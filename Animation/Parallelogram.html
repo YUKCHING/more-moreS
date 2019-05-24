@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    <style>
+        .button { 
+            margin: auto;
+            font-size: 40px;
+            width: 200px;
+            height: 100px;
+            line-height: 100px;
+            text-align: center;
+            position: relative; /* text color, paddings, etc. */
+            cursor: pointer;
+        } 
+        .button:hover {
+            text-decoration: underline;
+            color: red;
+        }
+        .button::before { 
+            content: ''; /* To generate the box */ 
+            position: absolute; 
+            top: 0; right: 0; bottom: 0; left: 0; 
+            z-index: -1;
+            background: #58a; 
+            transform: skewX(40deg); 
+            border: 1px solid red;
+        }
+    </style>
+    <script>
+        console.log(Math.random())
+        function person () {
+            age: 16
+        }
+        var lyq = new person()
+        console.log(1 == '1')
+    </script>
+</head>
+<body>
+    <div class="button">
+        Click me!
+    </div>
+</body>
+</html>
