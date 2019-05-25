@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    <style>
+        .wrap {
+            height: 60px;
+            padding-top: 50px;
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+            justify-content: center;
+        }
+        .wrap div{
+            width: 6px;
+            height: 30px;
+            background: orange;
+            display: inline-block;
+            margin-right: 6px;
+        }
+        .bar1 {
+            animation: bar1 2s infinite linear;
+        }
+        .bar2 {
+            animation: bar2 2s infinite linear;
+        }
+        .bar3 {
+            animation: bar3 2s infinite linear;
+        }
+        .bar4 {
+            animation: bar4 2s infinite linear;
+        }
+        .bar5 {
+            animation: bar5 2s infinite linear;
+        }
+        @keyframes bar1 {
+            from { height: 30px; }
+            10% { height: 70px; }
+            20% { height: 30px; }
+        }
+        @keyframes bar2 {
+            from { height: 30px; }
+            20% { height: 30px;}
+            30% { height: 70px; }
+            40% { height: 30px; }
+        }
+        @keyframes bar3 {
+            from { height: 30px; }
+            30% { height: 30px;}
+            40% { height: 70px; }
+            50% { height: 30px; }
+        }
+        @keyframes bar4 {
+            from { height: 30px; }
+            40% { height: 30px;}
+            50% { height: 70px; }
+            60% { height: 30px; }
+        }
+        @keyframes bar5 {
+            from { height: 30px; }
+            50% { height: 30px;}
+            60% { height: 70px; }
+            70% { height: 30px; }
+        }
+    </style>
+</head>
+<body>
+    <div class="wrap">
+        <div class="bar1"></div>
+        <div class="bar2"></div>
+        <div class="bar3"></div>
+        <div class="bar4"></div>
+        <div class="bar5"></div>
+    </div>
+</body>
+</html>
