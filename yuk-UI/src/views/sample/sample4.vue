@@ -9,11 +9,6 @@
     </div>
   </div>
 </template>
-<script>
-export default {
-  data () {}
-}
-</script>
 <style lang='scss' scoped>
 .sample4 {
   .wrap {

@@ -15,9 +15,6 @@ export default {
       })[0].children
     }
   },
-  created () {
-    console.log(this.menu)
-  },
   methods: {
     clickItem (item) {
       console.log(item)
