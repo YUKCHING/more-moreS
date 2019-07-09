@@ -12,7 +12,7 @@ export default new Router({
     {
       path: '/layout',
       name: 'layout',
-      redirect: '/layout/sample1',
+      redirect: '/layout/sample9',
       component: resolve => require(['@/views/layout/layout'], resolve),
       children: [
         {
@@ -47,13 +47,18 @@ export default new Router({
         },
         {
           path: 'sample7',
-          name: 'Loading-三棱柱',
+          name: 'Loading-三棱柱213213123123',
           component: resolve => require(['@/views/sample/sample7'], resolve)
         },
         {
           path: 'sample8',
-          name: 'Loading-三棱柱8',
+          name: '斜体',
           component: resolve => require(['@/views/sample/sample8'], resolve)
+        },
+        {
+          path: 'sample9',
+          name: '测试',
+          component: resolve => require(['@/views/sample/sample9'], resolve)
         }
       ]
     }

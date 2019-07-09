@@ -1,9 +1,12 @@
 <template>
   <div class="side">
-    <p class="item-bar" v-for="(item, index) in menu" :key="item.path" @click="clickItem(item)">
-      {{index + 1}}、
-      {{item.name}}
-    </p>
+    <div class="item-bar" v-for="(item, index) in menu" :key="item.path" @click="clickItem(item)">
+      <p class="content" :style="{background: isSelect(item.path) ? 'red' : ''}" >
+        {{index + 1}}.
+        {{item.name}}
+      </p>
+      <div class="selected"></div>
+    </div>
   </div>
 </template>
 <script>
@@ -15,9 +18,14 @@ export default {
       })[0].children
     }
   },
+  created () {
+
+  },
   methods: {
+    isSelect (value) {
+      return this.$route.path.indexOf(value) !== -1
+    },
     clickItem (item) {
-      console.log(item)
       this.$router.push('/layout/' + item.path)
     }
   }
@@ -31,16 +39,32 @@ export default {
   box-sizing: border-box;
   overflow: auto;
   background: #00838f;
-  padding: 20px;
+  padding: 20px 10px 20px 20px;
 
   .item-bar {
-    color: #fff;
-    line-height: 26px;
-    font-size: 16px;
-    cursor: pointer;
-  }
-  .item-bar:hover {
-    text-decoration: underline;
+    display: flex;
+    align-items: center;
+
+    .content {
+      width: 90%;
+      color: #fff;
+      line-height: 26px;
+      font-size: 16px;
+      cursor: pointer;
+      overflow: hidden;
+      white-space: nowrap;
+      text-overflow: ellipsis;
+      margin-bottom: 0;
+    }
+    .content:hover {
+      text-decoration: underline;
+    }
+    .selected {
+      width: 10px;
+      height: 100%;
+      background: blue;
+      display: inline-block;
+    }
   }
 }
 </style>
