@@ -1,6 +1,6 @@
 <template>
   <div class="button">
-      Click me!
+    Click me!
   </div>
 </template>
 <script>
