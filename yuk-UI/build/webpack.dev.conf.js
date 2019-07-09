@@ -67,7 +67,10 @@ const devWebpackConfig = merge(baseWebpackConfig, {
         ignore: ['.*']
       }
     ]),
-    new OpenBrowserPlugin({url: 'http://localhost:8080'})
+    new OpenBrowserPlugin({
+      url: 'http://localhost:8080',
+      browser: 'chrome'
+    })
   ]
 })
 
