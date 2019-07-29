@@ -47,7 +47,7 @@ export default new Router({
         },
         {
           path: 'sample7',
-          name: 'Loading-三棱柱213213123123',
+          name: 'Loading-三棱柱',
           component: resolve => require(['@/views/sample/sample7'], resolve)
         },
         {
@@ -57,8 +57,18 @@ export default new Router({
         },
         {
           path: 'sample9',
-          name: '测试',
+          name: '抽奖',
           component: resolve => require(['@/views/sample/sample9'], resolve)
+        },
+        {
+          path: 'sample10',
+          name: '分体转屏',
+          component: resolve => require(['@/views/sample/sample10'], resolve)
+        },
+        {
+          path: 'sample11',
+          name: '滚屏进度条',
+          component: resolve => require(['@/views/sample/sample11'], resolve)
         }
       ]
     }

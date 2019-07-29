@@ -1,14 +1,22 @@
 <template>
-  <div class="layout">
-    <div class="header">yuk-UI</div>
-    <side class="side-block"></side>
-    <div class="content-block">
-      <router-view></router-view>
+  <div class="background">
+    <div class="layout">
+      <div class="header">yuk-UI</div>
+      <side class="side-block"></side>
+      <div class="content-block">
+        <router-view></router-view>
+      </div>
     </div>
   </div>
 </template>
 <style lang="scss" scoped>
 $header-height: 50px;
+.background {
+  height: 100%;
+  width: 100%;
+  background: url(~@/assets/background/background1.jpg) no-repeat center;
+  background-size: 100% 100%;
+}
 .layout {
   position: relative;
   box-sizing: border-box;
@@ -39,12 +47,12 @@ $header-height: 50px;
     left: 0;
     top: $header-height;
     bottom: 0;
-    width: 20%;
+    width: 18%;
   }
 
   .content-block {
     position: absolute;
-    left: 20%;
+    left: 18%;
     top: $header-height;
     right: 0;
     bottom: 0;
@@ -52,6 +60,7 @@ $header-height: 50px;
     border-radius: 10px;
     margin: 20px;
     padding: 10px;
+    // overflow: auto;
   }
 }
 </style>

@@ -1,11 +1,14 @@
 <template>
   <div class="side">
     <div class="item-bar" v-for="(item, index) in menu" :key="item.path" @click="clickItem(item)">
-      <p class="content" :style="{background: isSelect(item.path) ? 'red' : ''}" >
+      <p class="content"
+        :style="{
+          color: isSelect(item.path) ? '#ffffff' : '#CBBDE2',
+          fontWeight: isSelect(item.path) ? '540' : '100'
+        }" >
         {{index + 1}}.
         {{item.name}}
       </p>
-      <div class="selected"></div>
     </div>
   </div>
 </template>
@@ -23,7 +26,7 @@ export default {
   },
   methods: {
     isSelect (value) {
-      return this.$route.path.indexOf(value) !== -1
+      return this.$route.path.slice(8) === value
     },
     clickItem (item) {
       this.$router.push('/layout/' + item.path)
@@ -39,15 +42,15 @@ export default {
   box-sizing: border-box;
   overflow: auto;
   background: #00838f;
-  padding: 20px 10px 20px 20px;
+  padding: 20px 0px 20px 20px;
 
   .item-bar {
     display: flex;
     align-items: center;
 
     .content {
-      width: 90%;
-      color: #fff;
+      width: 100%;
+      color: #CBBDE2;
       line-height: 26px;
       font-size: 16px;
       cursor: pointer;
@@ -55,15 +58,19 @@ export default {
       white-space: nowrap;
       text-overflow: ellipsis;
       margin-bottom: 0;
+
     }
     .content:hover {
       text-decoration: underline;
+      background-image: linear-gradient(140deg, transparent 50%, #FFC33D 90%, #E8A038);
+      background-size: 200% 100%;
+      background-position: 90% 0%;
+      animation: showBg .5s ease;
+      font-style: italic;
     }
-    .selected {
-      width: 10px;
-      height: 100%;
-      background: blue;
-      display: inline-block;
+    @keyframes showBg {
+      from { background-position: 0% 0%; }
+      to { background-position: 90% 0%; }
     }
   }
 }
