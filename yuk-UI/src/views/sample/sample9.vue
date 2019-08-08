@@ -104,10 +104,6 @@ export default {
       let num = Math.ceil(this.stepRotate / 30.0) % 12
 
       let prize = this.prizes[num - 1 < 0 ? 11 : num - 1]
-      console.log(rotate)
-      console.log(num)
-      console.log(prize.name)
-      console.log(prize.value)
       if (prize.value >= 0) {
         this.earn = this.earn + prize.value
       } else {
@@ -172,7 +168,8 @@ export default {
           margin-top: 20px;
           display: inline-block;
           color: #fff;
-          transform: rotate(20deg);
+          transform: rotate(15deg);
+          font-size: 15px;
         }
 
         &:nth-child(2n) {
