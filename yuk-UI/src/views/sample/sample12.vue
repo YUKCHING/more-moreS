@@ -1,0 +1,50 @@
+<template>
+  <div class="sample12">
+    <div class="shadow1">岸芷汀兰，郁郁青青。</div>
+    <div class="shadow2">岸芷汀兰，郁郁青青。</div>
+    <div class="shadow3">岸芷汀兰，郁郁青青。</div>
+    <div class="shadow4">岸芷汀兰，郁郁青青。</div>
+  </div>
+</template>
+<script>
+export default {
+
+}
+</script>
+<style lang='scss' scoped>
+.sample12 {
+  font-size: 30px;
+
+  div {
+    margin-bottom: 20px;
+  }
+
+  .shadow1 {
+    color: #fafafa;
+    letter-spacing: 0;
+    text-shadow: 0px 1px 0px #999, 0px 2px 0px #888, 0px 3px 0px #777, 0px 4px 0px #666, 0px 5px 0px #555, 0px 6px 0px #444, 0px 7px 0px #333, 0px 8px 7px #001135
+  }
+
+  .shadow2 {
+    color: transparent;
+    background-color: black;
+    text-shadow: rgba(255,255,255,0.5) 0 5px 6px, rgba(255,255,255,0.2) 1px 3px 3px;
+    -webkit-background-clip: text;
+  }
+
+  .shadow3 {
+    color: transparent;
+    -webkit-text-stroke: 1px black;
+    letter-spacing: 0.04em;
+  }
+
+  .shadow4 {
+    background: #EEE url(data:image/gif;base64,iVBORw0KGgoAAAANSUhEUgAAAAQAAAAECAIAAAAmkwkpAAAAHklEQVQImWNkYGBgYGD4//8/A5wF5SBYyAr+//8PAPOCFO0Q2zq7AAAAAElFTkSuQmCC) repeat;
+    text-shadow: 5px -5px black, 4px -4px white;
+    font-weight: bold;
+    -webkit-text-fill-color: transparent;
+    -webkit-background-clip: text;
+  }
+}
+
+</style>

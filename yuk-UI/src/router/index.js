@@ -69,6 +69,11 @@ export default new Router({
           path: 'sample11',
           name: '滚屏进度条',
           component: resolve => require(['@/views/sample/sample11'], resolve)
+        },
+        {
+          path: 'sample12',
+          name: '字体阴影',
+          component: resolve => require(['@/views/sample/sample12'], resolve)
         }
       ]
     }
