@@ -1,0 +1,16 @@
+{
+  "name": "yuk",
+  "version": "1.0.0",
+  "description": "测试模块",
+  "main": "server.js",
+  "dependencies": {
+    "express": "^4.17.1"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "make test",
+    "start": "node server.js"
+  },
+  "author": "",
+  "license": "ISC"
+}
