@@ -1,11 +1,6 @@
 <template>
   <div class="loans-list">
-    <div class="no-msg"
-         v-if="lists.length === 0">
-      <p>暂无内容</p>
-    </div>
-    <loans-block v-else
-                 v-for="item in lists"
+    <loans-block v-for="item in lists"
                  :key="item.id"
                  :data="item"
                  @click="showDetail"></loans-block>

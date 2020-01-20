@@ -8,10 +8,13 @@
     "dev": "webpack-dev-server --inline --progress --config build/webpack.dev.conf.js",
     "start": "npm run dev",
     "lint": "eslint --ext .js,.vue src",
-    "build": "node build/build.js"
+    "build": "node build/build.js",
+    "build:loansh5": "node build/build.js --PROJECT=loansh5",
+    "build:valuation": "node build/build.js --PROJECT=valuation"
   },
   "dependencies": {
     "axios": "^0.18.0",
+    "echarts": "^4.6.0",
     "lodash": "^4.17.11",
     "mint-ui": "^2.2.13",
     "normalize.css": "^8.0.1",

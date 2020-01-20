@@ -1,16 +1,17 @@
 import Vue from 'vue'
 import Router from 'vue-router'
+import store from '@/store'
 
 Vue.use(Router)
 
 const router = new Router({
   mode: process.env.NODE_ENV === 'production' ? 'history' : '',
-  base: process.env.NODE_ENV === 'production' ? '/loansh5/' : '',
+  base: process.env.NODE_ENV === 'production' ? process.env.REDIRECT : '',
   routes: [
     {
       path: '/',
       name: 'home',
-      redirect: '/training'
+      redirect: '/valuation'
     },
     {
       path: '/loanslist',
@@ -37,6 +38,14 @@ const router = new Router({
       }
     },
     {
+      path: '/idauth',
+      name: 'idauth',
+      component: resolve => require(['@/view/loans/IdAuth'], resolve),
+      meta: {
+        title: '身份认证'
+      }
+    },
+    {
       path: '/etcmember',
       name: 'etcmember',
       component: resolve => require(['@/view/etc/EtcMember'], resolve),
@@ -59,6 +68,30 @@ const router = new Router({
       meta: {
         title: '预约培训'
       }
+    },
+    {
+      path: '/valuation',
+      name: 'valuation',
+      component: resolve => require(['@/view/valuation/valuation'], resolve),
+      meta: {
+        title: '快速估值'
+      }
+    },
+    {
+      path: '/valrecord',
+      name: 'valrecord',
+      component: resolve => require(['@/view/valuation/valuationRecord'], resolve),
+      meta: {
+        title: '估值记录'
+      }
+    },
+    {
+      path: '/valresult',
+      name: 'valresult',
+      component: resolve => require(['@/view/valuation/valuationResult'], resolve),
+      meta: {
+        title: '估值结果'
+      }
     }
   ]
 })
@@ -67,7 +100,15 @@ router.beforeEach((to, from, next) => {
   if (to.meta.title) {
     document.title = to.meta.title
   }
-  next()
+  if (to.query.token) {
+    store.dispatch('setToken', {
+      token: to.query.token
+    }).then(() => {
+      next()
+    })
+  } else {
+    next()
+  }
 })
 
 export default router
