@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- 上述3个meta标签*必须*放在最前面，任何其他内容都*必须*跟随其后！ -->
+    <meta name="description" content="">
+    <meta name="author" content="">
+
+    <title>通行记录</title>
+
+    <!-- 最新版本的 Bootstrap 核心 CSS 文件 -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@3.3.7/dist/css/bootstrap.min.css"
+        integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+
+    <!-- 可选的 Bootstrap 主题文件（一般不用引入） -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@3.3.7/dist/css/bootstrap-theme.min.css"
+        integrity="sha384-rHyoN1iRsVXV4nD0JutlnGaslCJuC7uwjduW9SVrLvRYooPp2bWYgmgJQIXwl/Sp" crossorigin="anonymous">
+
+    <!-- jQuery (Bootstrap 的所有 JavaScript 插件都依赖 jQuery，所以必须放在前边) -->
+    <script src="https://cdn.jsdelivr.net/npm/jquery@1.12.4/dist/jquery.min.js"></script>
+    <!-- 加载 Bootstrap 的所有 JavaScript 插件。你也可以根据需要只加载单个插件。 -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@3.3.7/dist/js/bootstrap.min.js"></script>
+
+    <script src="https://cdn.jsdelivr.net/npm/vue@2.6.11"></script>
+
+</head>
+<style>
+  .body-pannel {
+    width: 100%;
+    height: 100vh;
+    padding: 20px;
+    background: #f1f3f3;
+    box-sizing: border-box;
+  }
+  .app-pannel {
+    height: 100%;
+    border-radius: 2px;
+    border: 1px solid #dee5e7;
+  }
+  .header {
+    background: #f7f8f8;
+    padding: 20px;
+  }
+  .header-block {
+    margin-right: 10px;
+  }
+  .header-block label {
+    margin-right: 5px;
+  }
+  .header-botton {
+    float: right;
+  }
+  .table-block {
+    background: #ffffff;
+    height: calc(100% - 113px);
+    position: relative;
+  }
+  thead {
+    color: #58666E;
+    font-family: '微软雅黑';
+  }
+  thead tr th {
+    text-align: center;
+  }
+  .page-nav {
+    position: absolute;
+    right: 30px;
+    bottom: 0px;
+  }
+</style>
+<body class="body-pannel">
+    <div id="app" class="app-pannel">
+        <div class="form-inline header">
+          <div>
+            <div class="form-group header-block">
+                <label for="passUserType">用户类型:</label>
+                <select class="form-control" id="passUserType" v-model="query.passUserType" style="width: 80px;">
+                    <option value="">全部</option>
+                    <option value="1">园区用户</option>
+                    <option value="2">访客</option>
+                    <option value="3">管理员</option>
+                </select>
+            </div>
+            <div class="form-group header-block">
+                <label for="passUserName">用户姓名:</label>
+                <input type="text" class="form-control" id="passUserName" v-model="query.passUserName">
+            </div>
+            <div class="form-group header-block">
+                <label for="passUserCompany">所属公司:</label>
+                <input type="text" class="form-control" id="passUserCompany" v-model="query.passUserCompany">
+            </div>
+            <div class="form-group header-block">
+                <label for="passUserPhone">手机号码:</label>
+                <input type="text" class="form-control" id="passUserPhone" v-model="query.passUserPhone">
+            </div>
+            <div class="form-group header-block">
+                <label for="passUserIdCard">身份证号:</label>
+                <input type="text" class="form-control" id="passUserIdCard" v-model="query.passUserIdCard">
+            </div>
+          </div>
+          <div style="margin-top: 5px;">
+            <div class="form-group header-block">
+                <label for="type">通行类型:</label>
+                <select class="form-control" id="type" v-model="query.type" style="width: 80px;">
+                    <option value="">全部</option>
+                    <option value="1">入园</option>
+                    <option value="2">出园</option>
+                </select>
+            </div>
+            <div class="form-group header-block">
+                <label for="createUserName">放行人名:</label>
+                <input type="text" class="form-control" id="createUserName" v-model="query.createUserName">
+            </div>
+            <div class="form-group header-block">
+                <label for="startCreateTime">放行时间:</label>
+                <input type="datetime-local" class="form-control" id="startCreateTime" v-model="query.startCreateTime">
+            </div>
+            
+            <div class="form-group" style="margin-left: -5px;">
+                <label for="endCreateTime" style="margin-right: 5px;">到</label>
+                <input type="datetime-local" class="form-control" id="endCreateTime" v-model="query.endCreateTime">
+            </div>
+            <button class="btn btn-default header-botton" v-on:click="getData()">查询</button>
+          </div>
+        </div>
+        <div class="table-block">
+            <table class="table table-bordered" style="margin-bottom: 0px;">
+
+                <thead>
+    
+                    <tr>
+                        <th>用户名称</th>
+                        <th>通行类型</th>
+                        <th>通行时间</th>
+                        <th>放行人</th>
+                        <th>用户性别</th>
+                        <th>用户手机号</th>
+                        <th>用户身份证号码</th>
+                        <th>用户所属公司</th>
+                        <th>用户类型</th>
+                    </tr>
+                </thead>
+    
+                <tbody>
+                    <tr v-for="passRecord in passRecords">
+                        <td>{{ passRecord.passUserName }}</td>
+                        <td v-if="passRecord.type == 1">入园</td>
+                        <td v-else-if="passRecord.type == 2">出园</td>
+                        <td v-else>未知</td>
+                        <td>{{ passRecord.createTime | dateFormat }}</td>
+                        <td>{{ passRecord.createUserName }}</td>
+                        <td v-if="passRecord.passUserSex == 1">男</td>
+                        <td v-else-if="passRecord.passUserSex == 2">女</td>
+                        <td v-else>未知</td>
+                        <td>{{ passRecord.passUserPhone }}</td>
+                        <td>{{ passRecord.passUserIdCard }}</td>
+                        <td>{{ passRecord.passUserCompany }}</td>
+                        <td v-if="passRecord.passUserType == 1">园区用户</td>
+                        <td v-else-if="passRecord.passUserType == 2">访客</td>
+                        <td v-else-if="passRecord.passUserType == 3">管理员</td>
+                        <td v-else>未知</td>
+                    </tr>
+                </tbody>
+    
+            </table>
+    
+            <nav aria-label="Page navigation" class="page-nav">
+                <ul class="pagination">
+                    <li>
+                        <a v-on:click="prePage()" aria-label="Previous">
+                            <span aria-hidden="true">&laquo;</span>
+                        </a>
+                    </li>
+                    <li v-for="page in page.navPages" v-on:click="jumpPage(page)"><a>{{ page }}</a></li>
+                    <li>
+                        <a v-on:click="nextPage()" aria-label="Next">
+                            <span aria-hidden="true">&raquo;</span>
+                        </a>
+                    </li>
+                </ul>
+            </nav>
+        </div>
+        
+
+    </div><!-- /.container -->
+
+</body>
+
+<script>
+    var getData = function pagePassRecord() {
+
+        $.ajax({
+            url: "/people/pagePassRecord?passUserType=" + app.query.passUserType
+                + "&passUserName=" + app.query.passUserName
+                + "&passUserCompany=" + app.query.passUserCompany
+                + "&passUserPhone=" + app.query.passUserPhone
+                + "&passUserIdCard=" + app.query.passUserIdCard
+                + "&type=" + app.query.type
+                + "&createUserName=" + app.query.createUserName
+                + "&startCreateTime=" + app.query.startCreateTime
+                + "&endCreateTime=" + app.query.endCreateTime,
+            success: function (rep) {
+                console.log(rep);
+                app.passRecords = rep.data.list;
+                app.page.pageNum = rep.data.pageNum;
+                app.page.pageSize = rep.data.pageSize;
+                app.page.navPages = rep.data.navigatepageNums;
+            }
+        });
+    }
+
+    var prePage = function prePeople() {
+        if (app.page.prePage > 0) {
+            app.page.pageNum = app.page.prePage;
+            getData();
+        }
+    }
+
+    var nextPage = function prePeople() {
+        if (app.page.nextPage > 0) {
+            app.page.pageNum = app.page.nextPage;
+            getData();
+        }
+    }
+
+    var jumpPage = function jumpPeople(pageNum) {
+        if (pageNum > 0) {
+            app.page.pageNum = pageNum;
+            getData();
+        }
+    }
+
+    Vue.filter('dateFormat', function (dateStr, pattern = '') {
+        // 根据给定的时间字符串， 得到特定的时间
+        var dt = new Date(dateStr)
+
+        // yyyy-mm-dd
+        var y = dt.getFullYear()
+        var m = (dt.getMonth() + 1).toString().padStart(2, '0')
+        var d = dt.getDate().toString().padStart(2, '0')
+
+        // return y + '-' + m + '-' + ''d
+        // return `${y}-${m}-${d}`
+
+        if (pattern.toLowerCase() === 'yyyy-mm-dd') {
+            return `${y}-${m}-${d}`
+        } else {
+            var hh = dt.getHours().toString().padStart(2, '0')
+            var mm = dt.getMinutes().toString().padStart(2, '0')
+            var ss = dt.getSeconds().toString().padStart(2, '0')
+            return `${y}-${m}-${d} ${hh}:${mm}:${ss}`
+        }
+
+    })
+
+    var app = new Vue({
+        el: '#app',
+        data: {
+            query: { passUserType: '', passUserName: '', passUserCompany: '', passUserPhone: '', passUserIdCard: '', type: '', createUserName: '', startCreateTime: '', endCreateTime: '' },
+            passRecords: [],
+            page: { pageNum: 1, pageSize: 10, navPages: [1], prePage: 0, nextPage: 0 }
+        },
+        methods: {
+            getData: getData,
+            prePage: prePage,
+            nextPage: nextPage,
+            jumpPage: jumpPage
+        }
+    })
+
+    getData();
+
+</script>
+
+</html>
