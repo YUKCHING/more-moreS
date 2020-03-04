@@ -17,7 +17,7 @@
     "echarts": "^4.6.0",
     "html2canvas": "^1.0.0-rc.5",
     "jr-qrcode": "^1.1.4",
-    "lodash": "^4.17.11",
+    "lodash": "^4.17.13",
     "mint-ui": "^2.2.13",
     "normalize.css": "^8.0.1",
     "postcss-plugins-px2rem": "0.0.5",
