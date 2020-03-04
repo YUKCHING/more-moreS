@@ -27,33 +27,34 @@
   box-sizing: border-box;
   width: 100%;
   background: #fff;
-  border-radius: 2rpx;
+  border-radius: 2px;
   display: flex;
   flex-direction: column;
-  margin-bottom: 15rpx;
-  padding: 5rpx 5rpx;
+  margin-bottom: 15px;
+  padding: 5px 5px;
   cursor: pointer;
   font-family: PingFangSC-Regular;
+  box-shadow: 0px 3px 5px 0px rgba(191, 192, 197, 0.5);
 
   .top {
     flex-direction: row;
     justify-content: center;
-    margin-left: 5rpx;
+    margin-left: 5px;
 
     .title {
-      font-size: 15rpx;
+      font-size: 15px;
       display: inline-block;
-      margin-right: 5rpx;
+      margin-right: 5px;
     }
 
     .chara {
       display: inline-block;
-      margin-left: 5rpx;
-      padding: 2rpx 5rpx;
-      font-size: 8rpx;
+      margin-left: 5px;
+      padding: 2px 5px;
+      font-size: 8px;
       color: #ff9900;
       background: #fef2e0;
-      border-radius: 8rpx;
+      border-radius: 8px;
     }
   }
 
@@ -61,9 +62,9 @@
     display: flex;
     flex-direction: row;
     justify-content: center;
-    padding: 10rpx 0;
+    padding: 10px 0;
     height: 100%;
-    font-size: 18rpx;
+    font-size: 18px;
 
     div {
       width: 48%;
@@ -72,22 +73,22 @@
       color: #000000;
 
       .name {
-        font-size: 13rpx;
+        font-size: 13px;
         opacity: 0.42;
-        margin-top: 5rpx;
+        margin-top: 5px;
       }
     }
   }
 
   .bottom {
     border-top: 0.1px solid #f7f7f7;
-    padding-top: 5rpx;
+    padding-top: 5px;
 
     span {
-      font-size: 13rpx;
+      font-size: 13px;
       color: #9e9e9e;
       display: inline-block;
-      margin-left: 5rpx;
+      margin-left: 5px;
       font-family: PingFangSC-Regular;
     }
   }

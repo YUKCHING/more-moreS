@@ -7,7 +7,8 @@ Vue.use(Vuex)
 const store = new Vuex.Store({
   state: {},
   getters: {
-    token: state => state.user.token
+    token: state => state.user.token,
+    valinfo: state => state.user.valinfo
   },
   mutitons: {},
   modules: {

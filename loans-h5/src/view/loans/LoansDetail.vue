@@ -131,11 +131,11 @@
 
   .fir-block {
     background: #fff;
-    padding: 14rpx 20rpx 9rpx;
-    margin-bottom: 6rpx;
+    padding: 14px 20px 9px;
+    margin-bottom: 6px;
 
     p + p {
-      margin: 10rpx 0;
+      margin: 10px 0;
     }
 
     .feature {
@@ -143,24 +143,24 @@
         font-size: 12px;
         border: 1px solid #bebebe;
         display: inline-block;
-        padding: 2rpx 6rpx;
-        border-radius: 3rpx;
-        margin-right: 7rpx;
+        padding: 2px 6px;
+        border-radius: 3px;
+        margin-right: 7px;
       }
     }
   }
 
   .sec-block {
     background: #fff;
-    padding: 14rpx 20rpx 9rpx;
-    margin-bottom: 6rpx;
+    padding: 14px 20px 9px;
+    margin-bottom: 6px;
     color: #030303;
   }
 
   .thr-block {
     background: #fff;
-    padding: 14rpx 20rpx;
-    margin-bottom: 6rpx;
+    padding: 14px 20px;
+    margin-bottom: 6px;
     color: #030303;
 
     .table {
@@ -182,7 +182,6 @@
 
     img {
       width: 100%;
-      height: 60rpx;
     }
   }
 

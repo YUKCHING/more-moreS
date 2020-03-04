@@ -92,6 +92,22 @@ const router = new Router({
       meta: {
         title: '估值结果'
       }
+    },
+    {
+      path: '/valdetail',
+      name: 'valdetail',
+      component: resolve => require(['@/view/valuation/valuationDetail'], resolve),
+      meta: {
+        title: '估值详细'
+      }
+    },
+    {
+      path: '/valshare',
+      name: 'valshare',
+      component: resolve => require(['@/view/valuation/components/ShareImage'], resolve),
+      meta: {
+        title: '估值分享'
+      }
     }
   ]
 })

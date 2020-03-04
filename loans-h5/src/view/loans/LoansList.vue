@@ -10,21 +10,10 @@
 .loans-list {
   box-sizing: border-box;
   background: #fafafa;
-  padding: 15rpx;
+  padding: 15px;
   width: 100%;
   height: 100%;
   overflow: auto;
-
-  .no-msg {
-    height: 100%;
-
-    p {
-      margin: 50% auto;
-      text-align: center;
-      font-size: 25px;
-      color: gray;
-    }
-  }
 }
 </style>
 <script>
@@ -41,41 +30,12 @@ export default {
   data () {
     return {
       lists: []
-      // lists: [
-      //   {
-      //     id: '1',
-      //     product_name: '平安银行车抵贷',
-      //     product_label: '通过率高',
-      //     monthly_rate: '0.55%',
-      //     amount: '3-50万',
-      //     loan_reward: '0%',
-      //     feature: ['车辆抵押', '不看负债']
-      //   },
-      //   {
-      //     id: '2',
-      //     product_name: '平安银行车抵贷',
-      //     product_label: '通过率高',
-      //     monthly_rate: '0.44~0.55%',
-      //     amount: '3-50',
-      //     loan_reward: '0',
-      //     feature: ['车辆抵押', '不看负债']
-      //   },
-      //   {
-      //     id: '5',
-      //     product_name: '平安银行车抵贷',
-      //     product_label: '通过率高',
-      //     monthly_rate: '0.55%',
-      //     amount: '3-50',
-      //     loan_reward: '0',
-      //     feature: ['车辆抵押', '不看负债']
-      //   }
-      // ]
     }
   },
   methods: {
     getProductList () {
       let req = {
-        token: this.$router.history.current.query.token,
+        token: this.$store.getters.token,
         limit: '99',
         page: '1',
         search: '',
