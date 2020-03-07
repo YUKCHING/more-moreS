@@ -1,29 +1,80 @@
 <template>
   <div class="car-popup">
-    <van-cell-group>
+    <div class="search-topbar">
       <van-field v-model="searchKey" :placeholder="searchPlaceholder" clearable>
-        <van-icon slot="left-icon" name="search" />
-        <span slot="button" class="search-button" @click="searchButtonAction">{{state === 1 ? '返回' : '上一级'}}</span>
+        <van-icon slot="left-icon" color="#F9CFD0" name="search" />
+        <span slot="button" class="search-button" @click="searchButtonAction">返回</span>
       </van-field>
-    </van-cell-group>
-    <div class="content">
-      <div v-show="state === 1">
-        <van-index-bar :index-list="brandIndexList">
-          <div v-for="item in brandIndexList" :key="item">
-            <van-index-anchor :index="item" />
-            <van-cell v-for="brand in brandData[item]" :key="brand.id" :title="brand.name" @click="selectItem(brand)"/>
+    </div>
+    <div class="content-block" id="first-content">
+      <van-index-bar :index-list="brandIndexList" :sticky="false">
+        <div v-for="(key, i) in brandIndexList" :key="key">
+          <div v-if="i === 0 && (brandIndexList.length !== 1)">
+            <van-index-anchor :index="key">最近浏览</van-index-anchor>
+            <div class="recent-block">
+              <span
+                class="label"
+                v-for="item in brandData[key]"
+                :key="item.name"
+                @click="selectBrandAction(item)"
+                v-show="recentBrand.length > 0"
+              >
+                {{item.name}}
+              </span>
+              <span v-show="recentBrand.length === 0">
+                无
+              </span>
+            </div>
           </div>
-        </van-index-bar>
-      </div>
-      <div v-show="state === 2">
-        <div v-for="item in seriesIndexList" :key="item">
-          <van-index-anchor :index="item" />
-          <van-cell v-for="series in seriesData[item]" :key="series.id" :title="series.name" is-link @click="selectItem(series)"/>
+          <div v-else>
+            <van-index-anchor :index="key" />
+            <van-cell v-for="brand in brandData[key]" :key="brand.id" :title="brand.name" @click="selectBrandAction(brand)"/>
+          </div>
+          <!-- <div>
+            <van-index-anchor :index="key" />
+            <van-cell v-for="brand in brandData[key]" :key="brand.id" :title="brand.name" @click="selectBrandAction(brand)"/>
+          </div> -->
         </div>
-      </div>
-      <div v-show="state === 3">
-        <van-cell v-for="model in modelData" :key="model.id" :title="model.name" is-link @click="selectItem(model)"/>
-      </div>
+      </van-index-bar>
+      <van-popup
+        get-container="#first-content"
+        v-model="showSeriesPopup"
+        position="right"
+        :close-on-click-overlay="false"
+        :overlay="false"
+        class="series-popup"
+      > <!-- series展出层 -->
+        <div class="series-panel">
+          <div class="top" @click="seriesBackAction">
+            <img src="@/assets/icon/icon-back.png" alt="">
+            <span>收起</span>
+          </div>
+          <div class="series-content">
+            <div v-for="item in seriesIndexList" :key="item">
+              <van-index-anchor :index="item" />
+              <van-cell v-for="series in seriesData[item]" :key="series.id" :title="series.name" is-link @click="selectSeriesAction(series)"/>
+            </div>
+          </div>
+        </div>
+      </van-popup>
+      <van-popup
+        get-container="#first-content"
+        v-model="showModelPopup"
+        position="right"
+        :close-on-click-overlay="false"
+        :overlay="false"
+        class="model-popup"
+      > <!-- model展出层 -->
+        <div class="model-panel">
+          <div class="top" @click="modelBackAction">
+            <img src="@/assets/icon/icon-back.png" alt="">
+            <span>收起</span>
+          </div>
+          <div class="model-content">
+            <van-cell v-for="model in modelData" :key="model.id" :title="model.name" @click="selectModelAction(model)"/>
+          </div>
+        </div>
+      </van-popup>
     </div>
   </div>
 </template>
@@ -78,11 +129,14 @@ export default {
       seriesIndexList: [],
       seriesData: {},
       modelData: [],
-      searchKey: ''
+      searchKey: '',
+      recentBrand: [],
+      showSeriesPopup: false,
+      showModelPopup: false
     }
   },
   created () {
-    this.loadBrand()
+    this.init()
   },
   methods: {
     searchAction: commonJs._debounce(function (_type, index, item) {
@@ -90,13 +144,13 @@ export default {
         this.searchDataAction()
       }
     }, 300),
+    init () {
+      if (this.$store.getters.recentBrand) {
+        this.recentBrand = JSON.parse(this.$store.getters.recentBrand)
+      }
+      this.loadBrand()
+    },
     searchButtonAction () {
-      // if (this.searchKey) {
-      //   this.searchDataAction()
-      // } else {
-      //   this.$emit('select')
-      //   this.resetData()
-      // }
       if (this.state === 1) {
         this.$emit('select')
         this.resetData()
@@ -139,15 +193,20 @@ export default {
         if (res.code === 0) {
           this.brandArrData = []
 
-          res.data.forEach(ele => {
-            this.brandIndexListBackup.push(ele.brandNamePinyin)
+          let arr = res.data.map(ele => {
+            return ele.brandNamePinyin
           })
-          this.brandIndexListBackup.sort()
-          this.brandIndexListBackup = Array.from(new Set(this.brandIndexListBackup))
+
+          this.brandIndexListBackup = Array.from(new Set(arr)).sort()
+          this.brandIndexListBackup.unshift('最')
 
           this.brandDataBackup = {}
-          this.brandIndexListBackup.forEach(ele => {
-            this.brandDataBackup[ele] = []
+          this.brandIndexListBackup.forEach((ele, index) => {
+            if (index === 0) {
+              this.brandDataBackup[ele] = this.recentBrand
+            } else {
+              this.brandDataBackup[ele] = []
+            }
           })
 
           res.data.forEach(ele => {
@@ -167,14 +226,17 @@ export default {
       let req = {
         brand_id: brand
       }
+      this.tLoading()
       evaluateSeriesRequest(req).then(res => {
+        this.tClear()
+        this.seriesIndexListBackup = []
+        this.seriesDataBackup = {}
         if (res.code === 0) {
           res.data.forEach(ele => {
             this.seriesIndexListBackup.push(ele.manufacturer)
           })
           this.seriesIndexListBackup = Array.from(new Set(this.seriesIndexListBackup))
 
-          this.seriesDataBackup = {}
           this.seriesIndexListBackup.forEach(ele => {
             this.seriesDataBackup[ele] = []
           })
@@ -197,6 +259,8 @@ export default {
 
           this.seriesIndexList = this.seriesIndexListBackup
           this.seriesData = this.seriesDataBackup
+
+          this.showSeriesPopup = true
         }
       })
     },
@@ -206,6 +270,7 @@ export default {
       }
       evaluateModelsRequest(req).then(res => {
         if (res.code === 0) {
+          console.log(res.data)
           this.modelDataBackup = res.data.map(ele => {
             return {
               id: ele.id,
@@ -215,19 +280,50 @@ export default {
             return b.name.localeCompare(a.name)
           })
           this.state++
-          console.log(this.modelDataBackup)
+
           this.modelData = this.modelDataBackup
+          this.showModelPopup = true
         }
       })
     },
-    selectItem (item) {
-      this.searchKey = ''
-      this.originData.push(item)
+    seriesBackAction () {
+      if (this.state === 2) {
+        this.state--
+        this.showSeriesPopup = false
+      }
+    },
+    modelBackAction () {
+      if (this.state === 3) {
+        this.state--
+        this.showModelPopup = false
+      }
+    },
+    selectBrandAction (item) {
       if (this.state === 1) {
+        if (this.recentBrand.filter(ele => ele.name === item.name).length === 0) {
+          this.recentBrand.unshift(item)
+          if (this.recentBrand.length > 5) this.recentBrand.pop()
+          this.$store.dispatch('setRecentBrand', {
+            recentBrand: JSON.stringify(this.recentBrand)
+          })
+        }
+
+        this.searchKey = ''
+        this.originData.push(item)
         this.loadBrandSeries(item.id)
-      } else if (this.state === 2) {
+      }
+    },
+    selectSeriesAction (item) {
+      if (this.state === 2) {
+        this.searchKey = ''
+        this.originData.push(item)
         this.loadSeriesModels(item.id)
-      } else if (this.state === 3) {
+      }
+    },
+    selectModelAction (item) {
+      if (this.state === 3) {
+        this.searchKey = ''
+        this.originData.push(item)
         this.$emit('select', this.originData)
         this.resetData()
       }
@@ -241,6 +337,8 @@ export default {
       this.seriesData = {}
       this.modelData = []
       this.searchKey = ''
+      this.showSeriesPopup = false
+      this.showModelPopup = false
       this.loadBrand()
     }
   }
@@ -250,15 +348,116 @@ export default {
 .car-popup /deep/ {
   height: 100vh;
 
-  $searchCarHeight: 45px;
-  .search-button {
-    font-size: 16px;
-    color: #00A7FF;
+  ::-webkit-scrollbar {
+    display:none;
   }
 
-  .content {
-    height: calc(100% - #{$searchCarHeight});
+  $searchBarHeight: 48px;
+  .search-topbar {
+    background: #E02020;
+    padding: 7px 8px;
+
+    .van-cell {
+      padding: 0;
+    }
+
+    .van-field {
+      display: inline-flex;
+      width: 100%;
+      padding: 5px 7px 5px 12px;
+      border-radius: 8px;
+      background: rgba(255, 255, 255, .5);
+    }
+
+    input::-webkit-input-placeholder {
+      color: rgba(255, 255, 255, .6);
+    }
+
+    .search-button {
+      color: rgba(255, 255, 255, .6);
+    }
+  }
+
+  .content-block {
+    height: calc(100% - #{$searchBarHeight});
     overflow: auto;
+    position: relative;
+
+    .recent-block {
+      padding: 11px 20px 16px;
+      display: flex;
+      align-items: center;
+      flex-wrap: wrap;
+      color: rgba(100, 100, 100, 1);
+      font-size: 11px;
+      font-family: PingFangSC-Regular;
+
+      .label {
+        border-radius: 2px;
+        background-color: rgba(0, 0, 0, 0.1);
+        padding: 5px 17px;
+        margin: 5px 10px 0px 0px;
+      }
+    }
+
+    .van-cell:not(:last-child)::after {
+      left: 0;
+    }
+
+    .top {
+      display: flex;
+      align-items: center;
+      padding: 12px 10px;
+      font-size: 13px;
+      color: rgba(0, 0, 0, .85);
+
+      img {
+        width: 16px;
+        height: 16px;
+        transform: rotate(180deg);
+        margin-right: 6px;
+      }
+    }
+
+    .series-popup {
+      height: calc(100% - #{$searchBarHeight});
+      width: 80%;
+      top: calc(50% + calc(#{$searchBarHeight} / 2.0));
+      bottom: 0;
+
+      .series-panel {
+        box-sizing: border-box;
+        height: 100%;
+        width: 100%;
+        border-left: 1px solid rgba(228, 229, 230, 1);
+
+        .series-content {
+          height: calc(100% - 42px);
+          overflow: auto;
+        }
+
+      }
+    }
+
+    .model-popup {
+      height: calc(100% - #{$searchBarHeight});
+      width: 60%;
+      top: calc(50% + calc(#{$searchBarHeight} / 2.0));
+      bottom: 0;
+
+      .model-panel {
+        box-sizing: border-box;
+        height: 100%;
+        width: 100%;
+        border-left: 1px solid rgba(228, 229, 230, 1);
+
+        .model-content {
+          height: calc(100% - 42px);
+          overflow: auto;
+        }
+
+      }
+    }
   }
 
   .van-index-anchor {

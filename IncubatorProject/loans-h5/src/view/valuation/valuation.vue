@@ -93,7 +93,7 @@ export default {
       selectTime: '',
       minDate: new Date(2006, 1, 1),
       maxDate: new Date(),
-      showBrandPicker: false,
+      showBrandPicker: true,
       showDatePicker: false,
       showCityPicker: false,
       carTime: new Date(),
@@ -119,7 +119,9 @@ export default {
         token: 'eyJpdiI6IjN5WWc1MEEyWkFBNU5LWU51WGZlOHc9PSIsInZhbHVlIjoiNjU5Vko4MzkyZXdVOU9iM01SdnJIVXViMkJcLzFaVlFkMlpVVkxKNlo1b0E9IiwibWFjIjoiYTk0ZTUyYjFkYWFiMmQ1MTE2NzA1MDc0NTE2YmY2YTQ3ZWQ3NzcxZWViZTBjYjhhMDA4NjRmZWMxZjI1ODBiZCJ9'
       }
       refreshToken(req).then(res => {
-        console.log(res)
+        if (res.code === 0) {
+          console.log(res.data.token)
+        }
       })
     },
     searchBrandAction () {
@@ -154,7 +156,6 @@ export default {
       }
     },
     selectCarModel (items) {
-      console.log(items)
       this.showBrandPicker = false
       if (items) {
         this.selectCarInfo = items

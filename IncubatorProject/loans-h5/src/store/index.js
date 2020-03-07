@@ -8,7 +8,9 @@ const store = new Vuex.Store({
   state: {},
   getters: {
     token: state => state.user.token,
-    valinfo: state => state.user.valinfo
+    valinfo: state => state.user.valinfo,
+    recentCity: state => state.user.recentCity,
+    recentBrand: state => state.user.recentBrand
   },
   mutitons: {},
   modules: {

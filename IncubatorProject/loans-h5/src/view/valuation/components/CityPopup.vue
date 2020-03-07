@@ -1,189 +1,164 @@
 <template>
   <div class="popup-panel">
-    <!-- <div class="local-city">
-      <p class="line1">当前位置</p>
-      <div class="text">
-        <span v-if="localCity.id === ''" style="color: gray">定位中...</span>
-        <div v-else class="button" @click="selectCityItem(localCity)">
-          {{localCity.name}}
-        </div>
-      </div>
-    </div> -->
-    <van-cell-group>
-      <van-field v-model="searchKey" placeholder="请输入搜索关键字" clearable>
-        <van-icon slot="left-icon" name="search" />
-        <span slot="button" class="search-button" @click="searchButtonAction">返回</span>
-      </van-field>
-    </van-cell-group>
     <div class="select-city">
-      <van-index-bar :index-list="cityIndexList" :sticky="false">
-        <div v-for="item in cityIndexList" :key="item">
-          <van-index-anchor :index="item" />
-          <van-cell v-for="city in cityData[item]" :key="city.id" :title="city.name" @click="selectCityItem(city)"/>
+      <van-index-bar :index-list="proIndexList" :sticky="false">
+        <div v-for="(key, i) in proIndexList" :key="key">
+          <div v-if="i === 0">
+            <div v-show="recentCity.length > 0">
+              <van-index-anchor :index="key">最近选择</van-index-anchor>
+              <div class="recent-block">
+                <span
+                  v-for="item in proData[key]"
+                  :key="item.name"
+                  @click="selectRecent(item)"
+                >
+                  {{item.name}}
+                </span>
+              </div>
+            </div>
+          </div>
+          <div v-else>
+            <van-index-anchor :index="key" />
+            <van-cell
+              v-for="item in proData[key]"
+              :key="item.name"
+              :title="item.name"
+              @click="selectProvinceItem(item)"
+            />
+          </div>
         </div>
       </van-index-bar>
     </div>
+    <van-popup
+      v-model="showPopup"
+      position="right"
+      :close-on-click-overlay="false"
+      :style="{ height: '100%', width: '60%' }"
+    >
+      <city-sec-popup :info="selectPro" @back="backAction" @select="selectAction"></city-sec-popup>
+    </van-popup>
   </div>
 </template>
 <script>
 import { evaluateCityRequest } from '@/apis/loansRequest.js'
+import CitySecPopup from './CitySecPopup'
 import py from '@/common/js/vue-py'
-import commonJs from '@/common/js/public.js'
-// import '@/common/base/geolocation.min.js'
 export default {
+  components: {
+    CitySecPopup
+  },
   created () {
-    this.loadCity()
-  },
-  mounted () {
-    // this.getMyLocation()
-  },
-  watch: {
-    'searchKey' () {
-      if (this.searchKey.length === 0) {
-        this.cityData = this.cityDataBackUp
-        this.cityIndexList = this.cityIndexListBackUp
-      } else {
-        this.searchAction()
-      }
-    }
+    this.init()
   },
   data () {
     return {
-      cityIndexListBackUp: [],
-      cityDataBackUp: {},
-      cityIndexList: [],
-      cityData: {},
-      localCity: {
-        name: '',
-        id: ''
-      },
-      searchKey: ''
+      showPopup: false,
+      proIndexList: [],
+      proData: {},
+      selectPro: {},
+      recentCity: []
     }
   },
   methods: {
-    searchAction: commonJs._debounce(function (_type, index, item) {
-      if (this.searchKey) {
-        if (this.cityData.length === 0) return
-        this.searchDataAction()
+    init () {
+      if (this.$store.getters.recentCity) {
+        this.recentCity = JSON.parse(this.$store.getters.recentCity)
       }
-    }, 300),
-    searchButtonAction () {
-      this.$emit('select')
-      this.searchKey = ''
+      this.loadCity()
     },
-    searchDataAction () {
-      let resultArr = this.cityArrData.filter(ele => ele.name.indexOf(this.searchKey) !== -1)
-      this.cityData = {
-        '': resultArr
-      }
-      this.cityIndexList = ['']
-    },
-    selectCityItem (item) {
-      this.$emit('select', item)
-      this.searchKey = ''
+    selectProvinceItem (item) {
+      this.showPopup = true
+      this.selectPro = item
     },
     loadCity () {
       evaluateCityRequest({}).then(res => {
         if (res.code === 0) {
-          this.cityIndexListBackUp = []
-          this.cityArrData = []
+          let arr = res.data.map(ele => {
+            return py.chineseToPinYinFirst(ele.name)
+          })
+          this.proIndexList = Array.from(new Set(arr)).sort()
+          this.proIndexList.unshift('最')
+          this.proIndexList.forEach((ele, index) => {
+            if (index === 0) {
+              this.proData[ele] = this.recentCity
+            } else {
+              this.proData[ele] = []
+            }
+          })
 
-          res.data.forEach(ele => {
-            ele.citys.forEach(city => {
-              this.cityIndexListBackUp.push(py.chineseToPinYinFirst(city.name))
+          res.data.forEach((ele, index) => {
+            let first = py.chineseToPinYinFirst(ele.name)
+            this.proData[first].push({
+              name: ele.name,
+              children: ele.citys
             })
           })
-          this.cityIndexListBackUp.sort()
-          this.cityIndexListBackUp = Array.from(new Set(this.cityIndexListBackUp))
-
-          this.cityDataBackUp = {}
-          this.cityIndexListBackUp.forEach(ele => {
-            this.cityDataBackUp[ele] = []
-          })
-          res.data.forEach(ele => {
-            ele.citys.forEach(city => {
-              let tag = py.chineseToPinYinFirst(city.name)
-              this.cityDataBackUp[tag].push({
-                ...city
-              })
-              this.cityArrData.push({...city})
+          Object.keys(this.proData).forEach(key => {
+            this.proData[key].sort((a, b) => {
+              return a.name.localeCompare(b.name)
             })
           })
-
-          this.cityIndexList = this.cityIndexListBackUp
-          this.cityData = this.cityDataBackUp
-          console.log(this.cityIndexList)
-          console.log(this.cityData)
-          console.log(this.cityArrData)
-          // this.fixLocalCity()
         }
       })
     },
-    getMyLocation () {
-      var geolocation = new window.qq.maps.Geolocation('GM3BZ-PSDLW-MWFR7-R6CFC-D2QO6-6QFXM', 'loansh5')
-      geolocation.getIpLocation(this.showPosition, this.showErr)
+    backAction () {
+      this.showPopup = false
+      this.selectPro = {}
     },
-    showPosition (position) {
-      this.localCity.name = position.city
-      this.fixLocalCity()
-    },
-    showErr () {
-      this.getMyLocation() // 定位失败再请求定位，测试使用
-    },
-    fixLocalCity () {
-      if (this.localCity.name === '') return
-      if (this.cityArrData.length === 0) return
-      for (let i = 0; i < this.cityArrData.length; i++) {
-        if (this.localCity.name.indexOf(this.cityArrData[i].name) !== -1) {
-          this.localCity.name = this.cityArrData[i].name
-          this.localCity.id = this.cityArrData[i].id
-          break
-        }
+    selectAction (item) {
+      if (this.recentCity.filter(ele => ele.name === item.name).length === 0) {
+        this.recentCity.unshift(item)
+        if (this.recentCity.length > 5) this.recentCity.pop()
+        console.log(this.recentCity)
+        this.$store.dispatch('setRecentCity', {
+          recentCity: JSON.stringify(this.recentCity)
+        })
       }
+
+      this.backAction()
+      this.$emit('select', item)
+    },
+    selectRecent (item) {
+      this.backAction()
+      this.$emit('select', item)
     }
   }
 }
 </script>
 <style lang='scss' scoped>
-.popup-panel {
+.popup-panel /deep/ {
   background: #ffffff;
   height: 100vh;
 
-  .search-button {
-    font-size: 16px;
-    color: #00A7FF;
+  .van-index-anchor {
+    background: rgb(239, 240, 242);
   }
 
-  $localCityHeight: 45px;
-  .local-city {
-    height: $localCityHeight;
-    box-sizing: border-box;
-    padding: 10px 15px;
-
-    .line1 {
-      font-weight: 500;
-
-    }
-
-    .text {
-      font-size: 14px;
-      margin: 5px;
-
-      .button {
-        display: inline-block;
-        line-height: 20px;
-        border-radius: 3px;
-        background-color: rgba(246, 246, 246, 1);
-        text-align: center;
-        border: 1px solid rgba(255, 0, 0, 0);
-        padding: 5px 10px;
-      }
-    }
+  .van-cell:not(:last-child)::after {
+    left: 0;
   }
 
   .select-city {
-    height: calc(100% - #{$localCityHeight});
+    height: calc(100%);
     overflow: auto;
+  }
+
+  .recent-block {
+    padding: 11px 20px 16px;
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+
+    span {
+      border-radius: 2px;
+      background-color: rgba(0, 0, 0, 0.1);
+      padding: 5px 17px;
+      left: 36.5px;
+      color: rgba(157, 157, 157, 1);
+      font-size: 11px;
+      font-family: PingFangSC-Regular;
+      margin: 5px 10px 0px 0px;
+    }
   }
 }
 </style>
