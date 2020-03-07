@@ -93,7 +93,7 @@ export default {
       selectTime: '',
       minDate: new Date(2006, 1, 1),
       maxDate: new Date(),
-      showBrandPicker: true,
+      showBrandPicker: false,
       showDatePicker: false,
       showCityPicker: false,
       carTime: new Date(),

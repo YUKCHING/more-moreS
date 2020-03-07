@@ -30,10 +30,6 @@
             <van-index-anchor :index="key" />
             <van-cell v-for="brand in brandData[key]" :key="brand.id" :title="brand.name" @click="selectBrandAction(brand)"/>
           </div>
-          <!-- <div>
-            <van-index-anchor :index="key" />
-            <van-cell v-for="brand in brandData[key]" :key="brand.id" :title="brand.name" @click="selectBrandAction(brand)"/>
-          </div> -->
         </div>
       </van-index-bar>
       <van-popup
@@ -71,7 +67,11 @@
             <span>收起</span>
           </div>
           <div class="model-content">
-            <van-cell v-for="model in modelData" :key="model.id" :title="model.name" @click="selectModelAction(model)"/>
+            <div v-for="item in modelIndexList" :key="item">
+              <van-index-anchor :index="item" />
+              <van-cell v-for="model in modelData[item]" :key="model.id" :title="model.name" @click="selectModelAction(model)"/>
+            </div>
+            <!-- <van-cell v-for="model in modelData" :key="model.id" :title="model.name" @click="selectModelAction(model)"/> -->
           </div>
         </div>
       </van-popup>
@@ -123,12 +123,15 @@ export default {
       seriesIndexListBackup: [],
       seriesDataBackup: {},
       seriesArrData: [],
-      modelDataBackup: [],
+      modelIndexListBackup: [],
+      modelDataBackup: {},
+      modelArrData: [],
       brandIndexList: [],
       brandData: {},
       seriesIndexList: [],
       seriesData: {},
-      modelData: [],
+      modelIndexList: [],
+      modelData: {},
       searchKey: '',
       recentBrand: [],
       showSeriesPopup: false,
@@ -159,40 +162,92 @@ export default {
       }
     },
     searchDataAction () {
+      let keys = this.searchKey.split(' ').filter(ele => ele !== '')
       if (this.state === 1) {
-        if (this.brandArrData.length === 0) return
-        let resultArr = this.brandArrData.filter(ele => ele.brandName.indexOf(this.searchKey) !== -1)
-        this.brandData = {
-          '': resultArr.map(ele => {
-            return {
-              id: ele.id,
-              name: ele.brandName
-            }
-          })
-        }
-        this.brandIndexList = ['']
+        this.searchBrand(keys)
       } else if (this.state === 2) {
-        if (this.seriesArrData.length === 0) return
-        let resultArr = this.seriesArrData.filter(ele => ele.series.indexOf(this.searchKey) !== -1)
-        this.seriesData = {
-          '': resultArr.map(ele => {
-            return {
-              id: ele.id,
-              name: ele.series
-            }
-          })
-        }
-        this.seriesIndexList = ['']
-      } else {
-        let resultArr = this.modelDataBackup.filter(ele => ele.name.indexOf(this.searchKey) !== -1)
-        this.modelData = resultArr
+        this.searchSeries(keys)
+      } else if (this.state === 3) {
+        this.searchModel(keys)
       }
     },
+    searchBrand (keys) {
+      if (this.brandArrData.length === 0) return
+      let resultArr = this.brandArrData.filter(ele => {
+        let pass = true
+        for (let index = 0; index < keys.length; index++) {
+          const key = keys[index]
+          if (ele.brandName.indexOf(key) === -1) {
+            pass = false
+            break
+          }
+        }
+        return pass
+      })
+      this.brandData = {
+        '': resultArr.map(ele => {
+          return {
+            id: ele.id,
+            name: ele.brandName
+          }
+        })
+      }
+      this.brandIndexList = ['']
+    },
+    searchSeries (keys) {
+      if (this.seriesArrData.length === 0) return
+      let resultArr = this.seriesArrData.filter(ele => {
+        let pass = true
+        for (let index = 0; index < keys.length; index++) {
+          const key = keys[index]
+          if (ele.series.indexOf(key) === -1) {
+            pass = false
+            break
+          }
+        }
+        return pass
+      })
+      this.seriesData = {
+        '': resultArr.map(ele => {
+          return {
+            id: ele.id,
+            name: ele.series
+          }
+        })
+      }
+      this.seriesIndexList = ['']
+    },
+    searchModel (keys) {
+      if (this.modelArrData.length === 0) return
+      let resultArr = this.modelArrData.filter(ele => {
+        let pass = true
+        for (let index = 0; index < keys.length; index++) {
+          const key = keys[index]
+          if (ele.model.indexOf(key) === -1) {
+            pass = false
+            break
+          }
+        }
+        return pass
+      })
+      this.modelData = {
+        '': resultArr.map(ele => {
+          return {
+            id: ele.id,
+            name: ele.model
+          }
+        })
+      }
+      this.modelIndexList = ['']
+    },
     loadBrand () {
+      this.brandIndexListBackup = []
+      this.brandDataBackup = {}
+      this.brandArrData = []
+      this.brandIndexList = []
+      this.brandData = {}
       evaluateBrandRequest({}).then(res => {
         if (res.code === 0) {
-          this.brandArrData = []
-
           let arr = res.data.map(ele => {
             return ele.brandNamePinyin
           })
@@ -200,7 +255,6 @@ export default {
           this.brandIndexListBackup = Array.from(new Set(arr)).sort()
           this.brandIndexListBackup.unshift('最')
 
-          this.brandDataBackup = {}
           this.brandIndexListBackup.forEach((ele, index) => {
             if (index === 0) {
               this.brandDataBackup[ele] = this.recentBrand
@@ -226,11 +280,12 @@ export default {
       let req = {
         brand_id: brand
       }
-      this.tLoading()
+      this.seriesIndexListBackup = []
+      this.seriesDataBackup = {}
+      this.seriesArrData = []
+      this.seriesIndexList = []
+      this.seriesData = {}
       evaluateSeriesRequest(req).then(res => {
-        this.tClear()
-        this.seriesIndexListBackup = []
-        this.seriesDataBackup = {}
         if (res.code === 0) {
           res.data.forEach(ele => {
             this.seriesIndexListBackup.push(ele.manufacturer)
@@ -268,20 +323,45 @@ export default {
       let req = {
         series_id: series
       }
+      this.modelIndexListBackup = []
+      this.modelDataBackup = {}
+      this.modelArrData = []
+      this.modelIndexList = []
+      this.modelData = {}
       evaluateModelsRequest(req).then(res => {
+        this.modelIndexListBackup = []
+        this.modelDataBackup = {}
+        this.modelArrData = []
+
         if (res.code === 0) {
-          console.log(res.data)
-          this.modelDataBackup = res.data.map(ele => {
-            return {
+          let arr = res.data.map(ele => {
+            let text = ele.model
+            let index = text.indexOf('款')
+            let key = index === -1 ? '其它款' : text.slice(index - 4, index + 1)
+            return key
+          })
+          this.modelIndexListBackup = Array.from(new Set(arr)).sort((a, b) => a - b)
+
+          this.modelDataBackup = {}
+          this.modelIndexListBackup.forEach((ele, index) => {
+            this.modelDataBackup[ele] = []
+          })
+
+          res.data.forEach(ele => {
+            let text = ele.model
+            let index = text.indexOf('款')
+            let key = index === -1 ? '其它款' : text.slice(index - 4, index + 1)
+            this.modelDataBackup[key].push({
               id: ele.id,
               name: ele.model
-            }
-          }).sort((a, b) => {
-            return b.name.localeCompare(a.name)
+            })
+            this.modelArrData.push({...ele})
           })
-          this.state++
 
+          this.modelIndexList = this.modelIndexListBackup
           this.modelData = this.modelDataBackup
+
+          this.state++
           this.showModelPopup = true
         }
       })
@@ -290,12 +370,14 @@ export default {
       if (this.state === 2) {
         this.state--
         this.showSeriesPopup = false
+        this.searchKey = ''
       }
     },
     modelBackAction () {
       if (this.state === 3) {
         this.state--
         this.showModelPopup = false
+        this.searchKey = ''
       }
     },
     selectBrandAction (item) {
