@@ -82,7 +82,7 @@
   </div>
 </template>
 <script>
-import { bookTraning } from '@/apis/loansRequest'
+import { bookTraning } from '@/apis/api'
 import { Toast } from 'vant'
 export default {
   computed: {

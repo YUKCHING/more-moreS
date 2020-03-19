@@ -192,7 +192,7 @@
 }
 </style>
 <script>
-import { getProductDetail, getApplyLoan } from '@/apis/loansRequest'
+import { getProductDetail, getApplyLoan } from '@/apis/api'
 import { MessageBox, Toast } from 'mint-ui'
 
 export default {

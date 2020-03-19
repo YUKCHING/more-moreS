@@ -29,6 +29,20 @@ function addURLParam (url, name, value) {
   return url
 }
 
+/**
+ * 小程序接口
+ */
+
+// 获取控制开关配置
+export function getControlConfig (data) {
+  let url = '/common/control-config'
+  return sendGetRequest(url, data)
+}
+
+/**
+ * 贷款产品接口
+ */
+
 // 获取产品列表
 export function getProductList (data) {
   let url = '/product/get-product-list'

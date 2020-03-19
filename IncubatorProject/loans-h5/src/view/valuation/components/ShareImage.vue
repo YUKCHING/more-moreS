@@ -58,7 +58,7 @@
   </div>
 </template>
 <script>
-import { createValQrcode } from '@/apis/loansRequest.js'
+import { createValQrcode } from '@/apis/api.js'
 import ShareCard from '@/components/card/ShareCard'
 import SelectButton from './SelectButton'
 import html2canvas from 'html2canvas'

@@ -11,9 +11,7 @@
                   v-for="item in proData[key]"
                   :key="item.name"
                   @click="selectRecent(item)"
-                >
-                  {{item.name}}
-                </span>
+                >{{item.name}}</span>
               </div>
             </div>
           </div>
@@ -40,7 +38,7 @@
   </div>
 </template>
 <script>
-import { evaluateCityRequest } from '@/apis/loansRequest.js'
+import { evaluateCityRequest } from '@/apis/api.js'
 import CitySecPopup from './CitySecPopup'
 import py from '@/common/js/vue-py'
 export default {

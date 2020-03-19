@@ -7,12 +7,12 @@ Vue.prototype.tClear = tClear
 Vue.prototype.tSuccess = tSuccess
 Vue.prototype.tFail = tFail
 
-function toast (text) {
+export function toast (text) {
   let message = text || ' '
   Toast(message)
 }
 
-function tLoading (text) {
+export function tLoading (text) {
   let message = text || '加载中...'
   Toast.loading({
     message: message,
@@ -20,7 +20,7 @@ function tLoading (text) {
   })
 }
 
-function tClear () {
+export function tClear () {
   Toast.clear()
 }
 

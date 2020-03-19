@@ -69,7 +69,7 @@
   </div>
 </template>
 <script>
-import { refreshToken } from '@/apis/loansRequest.js'
+import { refreshToken } from '@/apis/api.js'
 import { Toast } from 'mint-ui'
 import CarPopup from './components/CarPopup'
 import '@/common/base/geolocation.min.js'

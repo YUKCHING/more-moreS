@@ -10,8 +10,16 @@ const router = new Router({
   routes: [
     {
       path: '/',
+      name: '',
+      redirect: '/home'
+    },
+    {
+      path: '/home',
       name: 'home',
-      redirect: '/valuation'
+      component: resolve => require(['@/view/home/index'], resolve),
+      meta: {
+        title: '泰诺车抵贷'
+      }
     },
     {
       path: '/loanslist',

@@ -79,7 +79,7 @@
   </div>
 </template>
 <script>
-import { evaluateBrandRequest, evaluateSeriesRequest, evaluateModelsRequest } from '@/apis/loansRequest.js'
+import { evaluateBrandRequest, evaluateSeriesRequest, evaluateModelsRequest } from '@/apis/api.js'
 import commonJs from '@/common/js/public.js'
 export default {
   computed: {

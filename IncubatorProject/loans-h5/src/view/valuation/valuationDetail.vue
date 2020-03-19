@@ -112,7 +112,7 @@
   </div>
 </template>
 <script>
-import { evaluateQuickRequest, evaluateRecordsDetailRequest } from '@/apis/loansRequest.js'
+import { evaluateQuickRequest, evaluateRecordsDetailRequest } from '@/apis/api.js'
 import ShareImage from './components/ShareImage'
 import LineChart from './components/LineChart'
 export default {

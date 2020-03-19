@@ -93,7 +93,7 @@
   </div>
 </template>
 <script>
-import { evaluateQuickRequest, evaluateRecordsDetailRequest } from '@/apis/loansRequest.js'
+import { evaluateQuickRequest, evaluateRecordsDetailRequest } from '@/apis/api.js'
 import ShareCard from '@/components/card/ShareCard'
 import SelectButton from './components/SelectButton'
 export default {

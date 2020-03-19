@@ -26,7 +26,7 @@
   </div>
 </template>
 <script>
-import { evaluateCityRequest } from '@/apis/loansRequest.js'
+import { evaluateCityRequest } from '@/apis/api.js'
 import py from '@/common/js/vue-py'
 import commonJs from '@/common/js/public.js'
 // import '@/common/base/geolocation.min.js'

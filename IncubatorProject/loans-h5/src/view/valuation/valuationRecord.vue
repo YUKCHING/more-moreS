@@ -19,7 +19,7 @@
   </div>
 </template>
 <script>
-import { evaluateRecordsRequest, evaluateRecordsDetailRequest } from '@/apis/loansRequest.js'
+import { evaluateRecordsRequest, evaluateRecordsDetailRequest } from '@/apis/api.js'
 export default {
   data () {
     return {

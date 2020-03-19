@@ -1,6 +1,6 @@
 import axios from 'axios'
 import Config from '@/config'
-import { Indicator, Toast } from 'mint-ui'
+import { toast, tLoading, tClear } from '@/common/js/Toast.js'
 import store from '@/store'
 
 const request = axios.create({
@@ -11,7 +11,7 @@ const request = axios.create({
 })
 
 request.interceptors.request.use(config => {
-  Indicator.open('加载中...')
+  tLoading('加载中...')
 
   config.headers.Authorization = store.getters.token
 
@@ -27,21 +27,21 @@ request.interceptors.request.use(config => {
 })
 
 request.interceptors.response.use(res => {
-  Indicator.close()
+  tClear()
 
   const data = res.data
   if (data.code !== 0) {
-    Toast(data.msg)
+    console.log(data.msg)
+    toast(data.msg)
     return Promise.reject(data.msg)
   }
 
   return data
 }, error => {
-  Indicator.close()
+  tClear()
 
-  Toast({
-    message: '错误：[' + error.response.status + ']' + error.response.statusText,
-    duration: 1200
+  toast({
+    message: '错误：[' + error.response.status + ']' + error.response.statusText
   })
 
   return Promise.reject(error.message)

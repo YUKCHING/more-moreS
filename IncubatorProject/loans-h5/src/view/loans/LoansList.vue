@@ -18,7 +18,7 @@
 </style>
 <script>
 import LoansBlock from './components/LoansBlock'
-import { getProductList } from '@/apis/loansRequest'
+import { getProductList } from '@/apis/api'
 
 export default {
   components: {
