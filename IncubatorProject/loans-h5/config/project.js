@@ -14,20 +14,29 @@ const PROJECT = `${getCodeEnv()}`
 
 /**
  * loansh5 - 车贷
- * valuation -快速估值
+ * valuation - 快速估值
+ * home - 首页
  */
 
-const { AssetsPath } = (() => {
+const { AssetsPath, assetsPublicPath } = (() => {
   const def = {
-    AssetsPath: ''
+    AssetsPath: '',
+    assetsPublicPath: ''
   }
 
   switch (PROJECT) {
     case 'loansh5':
       def.AssetsPath = '/loansh5'
+      def.assetsPublicPath = '/loansh5/'
       break;
     case 'valuation':
       def.AssetsPath = '/valuation'
+      def.assetsPublicPath = '/valuation/'
+      break;
+
+    case 'home':
+      def.AssetsPath = '/home'
+      def.assetsPublicPath = '/home/'
       break;
   
     default:

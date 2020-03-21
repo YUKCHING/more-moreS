@@ -11,11 +11,11 @@ const router = new Router({
     {
       path: '/',
       name: '',
-      redirect: '/home'
+      redirect: '/homepage'
     },
     {
-      path: '/home',
-      name: 'home',
+      path: '/homepage',
+      name: 'homepage',
       component: resolve => require(['@/view/home/index'], resolve),
       meta: {
         title: '泰诺车抵贷'

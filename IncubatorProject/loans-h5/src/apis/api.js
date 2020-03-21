@@ -33,6 +33,12 @@ function addURLParam (url, name, value) {
  * 小程序接口
  */
 
+// 通过code获取token
+export function getTokenByCode (data) {
+  let url = '/wx/get-access-token'
+  return sendGetRequest(url, data)
+}
+
 // 获取控制开关配置
 export function getControlConfig (data) {
   let url = '/common/control-config'

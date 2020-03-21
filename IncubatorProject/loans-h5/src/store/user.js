@@ -8,7 +8,7 @@ const recentBrandKey = 'recentBrand_key'
 
 const user = {
   state: {
-    token: process.env.NODE_ENV === 'production' ? getStorageByKey(tokenKey) : 'eyJpdiI6ImliVTljVGczSWJscndOT1RkQnFDdVE9PSIsInZhbHVlIjoiaU12MmZ4WkNqdzVsVHlYak1JamVPXC9sKzVVY25YeGtua0dkUzJUWVwveVNFPSIsIm1hYyI6IjZlOWVhMWI4Njg2YzU0MjE1NmVlZjMxYTRhNjJjNzhkMDQzMWIyNDBjZDA0ZjM3MjFkNmYyNDdmZGQwYzA4NjAifQ==',
+    token: process.env.NODE_ENV === 'production' ? getStorageByKey(tokenKey) : '31_FjSKNGpQFCaZtjchnNvhtyLxWP448muS8c6W4QTv-Fsbms5NnLWtVyHlnw_hTtOmqRSHUHXL1Kqr41V1HJ5UN-5pji9mzLmVoSTgNLdroFI',
     valinfo: getStorageByKey(valinfoKey),
     recentCity: getStorageByKey(recentCityKey),
     recentBrand: getStorageByKey(recentBrandKey)

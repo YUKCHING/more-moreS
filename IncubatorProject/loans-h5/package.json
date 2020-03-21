@@ -10,7 +10,8 @@
     "lint": "eslint --ext .js,.vue src",
     "build": "node build/build.js",
     "build:loansh5": "node build/build.js --PROJECT=loansh5",
-    "build:valuation": "node build/build.js --PROJECT=valuation"
+    "build:valuation": "node build/build.js --PROJECT=valuation",
+    "build:home": "node build/build.js --PROJECT=home"
   },
   "dependencies": {
     "axios": "^0.18.0",

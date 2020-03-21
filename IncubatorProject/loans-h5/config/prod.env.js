@@ -12,6 +12,10 @@ switch (params) {
   case 'loansh5': 
     Redirect = '"/loansh5"'
     break;
+
+  case 'home': 
+    Redirect = '"/home"'
+    break;
   
   default:
     break;

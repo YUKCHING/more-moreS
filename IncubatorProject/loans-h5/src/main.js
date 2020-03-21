@@ -8,6 +8,7 @@ import '@/assets/reset.css'
 import '@/common/js/Toast.js'
 import '@/config/mintuiConfig.js'
 import '@/config/vantuiConfig.js'
+import '@/common/js/common.js'
 import _ from 'lodash'
 
 Vue.config.productionTip = false
