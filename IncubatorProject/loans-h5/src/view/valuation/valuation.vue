@@ -69,7 +69,6 @@
   </div>
 </template>
 <script>
-import { refreshToken } from '@/apis/api.js'
 import { Toast } from 'mint-ui'
 import CarPopup from './components/CarPopup'
 import '@/common/base/geolocation.min.js'
@@ -110,20 +109,7 @@ export default {
       this.info = json.info
     }
   },
-  mounted () {
-    // this.refreshTokenAction()
-  },
   methods: {
-    refreshTokenAction () {
-      let req = {
-        token: 'eyJpdiI6IjN5WWc1MEEyWkFBNU5LWU51WGZlOHc9PSIsInZhbHVlIjoiNjU5Vko4MzkyZXdVOU9iM01SdnJIVXViMkJcLzFaVlFkMlpVVkxKNlo1b0E9IiwibWFjIjoiYTk0ZTUyYjFkYWFiMmQ1MTE2NzA1MDc0NTE2YmY2YTQ3ZWQ3NzcxZWViZTBjYjhhMDA4NjRmZWMxZjI1ODBiZCJ9'
-      }
-      refreshToken(req).then(res => {
-        if (res.code === 0) {
-          console.log(res.data.token)
-        }
-      })
-    },
     searchBrandAction () {
     },
     formatter (type, value) {

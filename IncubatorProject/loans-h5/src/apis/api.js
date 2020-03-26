@@ -33,15 +33,27 @@ function addURLParam (url, name, value) {
  * 小程序接口
  */
 
-// 通过code获取token
-export function getTokenByCode (data) {
-  let url = '/wx/get-access-token'
+// 通过code获取openId
+export function getOpenidByCode (data) {
+  let url = '/wx/get-openid'
+  return sendGetRequest(url, data)
+}
+
+// 通过openId获取token
+export function getTokenByToken (data) {
+  let url = '/user/get-token-by-openid'
   return sendGetRequest(url, data)
 }
 
 // 获取控制开关配置
 export function getControlConfig (data) {
   let url = '/common/control-config'
+  return sendGetRequest(url, data)
+}
+
+// 获取用户信息
+export function getUserInfo (data) {
+  let url = '/user/get-user-info'
   return sendGetRequest(url, data)
 }
 
@@ -78,9 +90,12 @@ export function bookTraning (data) {
  */
 
 // 刷新token
-export function refreshToken (data) {
+export function refreshToken () {
+  let req = {
+    token: 'eyJpdiI6IjJZWVBoQUhickhXaTB2Zmd6aERmNWc9PSIsInZhbHVlIjoiRTJEUEZSVllDK2pud0x1ajdRSUExMDBhZWEzak5GSFJpbmY0UzNVWVFnST0iLCJtYWMiOiIyNmI5YWVkNDU4N2JmOWU5MWE4Mjg1MzZjOTU0OGY1MzNhOWRjOTg2ZWIwZGJmYmJlODI2YTNmYjJkZDFjNjk5In0='
+  }
   let url = '/user/refresh-token'
-  return sendGetRequest(url, data)
+  return sendGetRequest(url, req)
 }
 
 /**

@@ -3,8 +3,8 @@
     <div class="top">
       <img src="@/assets/imgs/my-bg.png" alt="">
       <div class="panel">
-        <img :src="info.avater" alt="">
-        <span>{{info.name}}</span>
+        <img :src="info.avatar" alt="">
+        <span>{{info.username}}</span>
       </div>
     </div>
     <div class="order">
@@ -44,6 +44,15 @@
 </template>
 <script>
 export default {
+  props: {
+    info: {
+      require: true,
+      type: Object,
+      default: () => {
+        return {}
+      }
+    }
+  },
   data () {
     return {
       orderMenu: [
@@ -62,12 +71,10 @@ export default {
         {name: '收货地址', icon: require('@/assets/icon/icon-server-shdz.png'), active: 5},
         {name: '我的优惠券', icon: require('@/assets/icon/icon-server-wdyhq.png'), active: 6},
         {name: '推广码', icon: require('@/assets/icon/icon-server-tgm.png'), active: 7}
-      ],
-      info: {
-        name: 'YUKCHING',
-        avater: 'https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1584787382271&di=2154beaf80cc15e1977b793931347dce&imgtype=0&src=http%3A%2F%2Fcdn2.image.apk.gfan.com%2Fasdf%2FPImages%2F2014%2F12%2F26%2F211610_2d6bc9db3-77eb-4d80-9330-cd5e95fa091f.png'
-      }
+      ]
     }
+  },
+  created () {
   },
   methods: {
     orderItemSelect (item) {

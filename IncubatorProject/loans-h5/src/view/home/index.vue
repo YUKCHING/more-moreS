@@ -1,34 +1,39 @@
 <template>
-  <div class='index'>
-    <div class="panel">
-      <home-page v-show="active === 0"></home-page>
-      <member v-show="active === 1"></member>
-      <my v-show="active === 2"></my>
+  <div class="index">
+    <div class='content' v-if="!isWeixinBrowser">
+      <div class="panel">
+        <home-page v-if="active === 0" :info="memberInfo"></home-page>
+        <member v-else-if="active === 1" :info="memberInfo"></member>
+        <my v-else-if="active === 2" :info="memberInfo"></my>
+      </div>
+      <van-tabbar v-model="active" active-color="#FE3525">
+        <van-tabbar-item>
+          <span>首页</span>
+            <template #icon="props">
+              <img :src="props.active ? tabIcon1.active : tabIcon1.inactive"/>
+            </template>
+        </van-tabbar-item>
+        <van-tabbar-item>
+          <span>粉丝</span>
+            <template #icon="props">
+              <img :src="props.active ? tabIcon2.active : tabIcon2.inactive"/>
+            </template>
+        </van-tabbar-item>
+        <van-tabbar-item>
+          <span>我的</span>
+            <template #icon="props">
+              <img :src="props.active ? tabIcon3.active : tabIcon3.inactive"/>
+            </template>
+        </van-tabbar-item>
+      </van-tabbar>
     </div>
-    <van-tabbar v-model="active" active-color="#FE3525">
-      <van-tabbar-item>
-        <span>首页</span>
-          <template #icon="props">
-            <img :src="props.active ? tabIcon1.active : tabIcon1.inactive"/>
-          </template>
-      </van-tabbar-item>
-      <van-tabbar-item>
-        <span>粉丝</span>
-          <template #icon="props">
-            <img :src="props.active ? tabIcon2.active : tabIcon2.inactive"/>
-          </template>
-      </van-tabbar-item>
-      <van-tabbar-item>
-        <span>我的</span>
-          <template #icon="props">
-            <img :src="props.active ? tabIcon3.active : tabIcon3.inactive"/>
-          </template>
-      </van-tabbar-item>
-    </van-tabbar>
+    <div class="ban-block" v-else>
+      <span>请使用微信打开页面</span>
+    </div>
   </div>
 </template>
 <script>
-import { getTokenByCode } from '@/apis/api.js'
+import { getOpenidByCode, getTokenByToken, refreshToken, getUserInfo } from '@/apis/api.js'
 import HomePage from './HomePage'
 import Member from './Member'
 import My from './My'
@@ -39,20 +44,28 @@ export default {
   components: {
     HomePage, Member, My
   },
+  beforeRouteEnter (to, from, next) {
+    console.log(from)
+    if (from.path === '/') {
+      next()
+    } else {
+      next()
+    }
+  },
   computed: {
     isWeixinBrowser () {
       return this.judgeWeixinBrowser()
     }
   },
   created () {
-    // this.getToken('0118LY5C0yzsil2G0B6C0O3Y5C08LY5L')
+    // this.getOpenId('061jq9wB0b9NKk2M2hxB0DQVvB0jq9wU')
     // this.checkInfo()
-  },
-  mounted () {
+    this.getInfo()
+    // this.refreshTokenAction()
   },
   data () {
     return {
-      active: 2,
+      active: 0,
       tabIcon1: {
         active: require('@/assets/icon/tab_home_fill.png'),
         inactive: require('@/assets/icon/tab_home.png')
@@ -64,13 +77,18 @@ export default {
       tabIcon3: {
         active: require('@/assets/icon/tab_my_fill.png'),
         inactive: require('@/assets/icon/tab_my.png')
-      }
+      },
+      memberInfo: {}
     }
   },
+
   methods: {
-    onChange (event) {
-      // event.detail 的值为当前选中项的索引
-      this.active = event
+    refreshTokenAction () {
+      refreshToken().then(res => {
+        if (res.code === 0) {
+          console.log(res.data.token)
+        }
+      })
     },
     checkInfo () {
       let query = this.$route.query
@@ -87,22 +105,51 @@ export default {
         }
       } else {
         console.log('code  ' + code)
-        this.getToken(code)
+        // this.getOpenId(code)
       }
     },
-    getToken (code) {
+    getOpenId (code) {
       let req = {
         code: code
       }
-      getTokenByCode(req).then(res => {
+      getOpenidByCode(req).then(res => {
         console.log(res)
         if (res.code === 0) {
-          if (res.data) {
-            this.$store.dispatch('setToken', {
-              token: res.data
-            }).then(() => {
-            })
+          this.$store.dispatch('setOpenid', {
+            openid: res.data.openid
+          }).then(() => {
+            this.getToken()
+          })
+        }
+      })
+    },
+    getToken () {
+      let req = {
+        openid: this.$store.getters.openid
+      }
+      getTokenByToken(req).then(res => {
+        console.log(res)
+        if (res.code === 0) {
+          this.$store.dispatch('setToken', {
+            token: res.data.token
+          }).then(() => {
+            console.log('finish')
+            this.getInfo()
+          })
+        }
+      })
+    },
+    getInfo () {
+      let req = {
+        openid: this.$store.getters.openid,
+        token: this.$store.getters.token
+      }
+      getUserInfo(req).then(res => {
+        if (res.code === 0) {
+          this.memberInfo = {
+            ...res.data
           }
+          console.log(this.memberInfo)
         }
       })
     }
@@ -114,8 +161,18 @@ export default {
   height 100%
   background #F3F3F3
 
-  .panel
-    height calc(100% - 50px)
-    overflow auto
-    -webkit-overflow-scrolling touch
+  .content
+    height 100%
+
+    .panel
+      height calc(100% - 50px)
+      overflow auto
+      -webkit-overflow-scrolling touch
+
+  .ban-block
+    height 100%
+    display flex
+    justify-content center
+    align-items center
+    font-size 1.5rem
 </style>

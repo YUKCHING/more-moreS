@@ -117,6 +117,7 @@ function judgeWeixinBrowser () {
 // 微信获取code链接跳转到Index
 function getWeixinCodeUrlToIndex () {
   let appid = 'wxa90d81193e301d26'
-  let redirectUri = 'http%3A%2F%2Fapi.tainuocar.com%2Fvaluation'
-  return 'https://open.weixin.qq.com/connect/oauth2/authorize?appid=' + appid + '&redirect_uri=' + redirectUri + '&response_type=code&scope=snsapi_base&state=&connect_redirect=1#wechat_redirect'
+  let redirectUri = encodeURIComponent('http://api.tainuocar.com/home/')
+  let resType = 'snsapi_userinfo' // snsapi_userinfo   snsapi_base
+  return 'https://open.weixin.qq.com/connect/oauth2/authorize?appid=' + appid + '&redirect_uri=' + redirectUri + '&response_type=code&scope=' + resType + '&state=&connect_redirect=1#wechat_redirect'
 }

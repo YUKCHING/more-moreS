@@ -1,4 +1,4 @@
-webpackJsonp([6],{"78vk":function(A,e){},GClJ:function(A,e,t){
+webpackJsonp([7],{"78vk":function(A,e){},GClJ:function(A,e,t){
 /*!
  * html2canvas 1.0.0-rc.5 <https://html2canvas.hertzen.com>
  * Copyright (c) 2019 Niklas von Hertzen <https://hertzen.com>

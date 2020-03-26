@@ -24,6 +24,15 @@
 <script>
 import { getControlConfig } from '@/apis/api.js'
 export default {
+  props: {
+    info: {
+      require: true,
+      type: Object,
+      default: () => {
+        return {}
+      }
+    }
+  },
   mounted () {
     this.getConfig()
   },
@@ -37,7 +46,7 @@ export default {
       getControlConfig({}).then(res => {
         if (res.code === 0) {
           if (res.data.functions.length > 0) {
-            console.log(res.data.functions)
+            // console.log(res.data.functions)
             this.configs = res.data.functions.map(ele => {
               return {
                 ...ele,
@@ -72,7 +81,7 @@ export default {
   padding 0 2rem 2rem
 
   .gif
-    padding-top 4rem
+    padding-top 2rem
     text-align center
 
     img
@@ -103,7 +112,7 @@ export default {
         align-items center
         justify-content center
         padding 1rem
-        margin-bottom 2rem
+        margin-bottom 1rem
         background #F8FAFD
         border-radius .42rem
 
@@ -114,5 +123,9 @@ export default {
         span
           color #262626
           font-size 1.17rem
+
+      .item
+        &:last-child
+          margin-bottom 2rem
 
 </style>

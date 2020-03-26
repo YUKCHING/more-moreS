@@ -2,13 +2,16 @@
 import { getStorageByKey, setStorageByKey } from '@/common/base/storage'
 
 const tokenKey = 'token_key'
+const openidKey = 'openid_key'
 const valinfoKey = 'valinfo_key'
 const recentCityKey = 'recentCity_key'
 const recentBrandKey = 'recentBrand_key'
 
 const user = {
   state: {
-    token: process.env.NODE_ENV === 'production' ? getStorageByKey(tokenKey) : '31_FjSKNGpQFCaZtjchnNvhtyLxWP448muS8c6W4QTv-Fsbms5NnLWtVyHlnw_hTtOmqRSHUHXL1Kqr41V1HJ5UN-5pji9mzLmVoSTgNLdroFI',
+    token: process.env.NODE_ENV === 'production' ? getStorageByKey(tokenKey) : 'eyJpdiI6IjJZWVBoQUhickhXaTB2Zmd6aERmNWc9PSIsInZhbHVlIjoiRTJEUEZSVllDK2pud0x1ajdRSUExMDBhZWEzak5GSFJpbmY0UzNVWVFnST0iLCJtYWMiOiIyNmI5YWVkNDU4N2JmOWU5MWE4Mjg1MzZjOTU0OGY1MzNhOWRjOTg2ZWIwZGJmYmJlODI2YTNmYjJkZDFjNjk5In0=',
+    // token: getStorageByKey(tokenKey),
+    openid: getStorageByKey(openidKey),
     valinfo: getStorageByKey(valinfoKey),
     recentCity: getStorageByKey(recentCityKey),
     recentBrand: getStorageByKey(recentBrandKey)
@@ -17,6 +20,9 @@ const user = {
   mutations: {
     SET_TOKEN (state) {
       state.token = getStorageByKey(tokenKey)
+    },
+    SET_OPENID (state) {
+      state.openid = getStorageByKey(openidKey)
     },
     SET_VALINFO (state) {
       state.valinfo = getStorageByKey(valinfoKey)
@@ -32,6 +38,10 @@ const user = {
     setToken ({ commit }, { token }) {
       setStorageByKey(tokenKey, token)
       commit('SET_TOKEN')
+    },
+    setOpenid ({ commit }, { openid }) {
+      setStorageByKey(openidKey, openid)
+      commit('SET_OPENID')
     },
     setValInfo ({ commit }, { valinfo }) {
       setStorageByKey(valinfoKey, valinfo)
