@@ -11,7 +11,8 @@ const store = new Vuex.Store({
     openid: state => state.user.openid,
     valinfo: state => state.user.valinfo,
     recentCity: state => state.user.recentCity,
-    recentBrand: state => state.user.recentBrand
+    recentBrand: state => state.user.recentBrand,
+    configInfo: state => state.user.configInfo
   },
   mutitons: {},
   modules: {

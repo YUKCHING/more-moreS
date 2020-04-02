@@ -17,7 +17,51 @@
         </div>
       </div>
     </div>
-
+    <div class="property">
+      <p class="title">
+        <span>我的资产</span>
+        <img src="@/assets/icon/icon-arrow-right.png">
+        <span class="button" @click="getMoneyAction">去提现</span>
+      </p>
+      <div class="content">
+        <div class="item">
+          <span>{{myProperty.today}}</span>
+          <span>今日(元)</span>
+        </div>
+        <div class="item">
+          <span>{{myProperty.month}}</span>
+          <span>本月(元)</span>
+        </div>
+        <div class="item">
+          <span>{{myProperty.total}}</span>
+          <span>累计(元)</span>
+        </div>
+        <div class="item">
+          <span style="color: #FFA109;">{{myProperty.cash}}</span>
+          <span>可提现(元)</span>
+        </div>
+      </div>
+    </div>
+    <div class="property">
+      <p class="title">
+        <span>我的用户</span>
+        <img src="@/assets/icon/icon-arrow-right.png">
+      </p>
+      <div class="content">
+        <div class="item">
+          <span>{{myUser.fans}}</span>
+          <span>已邀粉丝</span>
+        </div>
+        <div class="item">
+          <span>{{myUser.member}}</span>
+          <span>已邀会员</span>
+        </div>
+        <div class="item">
+          <span>{{myUser.senior}}</span>
+          <span>高级会员</span>
+        </div>
+      </div>
+    </div>
   </div>
 </template>
 <script>
@@ -54,8 +98,26 @@ export default {
       return name
     }
   },
+  data () {
+    return {
+      myProperty: {
+        today: 0,
+        month: 0,
+        total: 0,
+        cash: 0
+      },
+      myUser: {
+        fans: 0,
+        member: 0,
+        senior: 0
+      }
+    }
+  },
   methods: {
     copyInviteCode () {
+    },
+    getMoneyAction () {
+      console.log('提现')
     }
   }
 }
@@ -64,6 +126,55 @@ export default {
 .Member
   height 100%
   background #FAFAFA
+
+  .property
+    background #FFFFFF
+    border-radius .5rem
+    padding 2rem 0
+    margin 1rem 2rem 1.5rem
+
+    .title
+      font-size 1.33rem
+      font-weight 600
+      color #000000
+      padding 0 1rem
+      display flex
+      align-items center
+      letter-spacing 1px
+
+      img
+        width 1.2rem
+        margin-left 12px
+
+      .button
+        display inline-block
+        margin-left auto
+        background linear-gradient(to right, #FF7952 0%, #FE3525 100%)
+        color #ffffff
+        padding 4px 14px
+        font-weight 300
+        font-size 1rem
+        border-radius 12.5px
+
+    .content
+      display flex
+      align-items center
+      justify-content space-around
+      margin-top 1.5rem
+
+      .item
+        display inline-flex
+        flex-direction column
+        align-items center
+        justify-content center
+
+        span:first-child
+          font-size 1.25rem
+
+        span:nth-child(2)
+          font-size 1.08rem
+          color rgba(0, 0, 0, .42)
+          margin-top 1rem
 
   .top
     position relative
@@ -74,7 +185,7 @@ export default {
     .img2
       position absolute
       width 100%
-      bottom 2.5%
+      bottom 2%
       left 0
       right 0
 

@@ -6,15 +6,17 @@ const openidKey = 'openid_key'
 const valinfoKey = 'valinfo_key'
 const recentCityKey = 'recentCity_key'
 const recentBrandKey = 'recentBrand_key'
+const configInfoKey = 'configInfo_key'
 
 const user = {
   state: {
-    token: process.env.NODE_ENV === 'production' ? getStorageByKey(tokenKey) : 'eyJpdiI6IjJZWVBoQUhickhXaTB2Zmd6aERmNWc9PSIsInZhbHVlIjoiRTJEUEZSVllDK2pud0x1ajdRSUExMDBhZWEzak5GSFJpbmY0UzNVWVFnST0iLCJtYWMiOiIyNmI5YWVkNDU4N2JmOWU5MWE4Mjg1MzZjOTU0OGY1MzNhOWRjOTg2ZWIwZGJmYmJlODI2YTNmYjJkZDFjNjk5In0=',
-    // token: getStorageByKey(tokenKey),
+    // token: process.env.NODE_ENV === 'production' ? getStorageByKey(tokenKey) : 'eyJpdiI6Im5vQ3FWT0txMU1FNm5CWlFreDJCeGc9PSIsInZhbHVlIjoidm44RzNWT2kydkNFS29lNm1nVVREQVFES00xNzE0N09aaUJtTG4wUUw3ST0iLCJtYWMiOiI5MmI0NGY0ZjVjOWQ1NTk4Y2YxZWM4ZGY5MmZlNjliYjYyZGExZTliYjQ2MTcwZjhhYjc4MGJjYmM0ZjE1NTM5In0=',
+    token: getStorageByKey(tokenKey),
     openid: getStorageByKey(openidKey),
     valinfo: getStorageByKey(valinfoKey),
     recentCity: getStorageByKey(recentCityKey),
-    recentBrand: getStorageByKey(recentBrandKey)
+    recentBrand: getStorageByKey(recentBrandKey),
+    configInfo: getStorageByKey(configInfoKey)
   },
 
   mutations: {
@@ -32,6 +34,9 @@ const user = {
     },
     SET_RECENTBRAND (state) {
       state.recentBrand = getStorageByKey(recentBrandKey)
+    },
+    SET_CONFIGINFO (state) {
+      state.configInfo = getStorageByKey(configInfoKey)
     }
   },
   actions: {
@@ -54,6 +59,10 @@ const user = {
     setRecentBrand ({ commit }, { recentBrand }) {
       setStorageByKey(recentBrandKey, recentBrand)
       commit('SET_RECENTBRAND')
+    },
+    setConfigInfo ({ commit }, { configInfo }) {
+      setStorageByKey(configInfoKey, configInfo)
+      commit('SET_CONFIGINFO')
     }
   }
 }

@@ -37,9 +37,9 @@ import { getOpenidByCode, getTokenByToken, refreshToken, getUserInfo } from '@/a
 import HomePage from './HomePage'
 import Member from './Member'
 import My from './My'
-import VConsole from 'vconsole'
+// import VConsole from 'vconsole'
 // eslint-disable-next-line
-let vConsole = new VConsole()
+// let vConsole = new VConsole()
 export default {
   components: {
     HomePage, Member, My
@@ -58,7 +58,7 @@ export default {
     }
   },
   created () {
-    // this.getOpenId('061jq9wB0b9NKk2M2hxB0DQVvB0jq9wU')
+    // this.getOpenId('061C3KXH1xopl40H5fYH1qkLXH1C3KXT')
     // this.checkInfo()
     this.getInfo()
     // this.refreshTokenAction()

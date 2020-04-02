@@ -22,6 +22,14 @@ const router = new Router({
       }
     },
     {
+      path: '/moreconfig',
+      name: 'moreconfig',
+      component: resolve => require(['@/view/home/Config'], resolve),
+      meta: {
+        title: '更多功能'
+      }
+    },
+    {
       path: '/loanslist',
       name: '贷款',
       component: resolve => require(['@/view/loans/LoansList'], resolve),
