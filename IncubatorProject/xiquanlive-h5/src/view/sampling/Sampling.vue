@@ -2,7 +2,7 @@
   <div class="sampling">
     <div class="bg-block">
       <span>Service</span>
-      <span>喜圈</span>
+      <span>喜 圈</span>
     </div>
     <div class="fields-block">
       <van-field
