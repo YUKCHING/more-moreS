@@ -4,7 +4,7 @@
       <img src="https://tainuocar.oss-cn-zhangjiakou.aliyuncs.com/b63bd85c14b67b82469e013136c8b384.gif" alt="">
     </div>
     <div class="panel">
-      <p class="title">泰诺车抵贷</p>
+      <p class="title">泰诺汽车平台</p>
       <p class="des">超10款车贷产品，总有一款适合您！</p>
       <div class="config-block">
         <div
@@ -79,8 +79,13 @@ export default {
       })
     },
     configItemSelect (item) {
+      console.log(item)
       if (item.name === '更多功能') {
         this.$router.push('/moreconfig')
+      } else if (item.code === 'invite_fans') {
+        this.$router.push({
+          path: '/invitefans'
+        })
       } else {
         if (item.url) {
           window.location.href = item.url + '?token=' + this.$store.getters.token

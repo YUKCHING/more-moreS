@@ -58,8 +58,8 @@ export default {
     }
   },
   created () {
-    // this.getOpenId('061C3KXH1xopl40H5fYH1qkLXH1C3KXT')
     // this.checkInfo()
+    // this.getOpenId('061Cjh2e2mlPoI0bsf2e2Lfr2e2Cjh20')
     this.getInfo()
     // this.refreshTokenAction()
   },
@@ -125,7 +125,8 @@ export default {
     },
     getToken () {
       let req = {
-        openid: this.$store.getters.openid
+        openid: this.$store.getters.openid,
+        from: 'web'
       }
       getTokenByToken(req).then(res => {
         console.log(res)
@@ -149,7 +150,9 @@ export default {
           this.memberInfo = {
             ...res.data
           }
-          console.log(this.memberInfo)
+          this.$store.dispatch('setUserInfo', {
+            userInfo: JSON.stringify(this.memberInfo)
+          })
         }
       })
     }

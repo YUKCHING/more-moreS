@@ -57,6 +57,60 @@ export function getUserInfo (data) {
   return sendGetRequest(url, data)
 }
 
+// 获取已邀请用户
+export function getInvitedUser (data) {
+  let url = '/user/get-invited-user'
+  return sendGetRequest(url, data)
+}
+
+// 零钱提现
+export function getWithdraw (data) {
+  let url = '/property/withdraw'
+  return sendPostRequest(url, data)
+}
+
+// 获取资产明细
+export function getPropertyDetail (data) {
+  let url = '/user/get-property-detail'
+  return sendGetRequest(url, data)
+}
+
+// 提醒邀请的下级用户
+export function sendUserNotice (data) {
+  let url = '/user/notice'
+  return sendPostRequest(url, data)
+}
+
+// 获取邀请二维码
+export function createQrCode (data) {
+  let url = '/user/get-qr-code'
+  return sendGetRequest(url, data)
+}
+
+// 分享上传图片
+export function shareUploadImage (data) {
+  let url = '/share/upload-image'
+  return sendPostRequest(url, data)
+}
+
+// 获取我的用户广告图
+export function getAdPictures (data) {
+  let url = '/ad/get-ad-pictures'
+  return sendGetRequest(url, data)
+}
+
+// 获取订单列表
+export function getOrderList (data) {
+  let url = '/payment/get-order-list'
+  return sendGetRequest(url, data)
+}
+
+// 获取订单详情
+export function getOrderDetail (data) {
+  let url = '/payment/get-order-detail'
+  return sendGetRequest(url, data)
+}
+
 /**
  * 贷款产品接口
  */
@@ -92,7 +146,7 @@ export function bookTraning (data) {
 // 刷新token
 export function refreshToken () {
   let req = {
-    token: 'eyJpdiI6IjJZWVBoQUhickhXaTB2Zmd6aERmNWc9PSIsInZhbHVlIjoiRTJEUEZSVllDK2pud0x1ajdRSUExMDBhZWEzak5GSFJpbmY0UzNVWVFnST0iLCJtYWMiOiIyNmI5YWVkNDU4N2JmOWU5MWE4Mjg1MzZjOTU0OGY1MzNhOWRjOTg2ZWIwZGJmYmJlODI2YTNmYjJkZDFjNjk5In0='
+    token: 'eyJpdiI6IlVESkJyRUswUlwveDV2ak1RaldyYzdRPT0iLCJ2YWx1ZSI6Iit1M1U3K2VleGhJRXJJcm1VS3J4XC9PSWdOXC9lTUxWUzdHQTM5emRvVWQ5cz0iLCJtYWMiOiJhMjM4Y2E0N2JjMDU5N2Y4N2M4MDdhYjkwYWRkYzQxMWI3NTVlMThiNzc0ZTMxOTFhYTU5NGJlM2M3YmU0ZjYwIn0='
   }
   let url = '/user/refresh-token'
   return sendGetRequest(url, req)

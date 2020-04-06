@@ -8,7 +8,7 @@
       </div>
     </div>
     <div class="order">
-      <p class="title">
+      <p class="title" @click="myOrderAction(0)">
         <span>我的订单</span>
         <img src="@/assets/icon/icon-arrow-right.png">
       </p>
@@ -17,12 +17,15 @@
           class="item"
           v-for="item in orderMenu"
           :key="item.name"
-          @click="orderItemSelect(item)"
+          @click="myOrderAction(item.active)"
         >
           <img :src="item.icon">
           <span>{{item.name}}</span>
         </div>
       </div>
+    </div>
+    <div class="img-block" @click="inviteAction">
+      <img src="https://tainuocar.oss-cn-zhangjiakou.aliyuncs.com/my-share/image/17MnyNd6FVO19uxZaQ.png">
     </div>
     <div class="server">
       <p class="title">
@@ -65,7 +68,7 @@ export default {
       serverMenu: [
         {name: '我的拼团', icon: require('@/assets/icon/icon-server-wdpt.png'), active: 0},
         {name: '我的订单', icon: require('@/assets/icon/icon-server-wddd.png'), active: 1},
-        {name: '我的消息', icon: require('@/assets/icon/icon-server-wdxx.png'), active: 2},
+        // {name: '我的消息', icon: require('@/assets/icon/icon-server-wdxx.png'), active: 2},
         {name: '意见反馈', icon: require('@/assets/icon/icon-server-yjfk.png'), active: 3},
         {name: '关于泰诺', icon: require('@/assets/icon/icon-server-gytn.png'), active: 4},
         {name: '收货地址', icon: require('@/assets/icon/icon-server-shdz.png'), active: 5},
@@ -77,11 +80,32 @@ export default {
   created () {
   },
   methods: {
-    orderItemSelect (item) {
-      console.log(item)
-    },
     serverItemSelect (item) {
       console.log(item)
+      if (item.active === 0) {
+
+      } else if (item.active === 4) {
+        this.$router.push({
+          path: '/abouttainuo'
+        })
+      } else if (item.active === 7) {
+        this.$router.push({
+          path: '/invitefans'
+        })
+      }
+    },
+    inviteAction () {
+      this.$router.push({
+        path: '/invitefans'
+      })
+    },
+    myOrderAction (tab) {
+      this.$router.push({
+        path: '/myorder',
+        query: {
+          active: tab
+        }
+      })
     }
   }
 }
@@ -195,5 +219,12 @@ export default {
         span
           color #000000
           font-size 1rem
+
+  .img-block
+    box-sizing border-box
+    margin 1rem 2rem
+
+    img
+      width 100%
 
 </style>

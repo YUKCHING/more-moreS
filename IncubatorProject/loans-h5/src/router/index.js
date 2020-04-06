@@ -18,7 +18,7 @@ const router = new Router({
       name: 'homepage',
       component: resolve => require(['@/view/home/index'], resolve),
       meta: {
-        title: '泰诺车抵贷'
+        title: '泰诺汽车平台'
       }
     },
     {
@@ -27,6 +27,70 @@ const router = new Router({
       component: resolve => require(['@/view/home/Config'], resolve),
       meta: {
         title: '更多功能'
+      }
+    },
+    {
+      path: '/myuser',
+      name: 'myuser',
+      component: resolve => require(['@/view/home/component/MyUser'], resolve),
+      meta: {
+        title: '我的用户'
+      }
+    },
+    {
+      path: '/mutiplefans',
+      name: 'mutiplefans',
+      component: resolve => require(['@/view/home/component/MutipleFans'], resolve),
+      meta: {
+        title: '我的用户'
+      }
+    },
+    {
+      path: '/invitefans',
+      name: 'invitefans',
+      component: resolve => require(['@/view/home/component/InviteFans'], resolve),
+      meta: {
+        title: '邀请粉丝'
+      }
+    },
+    {
+      path: '/myassets',
+      name: 'myassets',
+      component: resolve => require(['@/view/home/component/MyAssets'], resolve),
+      meta: {
+        title: '我的资产'
+      }
+    },
+    {
+      path: '/carwithdrawal',
+      name: 'carwithdrawal',
+      component: resolve => require(['@/view/home/component/CashWithdrawal'], resolve),
+      meta: {
+        title: '提现'
+      }
+    },
+    {
+      path: '/abouttainuo',
+      name: 'abouttainuo',
+      component: resolve => require(['@/view/home/component/AboutTainuo'], resolve),
+      meta: {
+        title: '关于泰诺'
+      }
+    },
+    {
+      path: '/myorder',
+      name: 'myorder',
+      component: resolve => require(['@/view/home/component/MyOrder'], resolve),
+      meta: {
+        title: '我的订单'
+      }
+    },
+    {
+      path: '/orderdetail',
+      name: 'orderdetail',
+      component: resolve => require(['@/view/home/component/OrderDetail'], resolve),
+      meta: {
+        title: '订单详情'
       }
     },
     {
