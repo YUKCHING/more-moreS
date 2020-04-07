@@ -112,8 +112,8 @@ export default {
 </script>
 <style lang='stylus' rel='stylesheet/stylus' scoped>
 .My
-  height 100%
   background #FAFAFA
+  padding-bottom 1rem
 
   .top
     position relative
@@ -187,7 +187,7 @@ export default {
     background #FFFFFF
     border-radius .5rem
     padding 2rem 0 0
-    margin 1rem 2rem
+    margin 1rem 2rem 0
 
     .title
       font-size 1.33rem

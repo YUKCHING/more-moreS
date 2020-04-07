@@ -89,6 +89,8 @@ export default {
       } else {
         if (item.url) {
           window.location.href = item.url + '?token=' + this.$store.getters.token
+        } else {
+          this.toast('尽情期待')
         }
       }
     },

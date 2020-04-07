@@ -37,6 +37,7 @@ import { getOpenidByCode, getTokenByToken, refreshToken, getUserInfo } from '@/a
 import HomePage from './HomePage'
 import Member from './Member'
 import My from './My'
+// import wxShare from '@/common/js/wechat.js'
 // import VConsole from 'vconsole'
 // eslint-disable-next-line
 // let vConsole = new VConsole()
@@ -57,12 +58,6 @@ export default {
       return this.judgeWeixinBrowser()
     }
   },
-  created () {
-    // this.checkInfo()
-    // this.getOpenId('061Cjh2e2mlPoI0bsf2e2Lfr2e2Cjh20')
-    this.getInfo()
-    // this.refreshTokenAction()
-  },
   data () {
     return {
       active: 0,
@@ -81,8 +76,18 @@ export default {
       memberInfo: {}
     }
   },
-
+  created () {
+    this.init()
+  },
   methods: {
+    init () {
+      // this.checkInfo() // 正式 判断场景
+      // this.getOpenId('021rrFV000hO8J1XZpZ00f0HV00rrFVG') // 调试 直接获取openId
+      this.getInfo() // 调试 获取用户信息
+      // this.refreshTokenAction() // 用token刷新token
+
+      // wxShare.wechatShare('1', '2')
+    },
     refreshTokenAction () {
       refreshToken().then(res => {
         if (res.code === 0) {

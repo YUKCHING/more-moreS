@@ -1,8 +1,8 @@
 <template>
   <div class='InviteFans'>
-    <div class="panel" id="content">
+    <div class="panel" id="share-block">
       <div class="top">
-        <img src="https://tainuocar.oss-cn-zhangjiakou.aliyuncs.com/my-share/image/17ANSQDUykOdkrW69G.png">
+        <img src="@/assets/imgs/img-tainuo-logo.png">
         <div class="line"></div>
         <span class="banner">
           做车贷  找泰诺
@@ -18,6 +18,7 @@
             class="uploader"
             :after-read="afterRead"
             :preview-image="false"
+            v-if="showInput"
           />
         </div>
         <div class="edit-block">
@@ -28,7 +29,9 @@
               autosize
               clearable
               placeholder="请在此输入您的分享文案"
+              v-if="showInput"
             />
+            <p class="multi-p" v-else>{{writing}}</p>
             <div class="info">
               <img :src="userInfo.avatar" alt="">
               <span>{{userInfo.username}}</span>
@@ -39,18 +42,21 @@
       </div>
     </div>
     <div class="bottom-block">
-      <div class="bottom1" @click="shareAction">
+      <!-- <div class="bottom1" @click="shareAction">
         <img src="@/assets/icon/icon-share.png" alt="">
         点击分享
       </div>
       <div class="bottom2" @click="createImgAction">
         <img src="@/assets/icon/icon-download.png" alt="">
         生成照片
+      </div> -->
+      <div class="bottom1" @click="createImgAction">
+        <img src="@/assets/icon/icon-download.png" alt="">
+        生成照片
       </div>
     </div>
-    <van-image-preview v-model="showPreview" :images="[shareUrl]">
+    <van-image-preview v-model="showPreview" :images="[shareUrl]" @close="closePreviewAction">
     </van-image-preview>
-    <!-- <img :src="shareUrl" style="width: 100%"> -->
   </div>
 </template>
 <script>
@@ -61,16 +67,18 @@ import html2canvas from 'html2canvas'
 export default {
   data () {
     return {
-      imgUrl: 'https://tainuocar.oss-cn-zhangjiakou.aliyuncs.com/my-share/image/17bFj3QLUhkoKOtYF7.png',
+      imgUrl: require('@/assets/imgs/img-share-bg.png'),
       codeUrl: '',
       shareUrl: '',
       userInfo: this.$store.getters.userInfo,
       writing: '',
-      showPreview: false
+      showPreview: false,
+      showInput: true
     }
   },
   created () {
     this.getCode()
+    console.log(this.userInfo)
   },
   methods: {
     shareAction () {
@@ -138,13 +146,21 @@ export default {
       })
     },
     getHtmlImage () {
-      html2canvas(document.querySelector('#content'), {
-        async: true,
-        useCORS: true
-      }).then(canvas => {
-        this.shareUrl = canvas.toDataURL('image/png')
-        this.showPreview = true
-      })
+      this.showInput = !this.showInput
+      this.tLoading()
+      setTimeout(() => {
+        html2canvas(document.querySelector('#share-block'), {
+          async: true,
+          useCORS: true
+        }).then(canvas => {
+          this.tClear()
+          this.shareUrl = canvas.toDataURL('image/png')
+          this.showPreview = true
+        })
+      }, 500)
+    },
+    closePreviewAction () {
+      this.showInput = true
     }
   }
 }
@@ -162,11 +178,13 @@ export default {
     background linear-gradient(to bottom, #FC7550 0%, #FC3726 100%)
     border-radius 0.83rem
     padding-bottom .7rem
+    width 100%
 
     .top
       display flex
       align-items center
       justify-content space-between
+      box-sizing border-box
       padding 1rem
 
       img
@@ -221,14 +239,21 @@ export default {
         display flex
 
         .left
+          overflow hidden
           flex-grow 1
           display inline-flex
           flex-direction column
+
+          .multi-p
+            box-sizing border-box
+            word-wrap break-word
+            font-size 1.18rem
 
           .info
             display flex
             align-items center
             font-size 1.08rem
+            margin-top .5rem
 
             img
               width 2rem
