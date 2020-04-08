@@ -4,6 +4,7 @@ import { getStorageByKey, setStorageByKey } from '@/common/base/storage'
 const tokenKey = 'token_key'
 const openidKey = 'openid_key'
 const userInfoKey = 'userInfo_key'
+const wxConfigKey = 'wxConfig_key'
 const valinfoKey = 'valinfo_key'
 const recentCityKey = 'recentCity_key'
 const recentBrandKey = 'recentBrand_key'
@@ -15,6 +16,7 @@ const user = {
     token: getStorageByKey(tokenKey),
     openid: getStorageByKey(openidKey),
     userInfo: getStorageByKey(userInfoKey),
+    wxConfig: getStorageByKey(wxConfigKey),
     valinfo: getStorageByKey(valinfoKey),
     recentCity: getStorageByKey(recentCityKey),
     recentBrand: getStorageByKey(recentBrandKey),
@@ -30,6 +32,9 @@ const user = {
     },
     SET_USERINFO (state) {
       state.userInfo = getStorageByKey(userInfoKey)
+    },
+    SET_WXCONFIG (state) {
+      state.wxConfig = getStorageByKey(wxConfigKey)
     },
     SET_VALINFO (state) {
       state.valinfo = getStorageByKey(valinfoKey)
@@ -56,6 +61,10 @@ const user = {
     setUserInfo ({ commit }, { userInfo }) {
       setStorageByKey(userInfoKey, userInfo)
       commit('SET_USERINFO')
+    },
+    setWxConfig ({ commit }, { wxConfig }) {
+      setStorageByKey(wxConfigKey, wxConfig)
+      commit('SET_WXCONFIG')
     },
     setValInfo ({ commit }, { valinfo }) {
       setStorageByKey(valinfoKey, valinfo)

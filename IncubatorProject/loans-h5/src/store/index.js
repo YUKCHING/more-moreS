@@ -10,6 +10,7 @@ const store = new Vuex.Store({
     token: state => state.user.token,
     openid: state => state.user.openid,
     userInfo: state => JSON.parse(state.user.userInfo),
+    wxConfig: state => JSON.parse(state.user.wxConfig),
     valinfo: state => state.user.valinfo,
     recentCity: state => state.user.recentCity,
     recentBrand: state => state.user.recentBrand,

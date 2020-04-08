@@ -40,7 +40,7 @@ export function getOpenidByCode (data) {
 }
 
 // 通过openId获取token
-export function getTokenByToken (data) {
+export function getTokenByOpenId (data) {
   let url = '/user/get-token-by-openid'
   return sendGetRequest(url, data)
 }

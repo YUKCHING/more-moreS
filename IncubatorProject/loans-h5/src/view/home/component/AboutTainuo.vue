@@ -33,7 +33,6 @@ export default {
 </script>
 <style lang='stylus' rel='stylesheet/stylus' scoped>
 .AboutTainuo
-  height 100%
   background #ffffff
   display flex
   flex-direction column

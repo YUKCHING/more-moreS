@@ -33,20 +33,20 @@
   </div>
 </template>
 <script>
-import { getOpenidByCode, getTokenByToken, refreshToken, getUserInfo } from '@/apis/api.js'
+import { getOpenidByCode, getTokenByOpenId, refreshToken, getUserInfo } from '@/apis/api.js'
 import HomePage from './HomePage'
 import Member from './Member'
 import My from './My'
-// import wxShare from '@/common/js/wechat.js'
-// import VConsole from 'vconsole'
+import wxShare from '@/common/js/wechat.js'
+import VConsole from 'vconsole'
 // eslint-disable-next-line
-// let vConsole = new VConsole()
+let vConsole = new VConsole()
 export default {
   components: {
     HomePage, Member, My
   },
   beforeRouteEnter (to, from, next) {
-    console.log(from)
+    // console.log(from)
     if (from.path === '/') {
       next()
     } else {
@@ -60,6 +60,7 @@ export default {
   },
   data () {
     return {
+      inviteCode: '',
       active: 0,
       tabIcon1: {
         active: require('@/assets/icon/tab_home_fill.png'),
@@ -81,12 +82,26 @@ export default {
   },
   methods: {
     init () {
+      console.log(this.$route)
       // this.checkInfo() // 正式 判断场景
-      // this.getOpenId('021rrFV000hO8J1XZpZ00f0HV00rrFVG') // 调试 直接获取openId
+      // this.getOpenId('061Lf9pE0SA63i2jzxoE0J4lpE0Lf9pf') // 调试 直接获取openId
       this.getInfo() // 调试 获取用户信息
-      // this.refreshTokenAction() // 用token刷新token
-
-      // wxShare.wechatShare('1', '2')
+    },
+    setWxShare () {
+      this.$store.dispatch('setWxConfig', {
+        wxConfig: JSON.stringify({
+          timestamp: '',
+          noncestr: '',
+          signature: ''
+        })
+      }).then(() => {
+        wxShare.wechatShare({
+          title: '泰诺汽车平台', // 分享标题
+          desc: '泰诺汽车平台，以诚信使命、合作共赢、专业高效、卓越创新的价值观，立志成为车贷行业中的领袖企业！', // 分享描述
+          link: 'http://api.tainuocar.com/homepage', // 分享链接
+          imgUrl: 'https://tainuocar.oss-cn-zhangjiakou.aliyuncs.com/my-share/image/17ANSQDUykOdkrW69G.png' // 分享图标
+        })
+      })
     },
     refreshTokenAction () {
       refreshToken().then(res => {
@@ -99,10 +114,14 @@ export default {
       let query = this.$route.query
       console.log(query)
       const { code } = query
+      const { invite } = query
+      if (invite) {
+        this.inviteCode = invite
+      }
       if (!code) { // 没有code 判断浏览器
         if (this.isWeixinBrowser) {
           console.log('是微信浏览器')
-          let indexUrl = this.getWeixinCodeUrlToIndex()
+          let indexUrl = this.getWeixinCodeUrlToIndex(this.inviteCode)
           window.location.href = indexUrl
         } else {
           console.log('不是微信浏览器')
@@ -110,10 +129,11 @@ export default {
         }
       } else {
         console.log('code  ' + code)
-        // this.getOpenId(code)
+        this.getOpenId(code)
       }
     },
     getOpenId (code) {
+      console.log('getOpenIdByCode')
       let req = {
         code: code
       }
@@ -129,11 +149,13 @@ export default {
       })
     },
     getToken () {
+      console.log('getTokenByOpenId')
       let req = {
         openid: this.$store.getters.openid,
-        from: 'web'
+        from: 'web',
+        invite_code: this.inviteCode
       }
-      getTokenByToken(req).then(res => {
+      getTokenByOpenId(req).then(res => {
         console.log(res)
         if (res.code === 0) {
           this.$store.dispatch('setToken', {
@@ -146,11 +168,14 @@ export default {
       })
     },
     getInfo () {
+      console.log('getInfo')
       let req = {
         openid: this.$store.getters.openid,
         token: this.$store.getters.token
       }
+      this.tLoading()
       getUserInfo(req).then(res => {
+        this.tClear()
         if (res.code === 0) {
           this.memberInfo = {
             ...res.data
