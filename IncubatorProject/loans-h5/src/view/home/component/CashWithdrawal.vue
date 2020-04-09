@@ -98,7 +98,7 @@ export default {
       display flex
       align-items center
       padding 1rem 1rem
-      font-size .2rem
+      font-size 1rem
 
       .tag
         color #FF2F2F

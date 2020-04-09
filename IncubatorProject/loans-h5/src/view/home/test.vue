@@ -13,14 +13,6 @@ import VConsole from 'vconsole'
 // eslint-disable-next-line
 let vConsole = new VConsole()
 export default {
-  beforeRouteEnter (to, from, next) {
-    console.log(from)
-    if (from.path === '/') {
-      next()
-    } else {
-      next()
-    }
-  },
   computed: {
     isWeixinBrowser () {
       return this.judgeWeixinBrowser()

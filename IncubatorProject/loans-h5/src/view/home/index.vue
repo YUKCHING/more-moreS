@@ -1,6 +1,6 @@
 <template>
   <div class="index">
-    <div class='content' v-if="!isWeixinBrowser">
+    <div class='content' v-if="isWeixinBrowser || !isProduction">
       <div class="panel">
         <home-page v-if="active === 0" :info="memberInfo"></home-page>
         <member v-else-if="active === 1" :info="memberInfo"></member>
@@ -38,22 +38,17 @@ import HomePage from './HomePage'
 import Member from './Member'
 import My from './My'
 import wxShare from '@/common/js/wechat.js'
-import VConsole from 'vconsole'
-// eslint-disable-next-line
-let vConsole = new VConsole()
+// import VConsole from 'vconsole'
+// // eslint-disable-next-line
+// let vConsole = new VConsole()
 export default {
   components: {
     HomePage, Member, My
   },
-  beforeRouteEnter (to, from, next) {
-    // console.log(from)
-    if (from.path === '/') {
-      next()
-    } else {
-      next()
-    }
-  },
   computed: {
+    isProduction () {
+      return process.env.NODE_ENV === 'production'
+    },
     isWeixinBrowser () {
       return this.judgeWeixinBrowser()
     }
@@ -82,10 +77,12 @@ export default {
   },
   methods: {
     init () {
-      console.log(this.$route)
-      // this.checkInfo() // 正式 判断场景
-      // this.getOpenId('061Lf9pE0SA63i2jzxoE0J4lpE0Lf9pf') // 调试 直接获取openId
-      this.getInfo() // 调试 获取用户信息
+      if (this.isProduction) {
+        this.checkInfo() // 正式 判断场景
+      } else {
+        // this.getOpenId('061vzTF81RvoML1q2UC81mRAF81vzTFu') // 调试 直接获取openId
+        this.getInfo() // 调试 获取用户信息
+      }
     },
     setWxShare () {
       this.$store.dispatch('setWxConfig', {
@@ -113,6 +110,11 @@ export default {
     checkInfo () {
       let query = this.$route.query
       console.log(query)
+      const { isReady } = query
+      if (isReady) {
+        this.getInfo()
+        return
+      }
       const { code } = query
       const { invite } = query
       if (invite) {
@@ -161,7 +163,19 @@ export default {
           this.$store.dispatch('setToken', {
             token: res.data.token
           }).then(() => {
-            console.log('finish')
+            let path = this.$route.path
+            let query = this.$route.query
+            if (query.hasOwnProperty('code')) {
+              delete query.code
+            }
+            this.$router.replace({
+              path: path,
+              query: {
+                ...query,
+                isReady: true
+              }
+            })
+            console.log(this.$route)
             this.getInfo()
           })
         }

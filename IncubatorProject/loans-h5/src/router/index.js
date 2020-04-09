@@ -11,11 +11,11 @@ const router = new Router({
     {
       path: '/',
       name: '',
-      redirect: '/homepage'
+      redirect: '/index'
     },
     {
-      path: '/homepage',
-      name: 'homepage',
+      path: '/index',
+      name: 'index',
       component: resolve => require(['@/view/home/index'], resolve),
       meta: {
         title: '泰诺汽车平台'
