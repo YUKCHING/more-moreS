@@ -22,6 +22,21 @@
         开始贷款
       </div>
     </div>
+    <van-popup v-model="showToolPicker" position="bottom" class="tool-popup">
+      <div class="tool-menu">
+        <div class="tool-item" @click="showViolation">
+          <img src="@/assets/icon/icon-tainuo-logo.png">
+          <span>违章查询</span>
+        </div>
+        <div class="tool-item">
+          <img src="@/assets/icon/icon-tainuo-logo.png">
+          <span>车贷计算器</span>
+        </div>
+      </div>
+      <div class="tool-bottom">
+        <img src="@/assets/icon/icon-cha.png" @click="showToolPicker = false">
+      </div>
+    </van-popup>
   </div>
 </template>
 <script>
@@ -41,7 +56,8 @@ export default {
   },
   data () {
     return {
-      configs: []
+      configs: [],
+      showToolPicker: false
     }
   },
   methods: {
@@ -86,6 +102,10 @@ export default {
         this.$router.push({
           path: '/invitefans'
         })
+      } else if (item.code === 'break_rule') {
+        this.showViolation()
+      } else if (item.code === 'common_tools') {
+        this.showToolPicker = true
       } else {
         if (item.url) {
           window.location.href = item.url + '?token=' + this.$store.getters.token
@@ -93,6 +113,11 @@ export default {
           this.toast('尽情期待')
         }
       }
+    },
+    showViolation () {
+      this.$router.push({
+        path: '/violation'
+      })
     },
     loanAction () {
       this.$router.push('/loanslist')
@@ -110,6 +135,38 @@ export default {
 
     img
       width calc(100% - 4rem)
+
+  .tool-popup
+    border-top-left-radius 1.5rem
+    border-top-right-radius 1.5rem
+
+    .tool-menu
+      display flex
+      align-items center
+      justify-content space-around
+      padding 5rem 0
+      z-index 100
+
+      .tool-item
+        display inline-flex
+        flex-direction column
+        align-items center
+        justify-content center
+
+        img
+          width 5rem
+          margin-bottom .7rem
+
+        span
+          font-size 1.17rem
+          color #030303
+
+    .tool-bottom
+      text-align center
+      padding 0 0 1rem
+
+      img
+        width 1.5rem
 
   .panel
     padding 2rem 2rem

@@ -1,0 +1,192 @@
+<template>
+  <div class="violation">
+    <div class="top-block">
+      <p>有违章 早知道</p>
+      <p class="p2">免费查询，官方同步</p>
+    </div>
+    <div class="content-block">
+      <van-form @submit="onSubmit">
+        <p class="label">VIN码</p>
+        <van-field
+          v-model="vin"
+          placeholder="请输入17位VIN码"
+          :rules="[{ required: true, message: '请输入17位VIN码' }]"
+          class="border-bottom"
+          clearable
+        >
+          <img src="@/assets/icon/icon-camera.png" slot="right-icon" style="width: 1.5rem;">
+        </van-field>
+        <p class="label">发动机号</p>
+        <van-field
+          v-model="engine_no"
+          placeholder="请输入发动机号"
+          :rules="[{ required: true, message: '请输入发动机号' }]"
+          class="border-bottom"
+          clearable
+        >
+          <img src="@/assets/icon/icon-camera.png" slot="right-icon" style="width: 1.5rem;">
+        </van-field>
+        <p class="label">车牌号码</p>
+        <div class="plate-block border-bottom">
+          <p class="plate-select" @click="showPicker = true">
+            <span style="color: #FF2323;">{{plate_first}}</span>
+            <img src="@/assets/icon/icon-arrow-down.png" />
+          </p>
+          <van-field
+            v-model="plate_show"
+            placeholder="请输入车牌号码"
+            :rules="[{ required: true, message: '请输入车牌号码' }]"
+            class="plate-field"
+            clearable
+          />
+        </div>
+        <div style="margin: 4rem;">
+          <van-button round block type="info" native-type="submit" style="background: linear-gradient(to right, #FF7952 0%, #FE3525 100%); border: none">
+            查询
+          </van-button>
+        </div>
+      </van-form>
+    </div>
+    <van-popup v-model="showPicker" position="bottom">
+      <van-picker
+        show-toolbar
+        :columns="columns"
+        @cancel="showPicker = false"
+        @confirm="onPickerConfirm"
+      />
+    </van-popup>
+  </div>
+</template>
+<script>
+import { createBreakRule, getVinHistory } from '@/apis/api'
+export default {
+  data () {
+    return {
+      vin: '',
+      engine_no: '',
+      plate_show: '',
+      plate_first: '粤',
+      ocr_id: '',
+      columns: ['粤', '京', '沪', '津', '渝', '鲁', '冀', '晋', '蒙', '辽', '吉', '黑', '苏', '浙', '皖', '闽', '赣', '豫', '湘', '鄂', '桂', '琼', '川', '贵', '云', '藏', '陕', '甘', '青', '宁', '新', '港', '澳', '台'],
+      showPicker: false
+    }
+  },
+  created () {
+    this.init()
+  },
+  methods: {
+    init () {
+      if (this.$store.getters.violationInfo) {
+        let item = this.$store.getters.violationInfo
+        this.vin = item.vin
+        this.engine_no = item.engine_no
+        this.plate_first = item.plate_first
+        this.plate_show = item.plate_show
+      }
+    },
+    onSubmit (values) {
+      this.createAction()
+    },
+    onPickerConfirm (value) {
+      this.plate_first = value
+      this.showPicker = false
+    },
+    createAction () {
+      let req = {
+        vin: this.vin,
+        engine_number: this.engine_no,
+        license_no: this.plate_first + this.plate_show,
+        ocr_id: this.ocr_id
+      }
+      this.$store.dispatch('setViolationInfo', {
+        violationInfo: JSON.stringify({
+          vin: this.vin,
+          engine_no: this.engine_no,
+          plate_first: this.plate_first,
+          plate_show: this.plate_show
+        })
+      })
+      this.tLoading()
+      createBreakRule(req).then(res => {
+        console.log(res)
+        this.tClear()
+        if (res.code === 0) {
+          if (res.data.query_id) {
+            this.$router.push({
+              path: '/violationdetail',
+              query: {
+                id: res.data.query_id,
+                ocrId: this.ocr_id
+              }
+            })
+          }
+        }
+      })
+    },
+    getHistory () {
+      let req = {
+        token: this.$store.getters.token
+      }
+      getVinHistory(req).then(res => {
+        if (res.code === 0) {
+          console.log(res)
+        }
+      })
+    }
+  }
+}
+</script>
+<style lang='stylus' rel='stylesheet/stylus' scoped>
+.violation /deep/
+  height 100%
+  padding 2rem 1.5rem 0
+  box-sizing border-box
+
+  .top-block
+    text-align center
+    font-size 1.67rem
+    color #030303
+
+    .p2
+      font-size 1.17rem
+
+  .content-block
+    margin-top 4rem
+
+    .label
+      font-size 1.17rem
+      color #000000
+      margin 1rem 0
+
+    .van-cell
+      padding 0
+
+      .van-field__error-message
+        display none
+
+    .van-cell:not(:last-child)::after
+      display none
+
+    .border-bottom
+      padding-bottom .5rem
+      border-bottom 1px solid #ebedf0
+
+    .plate-block
+      display flex
+      align-items center
+
+      .plate-select
+        display inline-flex
+        align-items center
+
+        span
+          color #ff2323
+
+        img
+          width 1.2rem
+          margin 0 .5rem
+
+      .plate-field
+        display inline
+        flex-grow 1
+</style>

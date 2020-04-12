@@ -23,6 +23,16 @@ function sendPostRequest (url, data) {
   })
 }
 
+function sendPostFormRequest (url, data) {
+  let api = process.env.NODE_ENV === 'production' ? '' : '/api'
+  return request({
+    url: api + url,
+    data: data,
+    method: 'post',
+    isForm: true
+  })
+}
+
 function addURLParam (url, name, value) {
   url += (url.indexOf('?') === -1 ? '?' : '&')
   url += encodeURIComponent(name) + '=' + encodeURIComponent(value)
@@ -205,5 +215,35 @@ export function evaluateRecordsDetailRequest (id) {
 // 生成快速估值跳转二维码
 export function createValQrcode (data) {
   let url = '/tools/create-qr-code?type=1'
+  return sendPostRequest(url, data)
+}
+
+/**
+ * 违章查询
+ */
+// 违章查询购买
+export function createBreakRule (data) {
+  let url = '/break-rule/purchase'
+  return sendPostFormRequest(url, data)
+}
+
+// 违章查询详情
+export function getBreakRule (data) {
+  let url = '/break-rule/query'
+  return sendGetRequest(url, data)
+}
+
+// 获取VIN历史记录
+export function getVinHistory (data) {
+  let url = '/ocr/vin-history'
+  return sendGetRequest(url, data)
+}
+
+/**
+ * 微信分享
+ */
+// 获取VIN历史记录
+export function getWxShare (data) {
+  let url = '/wx/get-js-sdk'
   return sendPostRequest(url, data)
 }

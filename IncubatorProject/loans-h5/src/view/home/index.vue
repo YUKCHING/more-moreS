@@ -33,14 +33,14 @@
   </div>
 </template>
 <script>
-import { getOpenidByCode, getTokenByOpenId, refreshToken, getUserInfo } from '@/apis/api.js'
+import { getOpenidByCode, getTokenByOpenId, refreshToken, getUserInfo, getWxShare } from '@/apis/api.js'
 import HomePage from './HomePage'
 import Member from './Member'
 import My from './My'
 import wxShare from '@/common/js/wechat.js'
-// import VConsole from 'vconsole'
-// // eslint-disable-next-line
-// let vConsole = new VConsole()
+import VConsole from 'vconsole'
+// eslint-disable-next-line
+let vConsole = new VConsole()
 export default {
   components: {
     HomePage, Member, My
@@ -80,22 +80,40 @@ export default {
       if (this.isProduction) {
         this.checkInfo() // 正式 判断场景
       } else {
-        // this.getOpenId('061vzTF81RvoML1q2UC81mRAF81vzTFu') // 调试 直接获取openId
+        // this.getOpenId('011yrZhm1IKKtn0ejCgm1ERShm1yrZhA') // 调试 直接获取openId
         this.getInfo() // 调试 获取用户信息
+        this.getWxShareConfig()
       }
     },
-    setWxShare () {
+    getWxShareConfig () {
+      let req = {
+        apis: [
+          'onMenuShareTimeline',
+          'onMenuShareAppMessage'
+        ],
+        url: encodeURIComponent(location.href.split('#')[0])
+      }
+      getWxShare(req).then(res => {
+        console.log(res)
+        if (res.code === 0) {
+          this.setWxShare(res.data)
+        }
+      })
+    },
+    setWxShare (config) {
       this.$store.dispatch('setWxConfig', {
         wxConfig: JSON.stringify({
-          timestamp: '',
-          noncestr: '',
-          signature: ''
+          appId: config.appId,
+          timestamp: config.timestamp,
+          noncestr: config.nonceStr,
+          signature: config.signature
         })
       }).then(() => {
         wxShare.wechatShare({
           title: '泰诺汽车平台', // 分享标题
           desc: '泰诺汽车平台，以诚信使命、合作共赢、专业高效、卓越创新的价值观，立志成为车贷行业中的领袖企业！', // 分享描述
-          link: 'http://api.tainuocar.com/homepage', // 分享链接
+          // link: 'http://api.tainuocar.com/home/', // 分享链接
+          link: location.href.split('#')[0],
           imgUrl: 'https://tainuocar.oss-cn-zhangjiakou.aliyuncs.com/my-share/image/17ANSQDUykOdkrW69G.png' // 分享图标
         })
       })
@@ -168,6 +186,8 @@ export default {
             if (query.hasOwnProperty('code')) {
               delete query.code
             }
+            console.log('设置分享')
+
             this.$router.replace({
               path: path,
               query: {
@@ -175,6 +195,7 @@ export default {
                 isReady: true
               }
             })
+            this.getWxShareConfig()
             console.log(this.$route)
             this.getInfo()
           })
@@ -194,6 +215,7 @@ export default {
           this.memberInfo = {
             ...res.data
           }
+          console.log(this.memberInfo)
           this.$store.dispatch('setUserInfo', {
             userInfo: JSON.stringify(this.memberInfo)
           })

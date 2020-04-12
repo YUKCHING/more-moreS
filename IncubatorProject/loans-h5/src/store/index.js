@@ -14,7 +14,8 @@ const store = new Vuex.Store({
     valinfo: state => state.user.valinfo,
     recentCity: state => state.user.recentCity,
     recentBrand: state => state.user.recentBrand,
-    configInfo: state => state.user.configInfo
+    configInfo: state => state.user.configInfo,
+    violationInfo: state => JSON.parse(state.user.violationInfo)
   },
   mutitons: {},
   modules: {

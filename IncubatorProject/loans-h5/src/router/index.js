@@ -102,6 +102,22 @@ const router = new Router({
       }
     },
     {
+      path: '/violation',
+      name: 'violation',
+      component: resolve => require(['@/view/violation/violationCheck'], resolve),
+      meta: {
+        title: '违章查询'
+      }
+    },
+    {
+      path: '/violationdetail',
+      name: 'violationdetail',
+      component: resolve => require(['@/view/violation/violationDetail'], resolve),
+      meta: {
+        title: '违章报告'
+      }
+    },
+    {
       path: '/loanslist',
       name: '贷款',
       component: resolve => require(['@/view/loans/LoansList'], resolve),

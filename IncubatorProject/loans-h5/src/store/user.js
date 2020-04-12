@@ -9,6 +9,7 @@ const valinfoKey = 'valinfo_key'
 const recentCityKey = 'recentCity_key'
 const recentBrandKey = 'recentBrand_key'
 const configInfoKey = 'configInfo_key'
+const violationInfoKey = 'violationInfo_key'
 
 const user = {
   state: {
@@ -20,7 +21,8 @@ const user = {
     valinfo: getStorageByKey(valinfoKey),
     recentCity: getStorageByKey(recentCityKey),
     recentBrand: getStorageByKey(recentBrandKey),
-    configInfo: getStorageByKey(configInfoKey)
+    configInfo: getStorageByKey(configInfoKey),
+    violationInfo: getStorageByKey(violationInfoKey)
   },
 
   mutations: {
@@ -47,6 +49,9 @@ const user = {
     },
     SET_CONFIGINFO (state) {
       state.configInfo = getStorageByKey(configInfoKey)
+    },
+    SET_VIOLATIONINFO (state) {
+      state.violationInfo = getStorageByKey(violationInfoKey)
     }
   },
   actions: {
@@ -81,6 +86,10 @@ const user = {
     setConfigInfo ({ commit }, { configInfo }) {
       setStorageByKey(configInfoKey, configInfo)
       commit('SET_CONFIGINFO')
+    },
+    setViolationInfo ({ commit }, { violationInfo }) {
+      setStorageByKey(violationInfoKey, violationInfo)
+      commit('SET_VIOLATIONINFO')
     }
   }
 }
