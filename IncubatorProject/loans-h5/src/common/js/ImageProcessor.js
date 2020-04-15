@@ -43,10 +43,11 @@ function canvasDataURL (path, obj, name) {
       }
       var base64 = canvas.toDataURL('image/jpeg', quality)
       var urlFile = converBase64UrlToBlob(base64)
-      var file = blobToFile(urlFile, name)
+      let picName = 'picture'
+      var file = blobToFile(urlFile, picName)
 
       var formdata = new FormData()
-      formdata.append(file.name, file)
+      formdata.append(picName, file)
       resolve(formdata)
     }
   })

@@ -7,6 +7,22 @@ Vue.prototype.judgeWeixinBrowser = judgeWeixinBrowser
 Vue.prototype.getWeixinCodeUrlToIndex = getWeixinCodeUrlToIndex
 Vue.prototype.getWeixinCodeUrlToTest = getWeixinCodeUrlToTest
 
+// 微信获取code链接跳转到Index
+export function getWeixinCodeUrlToIndex (link, code) {
+  let appid = 'wxa90d81193e301d26'
+  let redirectUri = encodeURIComponent('http://api.tainuocar.com/home/' + link + '?invite=' + code)
+  let resType = 'snsapi_userinfo' // snsapi_userinfo   snsapi_base
+  return 'https://open.weixin.qq.com/connect/oauth2/authorize?appid=' + appid + '&redirect_uri=' + redirectUri + '&response_type=code&scope=' + resType + '&state=&connect_redirect=1#wechat_redirect'
+}
+
+// 微信获取code链接跳转到test
+export function getWeixinCodeUrlToTest () {
+  let appid = 'wxa90d81193e301d26'
+  let redirectUri = encodeURIComponent('http://api.tainuocar.com/home/test')
+  let resType = 'snsapi_userinfo' // snsapi_userinfo   snsapi_base
+  return 'https://open.weixin.qq.com/connect/oauth2/authorize?appid=' + appid + '&redirect_uri=' + redirectUri + '&response_type=code&scope=' + resType + '&state=&connect_redirect=1#wechat_redirect'
+}
+
 // 大陆身份证校验
 function checkMainlandIdcard (code) {
   // 身份证号合法性验证
@@ -106,27 +122,11 @@ function checkGangAoTaiIdCard (code) {
 }
 
 // 判断是否是微信浏览器
-function judgeWeixinBrowser () {
+export function judgeWeixinBrowser () {
   var ua = window.navigator.userAgent.toLowerCase()
   if (ua.indexOf('micromessenger') !== -1) {
     return true // 是微信端
   } else {
     return false
   }
-}
-
-// 微信获取code链接跳转到Index
-function getWeixinCodeUrlToIndex (code) {
-  let appid = 'wxa90d81193e301d26'
-  let redirectUri = encodeURIComponent('http://api.tainuocar.com/home/index?invite=' + code)
-  let resType = 'snsapi_userinfo' // snsapi_userinfo   snsapi_base
-  return 'https://open.weixin.qq.com/connect/oauth2/authorize?appid=' + appid + '&redirect_uri=' + redirectUri + '&response_type=code&scope=' + resType + '&state=&connect_redirect=1#wechat_redirect'
-}
-
-// 微信获取code链接跳转到test
-function getWeixinCodeUrlToTest () {
-  let appid = 'wxa90d81193e301d26'
-  let redirectUri = encodeURIComponent('http://api.tainuocar.com/home/test')
-  let resType = 'snsapi_userinfo' // snsapi_userinfo   snsapi_base
-  return 'https://open.weixin.qq.com/connect/oauth2/authorize?appid=' + appid + '&redirect_uri=' + redirectUri + '&response_type=code&scope=' + resType + '&state=&connect_redirect=1#wechat_redirect'
 }

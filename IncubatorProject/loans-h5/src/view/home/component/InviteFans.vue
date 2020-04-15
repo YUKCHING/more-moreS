@@ -60,10 +60,11 @@
   </div>
 </template>
 <script>
-import { createQrCode, shareUploadImage } from '@/apis/api.js'
-// import imgProcessor from '@/common/js/ImageProcessor.js'
+import { createQrCode, uploadImageRequest } from '@/apis/api.js'
+import imgProcessor from '@/common/js/ImageProcessor.js'
 import jrQrcode from 'jr-qrcode'
 import html2canvas from 'html2canvas'
+import initLoginCheckInfo from '@/common/js/login.js'
 export default {
   data () {
     return {
@@ -76,11 +77,34 @@ export default {
       showInput: true
     }
   },
+  beforeCreate () {
+    window.shareUrl = location.href.split('#')[0]
+    console.log('beforeCreate ', window.shareUrl)
+  },
   created () {
-    this.getCode()
-    console.log(this.userInfo)
+    this.init()
   },
   methods: {
+    init () {
+      if (!window.isReady) {
+        console.log('inviteFans not isReady')
+        initLoginCheckInfo(this.$route).then(info => {
+        // 分享设置
+          let shareLink = 'http://api.tainuocar.com/home/' + this.$route.name + '?invite=' + this.$store.getters.userInfo['invite_code']
+          this.initWxShare(window.shareUrl, shareLink)
+        })
+      } else {
+        console.log('inviteFans isReady')
+        // 分享设置
+        let shareLink = 'http://api.tainuocar.com/home/' + this.$route.name + '?invite=' + this.$store.getters.userInfo['invite_code']
+        this.initWxShare(window.shareUrl, shareLink)
+        // this.wechatShareReady(shareLink).then(() => {
+        //   console.log('wechatShareReady')
+        // })
+      }
+
+      this.getCode()
+    },
     shareAction () {
 
     },
@@ -107,39 +131,14 @@ export default {
         foreground: '#000000' // 二维码颜色（默认黑色
       }
       this.codeUrl = jrQrcode.getQrBase64(url, option)
-
-      // var timer = null
-      // timer = setInterval(() => {
-      //   let img1Height = window.getComputedStyle(this.$refs.img1).height
-      //   let img2Height = window.getComputedStyle(this.$refs.img2).height
-      //   console.log('setInterval')
-      //   if (img1Height !== '0px' && img2Height !== '0px') {
-      //     console.log('getHtmlImage')
-      //     this.contentHeight = window.getComputedStyle(this.$refs.content).height
-      //     clearInterval(timer)
-      //     this.getHtmlImage()
-      //   }
-      // }, 100)
     },
     afterRead (file) {
-      let item = file.file
-      item.name = 'picture'
-      console.log(item)
-      // imgProcessor.uploadImage(file).then(formData => {
-      //   console.log('123123')
-      //   this.uploadShareImage(formData)
-      // })
-      // let fileItem = new File([file], file.name)
-      // console.log(typeof (fileItem))
-      // this.uploadShareImage(fileItem)
+      imgProcessor.uploadImage(file).then(formData => {
+        this.uploadShareImage(formData)
+      })
     },
     uploadShareImage (file) {
-      let req = {
-        picture: file
-      }
-      console.log(req)
-      shareUploadImage(req).then(res => {
-        console.log(res)
+      uploadImageRequest(file).then(res => {
         if (res.code === 0) {
           this.imgUrl = res.data.url
         }

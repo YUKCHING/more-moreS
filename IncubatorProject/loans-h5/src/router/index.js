@@ -104,7 +104,7 @@ const router = new Router({
     {
       path: '/violation',
       name: 'violation',
-      component: resolve => require(['@/view/violation/violationCheck'], resolve),
+      component: resolve => require(['@/view/violation/violation'], resolve),
       meta: {
         title: '违章查询'
       }

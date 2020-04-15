@@ -14,7 +14,7 @@
           class="border-bottom"
           clearable
         >
-          <img src="@/assets/icon/icon-camera.png" slot="right-icon" style="width: 1.5rem;">
+          <!-- <img src="@/assets/icon/icon-camera.png" slot="right-icon" style="width: 1.5rem;"> -->
         </van-field>
         <p class="label">发动机号</p>
         <van-field
@@ -24,7 +24,7 @@
           class="border-bottom"
           clearable
         >
-          <img src="@/assets/icon/icon-camera.png" slot="right-icon" style="width: 1.5rem;">
+          <!-- <img src="@/assets/icon/icon-camera.png" slot="right-icon" style="width: 1.5rem;"> -->
         </van-field>
         <p class="label">车牌号码</p>
         <div class="plate-block border-bottom">
@@ -59,6 +59,7 @@
 </template>
 <script>
 import { createBreakRule, getVinHistory } from '@/apis/api'
+import initLoginCheckInfo from '@/common/js/login.js'
 export default {
   data () {
     return {
@@ -71,11 +72,32 @@ export default {
       showPicker: false
     }
   },
+  beforeCreate () {
+    window.shareUrl = location.href.split('#')[0]
+    console.log('beforeCreate ', window.shareUrl)
+  },
   created () {
     this.init()
   },
   methods: {
     init () {
+      if (!window.isReady) {
+        console.log('violation isReady')
+        initLoginCheckInfo(this.$route).then(info => {
+        // 分享设置
+          let shareLink = 'http://api.tainuocar.com/home/' + this.$route.name + '?invite=' + this.$store.getters.userInfo['invite_code']
+          this.initWxShare(window.shareUrl, shareLink)
+        })
+      } else {
+        console.log('violation isReady')
+        // 分享设置
+        let shareLink = 'http://api.tainuocar.com/home/' + this.$route.name + '?invite=' + this.$store.getters.userInfo['invite_code']
+        this.initWxShare(window.shareUrl, shareLink)
+        // this.wechatShareReady(shareLink).then(() => {
+        //   console.log('wechatShareReady')
+        // })
+      }
+
       if (this.$store.getters.violationInfo) {
         let item = this.$store.getters.violationInfo
         this.vin = item.vin

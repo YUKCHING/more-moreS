@@ -16,6 +16,7 @@ module.exports = {
     proxyTable: {
       '/api': {
         target: 'http://api.tainuocar.com',
+        // target: 'http://test-api.tainuocar.com',
         changeOrigin: true,
         pathRewrite: {
           '^/api': ''

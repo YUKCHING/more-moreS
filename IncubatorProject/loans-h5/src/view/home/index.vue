@@ -2,7 +2,7 @@
   <div class="index">
     <div class='content' v-if="isWeixinBrowser || !isProduction">
       <div class="panel">
-        <home-page v-if="active === 0" :info="memberInfo"></home-page>
+        <home-page v-if="active === 0" :info="memberInfo" @showTool="showToolPicker = true"></home-page>
         <member v-else-if="active === 1" :info="memberInfo"></member>
         <my v-else-if="active === 2" :info="memberInfo"></my>
       </div>
@@ -30,17 +30,31 @@
     <div class="ban-block" v-else>
       <span>请使用微信打开页面</span>
     </div>
+    <van-popup v-model="showToolPicker" position="bottom" class="tool-popup">
+      <div class="tool-menu">
+        <div class="tool-item" @click="showViolation">
+          <img src="@/assets/icon/icon_tool_wzcx.png">
+          <span>违章查询</span>
+        </div>
+        <div class="tool-item">
+          <img src="@/assets/icon/icon_tool_jsq.png">
+          <span>车贷计算器</span>
+        </div>
+      </div>
+      <div class="tool-bottom">
+        <img src="@/assets/icon/icon-cha.png" @click="showToolPicker = false">
+      </div>
+    </van-popup>
   </div>
 </template>
 <script>
-import { getOpenidByCode, getTokenByOpenId, refreshToken, getUserInfo, getWxShare } from '@/apis/api.js'
+import { getOpenidByCode, getTokenByOpenId, getUserInfo } from '@/apis/api.js'
 import HomePage from './HomePage'
 import Member from './Member'
 import My from './My'
-import wxShare from '@/common/js/wechat.js'
-import VConsole from 'vconsole'
-// eslint-disable-next-line
-let vConsole = new VConsole()
+import initLoginCheckInfo from '@/common/js/login.js'
+// import merge from 'webpack-merge'
+
 export default {
   components: {
     HomePage, Member, My
@@ -69,88 +83,42 @@ export default {
         active: require('@/assets/icon/tab_my_fill.png'),
         inactive: require('@/assets/icon/tab_my.png')
       },
-      memberInfo: {}
+      memberInfo: {},
+      showToolPicker: false
     }
   },
   created () {
     this.init()
   },
+  beforeCreate () {
+    window.shareUrl = location.href.split('#')[0]
+    console.log('beforeCreate ', location.href.split('#')[0])
+  },
   methods: {
     init () {
       if (this.isProduction) {
-        this.checkInfo() // 正式 判断场景
+        initLoginCheckInfo(this.$route, 'index').then(info => {
+          this.memberInfo = info
+          // 分享设置
+          let shareLink = 'http://api.tainuocar.com/home/index?invite=' + info['invite_code']
+          this.initWxShare(window.shareUrl, shareLink)
+          window.isReady = true
+          // setTimeout(() => {
+          //   this.$router.push({
+          //     query: merge({}, {isReady: true})
+          //   })
+          //   console.log('new ', this.$route)
+          // }, 3000)
+        })
       } else {
-        // this.getOpenId('011yrZhm1IKKtn0ejCgm1ERShm1yrZhA') // 调试 直接获取openId
-        this.getInfo() // 调试 获取用户信息
-        this.getWxShareConfig()
-      }
-    },
-    getWxShareConfig () {
-      let req = {
-        apis: [
-          'onMenuShareTimeline',
-          'onMenuShareAppMessage'
-        ],
-        url: encodeURIComponent(location.href.split('#')[0])
-      }
-      getWxShare(req).then(res => {
-        console.log(res)
-        if (res.code === 0) {
-          this.setWxShare(res.data)
-        }
-      })
-    },
-    setWxShare (config) {
-      this.$store.dispatch('setWxConfig', {
-        wxConfig: JSON.stringify({
-          appId: config.appId,
-          timestamp: config.timestamp,
-          noncestr: config.nonceStr,
-          signature: config.signature
-        })
-      }).then(() => {
-        wxShare.wechatShare({
-          title: '泰诺汽车平台', // 分享标题
-          desc: '泰诺汽车平台，以诚信使命、合作共赢、专业高效、卓越创新的价值观，立志成为车贷行业中的领袖企业！', // 分享描述
-          // link: 'http://api.tainuocar.com/home/', // 分享链接
-          link: location.href.split('#')[0],
-          imgUrl: 'https://tainuocar.oss-cn-zhangjiakou.aliyuncs.com/my-share/image/17ANSQDUykOdkrW69G.png' // 分享图标
-        })
-      })
-    },
-    refreshTokenAction () {
-      refreshToken().then(res => {
-        if (res.code === 0) {
-          console.log(res.data.token)
-        }
-      })
-    },
-    checkInfo () {
-      let query = this.$route.query
-      console.log(query)
-      const { isReady } = query
-      if (isReady) {
+        // this.getOpenId('001Tw2h42mubIQ0Efli42FZ8h42Tw2hI') // 调试 直接获取openId
         this.getInfo()
-        return
       }
-      const { code } = query
-      const { invite } = query
-      if (invite) {
-        this.inviteCode = invite
-      }
-      if (!code) { // 没有code 判断浏览器
-        if (this.isWeixinBrowser) {
-          console.log('是微信浏览器')
-          let indexUrl = this.getWeixinCodeUrlToIndex(this.inviteCode)
-          window.location.href = indexUrl
-        } else {
-          console.log('不是微信浏览器')
-          this.toast('请使用微信打开')
-        }
-      } else {
-        console.log('code  ' + code)
-        this.getOpenId(code)
-      }
+    },
+    showViolation () {
+      this.$router.push({
+        path: '/violation'
+      })
     },
     getOpenId (code) {
       console.log('getOpenIdByCode')
@@ -158,7 +126,6 @@ export default {
         code: code
       }
       getOpenidByCode(req).then(res => {
-        console.log(res)
         if (res.code === 0) {
           this.$store.dispatch('setOpenid', {
             openid: res.data.openid
@@ -181,29 +148,12 @@ export default {
           this.$store.dispatch('setToken', {
             token: res.data.token
           }).then(() => {
-            let path = this.$route.path
-            let query = this.$route.query
-            if (query.hasOwnProperty('code')) {
-              delete query.code
-            }
-            console.log('设置分享')
-
-            this.$router.replace({
-              path: path,
-              query: {
-                ...query,
-                isReady: true
-              }
-            })
-            this.getWxShareConfig()
-            console.log(this.$route)
             this.getInfo()
           })
         }
       })
     },
     getInfo () {
-      console.log('getInfo')
       let req = {
         openid: this.$store.getters.openid,
         token: this.$store.getters.token
@@ -215,10 +165,24 @@ export default {
           this.memberInfo = {
             ...res.data
           }
-          console.log(this.memberInfo)
           this.$store.dispatch('setUserInfo', {
             userInfo: JSON.stringify(this.memberInfo)
           })
+          // this.resetRoute()
+        }
+      })
+    },
+    resetRoute () {
+      let path = this.$route.path
+      let query = this.$route.query
+      if (query.hasOwnProperty('code')) {
+        delete query.code
+      }
+      this.$router.replace({
+        path: path,
+        query: {
+          ...query,
+          isReady: true
         }
       })
     }
@@ -244,4 +208,37 @@ export default {
     justify-content center
     align-items center
     font-size 1.5rem
+
+  .tool-popup
+    border-top-left-radius 1.5rem
+    border-top-right-radius 1.5rem
+    z-index -1
+
+    .tool-menu
+      display flex
+      align-items center
+      justify-content space-around
+      padding 5rem 0
+      z-index 100
+
+      .tool-item
+        display inline-flex
+        flex-direction column
+        align-items center
+        justify-content center
+
+        img
+          width 5rem
+          margin-bottom .7rem
+
+        span
+          font-size 1.17rem
+          color #030303
+
+    .tool-bottom
+      text-align center
+      padding 0 0 1rem
+
+      img
+        width 1.5rem
 </style>

@@ -71,8 +71,8 @@
 <script>
 import { Toast } from 'mint-ui'
 import CarPopup from './components/CarPopup'
-import '@/common/base/geolocation.min.js'
 import CityPopup from './components/CityPopup'
+import initLoginCheckInfo from '@/common/js/login.js'
 export default {
   components: {
     CarPopup, CityPopup
@@ -85,7 +85,6 @@ export default {
         mileage: '',
         city: ''
       },
-
       cityArrData: [],
       selectCity: {},
       selectCarInfo: [],
@@ -99,17 +98,39 @@ export default {
       evaResult: {}
     }
   },
+  beforeCreate () {
+    window.shareUrl = location.href.split('#')[0]
+    console.log('beforeCreate ', window.shareUrl)
+  },
   created () {
-    let valinfo = this.$store.getters.valinfo
-    if (valinfo) {
-      let json = JSON.parse(valinfo)
-      this.selectCarInfo = json.selectCarInfo
-      this.selectCity = json.selectCity
-      this.selectTime = json.selectTime
-      this.info = json.info
-    }
+    this.init()
   },
   methods: {
+    init () {
+      if (!window.isReady) {
+        console.log('valuation not isReady')
+        initLoginCheckInfo(this.$route).then(info => {
+        // 分享设置
+          let shareLink = 'http://api.tainuocar.com/home/' + this.$route.name + '?invite=' + this.$store.getters.userInfo['invite_code']
+          this.initWxShare(window.shareUrl, shareLink)
+        })
+      } else {
+        console.log('valuation isReady12')
+        // 分享设置
+        let shareLink = 'http://api.tainuocar.com/home/' + this.$route.name + '?invite=' + this.$store.getters.userInfo['invite_code']
+        this.initWxShare(window.shareUrl, shareLink)
+        // this.wechatShareReady(shareLink).then(() => {
+        //   console.log('wechatShareReady')
+        // })
+      }
+      let valinfo = this.$store.getters.valinfo
+      if (valinfo) {
+        this.selectCarInfo = valinfo.selectCarInfo
+        this.selectCity = valinfo.selectCity
+        this.selectTime = valinfo.selectTime
+        this.info = valinfo.info
+      }
+    },
     searchBrandAction () {
     },
     formatter (type, value) {

@@ -24,7 +24,6 @@ request.interceptors.request.use(config => {
   } else {
     if (config.headers['Content-Type'].indexOf('application/x-www-form-urlencoded;charset=UTF-8') !== -1) {
       config.data = Qs.stringify(config.data)
-      console.log('qsqsqs')
     } else if (config.data) {
       config.data = JSON.stringify(config.data)
     }

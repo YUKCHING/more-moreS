@@ -1,8 +1,13 @@
 import request from '@/utils/request'
+import axios from 'axios'
+import Config from '@/config'
+import store from '@/store'
+import { tLoading, tClear } from '@/common/js/Toast.js'
 
 function sendGetRequest (url, data) {
   let api = process.env.NODE_ENV === 'production' ? '' : '/api'
   let dealUrl = api + url
+  // data['debug'] = 1
   if (data) {
     for (const key in data) {
       dealUrl = addURLParam(dealUrl, key, data[key])
@@ -16,6 +21,7 @@ function sendGetRequest (url, data) {
 
 function sendPostRequest (url, data) {
   let api = process.env.NODE_ENV === 'production' ? '' : '/api'
+  // data['debug'] = 1
   return request({
     url: api + url,
     data: data,
@@ -25,6 +31,7 @@ function sendPostRequest (url, data) {
 
 function sendPostFormRequest (url, data) {
   let api = process.env.NODE_ENV === 'production' ? '' : '/api'
+  // data['debug'] = 1
   return request({
     url: api + url,
     data: data,
@@ -37,6 +44,25 @@ function addURLParam (url, name, value) {
   url += (url.indexOf('?') === -1 ? '?' : '&')
   url += encodeURIComponent(name) + '=' + encodeURIComponent(value)
   return url
+}
+
+// 上传图片
+export function uploadImageRequest (data) {
+  let api = process.env.NODE_ENV === 'production' ? '' : '/api'
+  tLoading('上传中...')
+  return axios({
+    baseURL: Config.apiUrl,
+    url: api + '/share/upload-image?token=' + store.getters.token,
+    method: 'post',
+    data: data,
+    dataType: 'text',
+    header: {
+      'Content-Type': 'multipart/format-data'
+    }
+  }).then(res => {
+    tClear()
+    return res.data
+  })
 }
 
 /**
@@ -95,12 +121,6 @@ export function sendUserNotice (data) {
 export function createQrCode (data) {
   let url = '/user/get-qr-code'
   return sendGetRequest(url, data)
-}
-
-// 分享上传图片
-export function shareUploadImage (data) {
-  let url = '/share/upload-image'
-  return sendPostRequest(url, data)
 }
 
 // 获取我的用户广告图
