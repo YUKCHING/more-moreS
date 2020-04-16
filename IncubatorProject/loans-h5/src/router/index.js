@@ -40,7 +40,7 @@ const router = new Router({
     {
       path: '/myuser',
       name: 'myuser',
-      component: resolve => require(['@/view/home/component/MyUser'], resolve),
+      component: resolve => require(['@/view/user/MyUser'], resolve),
       meta: {
         title: '我的用户'
       }
@@ -48,7 +48,7 @@ const router = new Router({
     {
       path: '/mutiplefans',
       name: 'mutiplefans',
-      component: resolve => require(['@/view/home/component/MutipleFans'], resolve),
+      component: resolve => require(['@/view/user/MutipleFans'], resolve),
       meta: {
         title: '我的用户'
       }
@@ -56,7 +56,7 @@ const router = new Router({
     {
       path: '/invitefans',
       name: 'invitefans',
-      component: resolve => require(['@/view/home/component/InviteFans'], resolve),
+      component: resolve => require(['@/view/fans/InviteFans'], resolve),
       meta: {
         title: '邀请粉丝'
       }

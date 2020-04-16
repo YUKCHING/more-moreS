@@ -81,21 +81,18 @@ export default {
   },
   methods: {
     init () {
+      let title = '泰诺汽车平台-违章查询'
+      let des = '一键识别，有违章，早知道，免费查询，官方同步。'
       if (!window.isReady) {
-        console.log('violation isReady')
         initLoginCheckInfo(this.$route).then(info => {
         // 分享设置
           let shareLink = 'http://api.tainuocar.com/home/' + this.$route.name + '?invite=' + this.$store.getters.userInfo['invite_code']
-          this.initWxShare(window.shareUrl, shareLink)
+          this.initWxShare(window.shareUrl, title, des, shareLink)
         })
       } else {
-        console.log('violation isReady')
         // 分享设置
         let shareLink = 'http://api.tainuocar.com/home/' + this.$route.name + '?invite=' + this.$store.getters.userInfo['invite_code']
-        this.initWxShare(window.shareUrl, shareLink)
-        // this.wechatShareReady(shareLink).then(() => {
-        //   console.log('wechatShareReady')
-        // })
+        this.initWxShare(window.shareUrl, title, des, shareLink)
       }
 
       if (this.$store.getters.violationInfo) {

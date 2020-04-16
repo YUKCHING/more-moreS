@@ -14,7 +14,7 @@
             </template>
         </van-tabbar-item>
         <van-tabbar-item>
-          <span>粉丝</span>
+          <span>{{gradeName}}</span>
             <template #icon="props">
               <img :src="props.active ? tabIcon2.active : tabIcon2.inactive"/>
             </template>
@@ -65,6 +65,27 @@ export default {
     },
     isWeixinBrowser () {
       return this.judgeWeixinBrowser()
+    },
+    gradeName () {
+      let name = '粉丝'
+      switch (this.memberInfo.grade) {
+        case 1:
+          name = '会员'
+          break
+        case 2:
+          name = '高级会员'
+          break
+        case 3:
+          name = '一级代理'
+          break
+        case 4:
+          name = '总代理'
+          break
+
+        default:
+          break
+      }
+      return name
     }
   },
   data () {
@@ -83,7 +104,9 @@ export default {
         active: require('@/assets/icon/tab_my_fill.png'),
         inactive: require('@/assets/icon/tab_my.png')
       },
-      memberInfo: {},
+      memberInfo: {
+        grade: 0
+      },
       showToolPicker: false
     }
   },
@@ -101,17 +124,11 @@ export default {
           this.memberInfo = info
           // 分享设置
           let shareLink = 'http://api.tainuocar.com/home/index?invite=' + info['invite_code']
-          this.initWxShare(window.shareUrl, shareLink)
+          this.initWxShare(window.shareUrl, '泰诺汽车平台', '一站式汽车金融服务，做车贷，找泰诺！', shareLink)
           window.isReady = true
-          // setTimeout(() => {
-          //   this.$router.push({
-          //     query: merge({}, {isReady: true})
-          //   })
-          //   console.log('new ', this.$route)
-          // }, 3000)
         })
       } else {
-        // this.getOpenId('001Tw2h42mubIQ0Efli42FZ8h42Tw2hI') // 调试 直接获取openId
+        // this.getOpenId('0618ENHX0gDEpW1YPvKX0zwAHX08ENHe') // 调试 直接获取openId
         this.getInfo()
       }
     },

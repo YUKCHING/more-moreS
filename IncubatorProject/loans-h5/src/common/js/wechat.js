@@ -5,7 +5,7 @@ import { getWxShare } from '@/apis/api.js'
 Vue.prototype.initWxShare = initWxShare
 Vue.prototype.wechatShareReady = wechatShareReady
 
-function initWxShare (iniUrl, link) {
+function initWxShare (iniUrl, title, des, link) {
   return new Promise((resolve, reject) => {
     let req = {
       apis: [
@@ -28,7 +28,7 @@ function initWxShare (iniUrl, link) {
           })
         }).then(() => {
           console.log('分享link ', link)
-          wechatShareReady(link).then(() => {
+          wechatShareReady(title, des, link).then(() => {
             resolve()
           })
         })
@@ -37,10 +37,10 @@ function initWxShare (iniUrl, link) {
   })
 }
 
-function wechatShareReady (link) {
+function wechatShareReady (title, des, link) {
   let info = {
-    title: '泰诺汽车平台', // 分享标题
-    desc: '一站式汽车金融服务，做车贷，找泰诺！', // 分享描述
+    title: title, // 分享标题
+    desc: des, // 分享描述
     link: link, // 分享链接
     // link: location.href.split('#')[0],
     // link: window.shareUrl,

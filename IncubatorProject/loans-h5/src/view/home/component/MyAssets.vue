@@ -70,6 +70,7 @@ export default {
         if (res.code === 0) {
           if (res.data.length > 0) {
             this.detailList = res.data
+            console.log(this.detailList)
           } else {
             this.detailList = []
           }
@@ -82,7 +83,6 @@ export default {
 <style lang='stylus' rel='stylesheet/stylus' scoped>
 .MyAssets
   background #FFFFFF
-  height 100%
   display flex
   flex-direction column
 

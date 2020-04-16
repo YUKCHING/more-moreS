@@ -5,8 +5,8 @@
       <span>￥ {{info.total}}</span>
     </p>
     <p class="detailItem" v-for="(item, index) in info.detail" :key="index">
-      <span>{{item.channel}}</span>
-      <span>￥{{item.withdraw_amount}}</span>
+      <span>{{item.channel || item.from}}</span>
+      <span>￥{{item.withdraw_amount || item.income}}</span>
     </p>
   </div>
 </template>

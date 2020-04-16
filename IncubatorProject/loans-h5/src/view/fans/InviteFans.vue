@@ -86,21 +86,18 @@ export default {
   },
   methods: {
     init () {
+      let title = '泰诺汽车平台-邀请粉丝'
+      let des = '超10款车贷产品，总有一款适合您！做车贷，找泰诺。'
       if (!window.isReady) {
-        console.log('inviteFans not isReady')
         initLoginCheckInfo(this.$route).then(info => {
         // 分享设置
           let shareLink = 'http://api.tainuocar.com/home/' + this.$route.name + '?invite=' + this.$store.getters.userInfo['invite_code']
-          this.initWxShare(window.shareUrl, shareLink)
+          this.initWxShare(window.shareUrl, title, des, shareLink)
         })
       } else {
-        console.log('inviteFans isReady')
         // 分享设置
         let shareLink = 'http://api.tainuocar.com/home/' + this.$route.name + '?invite=' + this.$store.getters.userInfo['invite_code']
-        this.initWxShare(window.shareUrl, shareLink)
-        // this.wechatShareReady(shareLink).then(() => {
-        //   console.log('wechatShareReady')
-        // })
+        this.initWxShare(window.shareUrl, title, des, shareLink)
       }
 
       this.getCode()

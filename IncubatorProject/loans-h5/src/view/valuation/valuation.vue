@@ -107,21 +107,18 @@ export default {
   },
   methods: {
     init () {
+      let title = '泰诺汽车平台-快速估值'
+      let des = '基于海量真实成交记录，采用人工智能和大数据，保证估值的真实可靠性。'
       if (!window.isReady) {
-        console.log('valuation not isReady')
         initLoginCheckInfo(this.$route).then(info => {
         // 分享设置
           let shareLink = 'http://api.tainuocar.com/home/' + this.$route.name + '?invite=' + this.$store.getters.userInfo['invite_code']
-          this.initWxShare(window.shareUrl, shareLink)
+          this.initWxShare(window.shareUrl, title, des, shareLink)
         })
       } else {
-        console.log('valuation isReady12')
         // 分享设置
         let shareLink = 'http://api.tainuocar.com/home/' + this.$route.name + '?invite=' + this.$store.getters.userInfo['invite_code']
-        this.initWxShare(window.shareUrl, shareLink)
-        // this.wechatShareReady(shareLink).then(() => {
-        //   console.log('wechatShareReady')
-        // })
+        this.initWxShare(window.shareUrl, title, des, shareLink)
       }
       let valinfo = this.$store.getters.valinfo
       if (valinfo) {

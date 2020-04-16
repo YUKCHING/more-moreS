@@ -85,7 +85,7 @@ export default {
   },
   computed: {
     gradeName () {
-      let name = '非会员'
+      let name = '粉丝'
       switch (this.info.grade) {
         case 1:
           name = '会员'
