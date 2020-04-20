@@ -72,6 +72,7 @@ export default {
 .UserTab
   flex-grow: 1;
   width: 100%;
+  height 100%
   background: #FFFFFF;
 
   .list-content
@@ -93,7 +94,7 @@ export default {
         font-weight 600
 
     .list
-      flex-grow 1
+      flex-grow 2
       overflow auto
 
   .no-data

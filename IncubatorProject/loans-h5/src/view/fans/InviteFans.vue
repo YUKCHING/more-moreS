@@ -130,7 +130,7 @@ export default {
       this.codeUrl = jrQrcode.getQrBase64(url, option)
     },
     afterRead (file) {
-      imgProcessor.uploadImage(file).then(formData => {
+      imgProcessor.uploadImage(file, 'picture', 0.7).then(formData => {
         this.uploadShareImage(formData)
       })
     },

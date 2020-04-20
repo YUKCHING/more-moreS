@@ -119,12 +119,15 @@ export default {
   },
   methods: {
     init () {
+      if (this.$store.getters.userInfo) {
+        this.memberInfo = this.$store.getters.userInfo
+      }
       if (this.isProduction) {
         initLoginCheckInfo(this.$route, 'index').then(info => {
           this.memberInfo = info
           // 分享设置
           let shareLink = 'http://api.tainuocar.com/home/index?invite=' + info['invite_code']
-          this.initWxShare(window.shareUrl, '泰诺汽车平台', '一站式汽车金融服务，做车贷，找泰诺！', shareLink)
+          this.initWxShare(window.shareUrl, '泰诺汽车平台', '一站式汽车金融服务\r\n做车贷，找泰诺！', shareLink)
           window.isReady = true
         })
       } else {
@@ -177,7 +180,6 @@ export default {
       }
       this.tLoading()
       getUserInfo(req).then(res => {
-        this.tClear()
         if (res.code === 0) {
           this.memberInfo = {
             ...res.data

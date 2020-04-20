@@ -15,17 +15,27 @@
       >{{money > 0 ? '我要提现' : '暂无提现金额'}}</div>
     </div>
     <div class="content">
-      <van-tabs v-model="active" title-active-color="#FF4242" @click="clickTabsAction">
-        <van-tab title="收益明细"></van-tab>
-        <van-tab title="提现明细"></van-tab>
+      <van-tabs v-model="active" title-active-color="#FF4242" @click="clickTabsAction" :swipeable="true" :animated="true" @change="clickTabsAction">
+        <van-tab title="收益明细" style="height: calc(100vh - 169.78px - 44px);">
+          <div class="list" v-show="detailList.length > 0">
+            <withdrawal-card v-for="item in detailList" :key="item.date" :info="item"></withdrawal-card>
+          </div>
+          <div class="nodata" v-show="detailList.length === 0">
+            <img src="@/assets/imgs/img-assets-nodata.png">
+            <p>暂无明细</p>
+          </div>
+        </van-tab>
+        <van-tab title="提现明细" style="height: calc(100vh - 168.78px - 44px);">
+          <div class="list" v-show="detailList.length > 0">
+            <withdrawal-card v-for="item in detailList" :key="item.date" :info="item"></withdrawal-card>
+          </div>
+          <div class="nodata" v-show="detailList.length === 0">
+            <img src="@/assets/imgs/img-assets-nodata.png">
+            <p>暂无明细</p>
+          </div>
+        </van-tab>
       </van-tabs>
-      <div class="list" v-show="detailList.length > 0">
-        <withdrawal-card v-for="item in detailList" :key="item.date" :info="item"></withdrawal-card>
-      </div>
-      <div class="nodata" v-show="detailList.length === 0">
-        <img src="@/assets/imgs/img-assets-nodata.png">
-        <p>暂无明细</p>
-      </div>
+
     </div>
   </div>
 </template>

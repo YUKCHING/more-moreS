@@ -1,5 +1,5 @@
 var imgProcessor = {
-  uploadImage: (file) => {
+  uploadImage: (file, name, quality) => {
     return new Promise((resolve, reject) => {
       var reday = new FileReader()
       var imgFile = file.file
@@ -9,15 +9,23 @@ var imgProcessor = {
         var re = reday.result
         canvasDataURL(re, {
           quality: 0.2
-        }, file.file.name).then(res => {
+        }, name, quality).then(res => {
           resolve(res)
         })
       }
     })
+  },
+  uploadOrigin: (file, name) => {
+    return new Promise((resolve, reject) => {
+      var fileBlob = blobToFile(file, name)
+      var formdata = new FormData()
+      formdata.append(name, fileBlob)
+      resolve(formdata)
+    })
   }
 }
 
-function canvasDataURL (path, obj, name) {
+function canvasDataURL (path, obj, name, qua) {
   return new Promise((resolve, reject) => {
     var img = new Image()
     img.src = path
@@ -28,7 +36,7 @@ function canvasDataURL (path, obj, name) {
       var scale = w / h
       w = obj.width || w
       h = obj.height || (w / scale)
-      var quality = 0.7
+      var quality = qua
       var canvas = document.createElement('canvas')
       var ctx = canvas.getContext('2d')
       var anw = document.createAttribute('width')
@@ -43,7 +51,7 @@ function canvasDataURL (path, obj, name) {
       }
       var base64 = canvas.toDataURL('image/jpeg', quality)
       var urlFile = converBase64UrlToBlob(base64)
-      let picName = 'picture'
+      let picName = name
       var file = blobToFile(urlFile, picName)
 
       var formdata = new FormData()

@@ -49,11 +49,36 @@ export default {
       getControlConfig({}).then(res => {
         if (res.code === 0) {
           if (res.data.functions.length > 0) {
+            let grade = this.$store.getters.userInfo.grade
+
+            let baseData = res.data.functions.filter(ele => {
+              return ele.visible_grade.indexOf(String(grade)) !== -1
+            })
+
+            // 读缓存的配置
             let configInfo = this.$store.getters.configInfo
-            if (configInfo) {
-              this.configs = JSON.parse(configInfo)
+            let showArr = []
+            configInfo.forEach(ele => {
+              if (ele.is_show === 1) {
+                showArr.push(ele.code)
+              }
+            })
+            if (showArr.length > 0) {
+              let temArr = baseData.map((ele, index) => {
+                return {
+                  ...ele,
+                  icon: ele.icon || require('@/assets/icon/icon-config-backup.png'),
+                  is_show: showArr.indexOf(ele.code) !== -1 ? 1 : 0
+                }
+              })
+              this.configs = temArr
+              this.$store.dispatch('setConfigInfo', {
+                configInfo: JSON.stringify(temArr)
+              }).then(() => {
+
+              })
             } else {
-              let temArr = res.data.functions.map((ele, index) => {
+              let temArr = baseData.map((ele, index) => {
                 return {
                   ...ele,
                   icon: ele.icon || require('@/assets/icon/icon-config-backup.png'),

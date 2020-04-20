@@ -79,7 +79,7 @@ export default {
       sendUserNotice(req).then(res => {
         if (res.code === 0) {
           this.tSuccess('提醒成功')
-          this.$router.go(-1)
+          this.getInvited()
         }
       })
     }

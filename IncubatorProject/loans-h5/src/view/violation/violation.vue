@@ -14,7 +14,14 @@
           class="border-bottom"
           clearable
         >
-          <!-- <img src="@/assets/icon/icon-camera.png" slot="right-icon" style="width: 1.5rem;"> -->
+          <van-uploader
+            slot="right-icon"
+            class="uploader"
+            :after-read="afterRead"
+            :preview-image="false"
+          >
+            <img src="@/assets/icon/icon-camera.png" style="width: 1.5rem;">
+          </van-uploader>
         </van-field>
         <p class="label">发动机号</p>
         <van-field
@@ -24,7 +31,14 @@
           class="border-bottom"
           clearable
         >
-          <!-- <img src="@/assets/icon/icon-camera.png" slot="right-icon" style="width: 1.5rem;"> -->
+          <van-uploader
+            slot="right-icon"
+            class="uploader"
+            :after-read="afterRead"
+            :preview-image="false"
+          >
+            <img src="@/assets/icon/icon-camera.png" style="width: 1.5rem;">
+          </van-uploader>
         </van-field>
         <p class="label">车牌号码</p>
         <div class="plate-block border-bottom">
@@ -58,8 +72,9 @@
   </div>
 </template>
 <script>
-import { createBreakRule, getVinHistory } from '@/apis/api'
+import { createBreakRule, getVinHistory, uploadDriverLicense } from '@/apis/api'
 import initLoginCheckInfo from '@/common/js/login.js'
+// import imgProcessor from '@/common/js/ImageProcessor.js'
 export default {
   data () {
     return {
@@ -109,6 +124,23 @@ export default {
     onPickerConfirm (value) {
       this.plate_first = value
       this.showPicker = false
+    },
+    afterRead (file) {
+      console.log(file)
+      this.uploadDriverImage(file.file)
+      // imgProcessor.uploadOrigin(file, 'license_img').then(formData => {
+      //   this.uploadDriverImage(formData)
+      // })
+    },
+    uploadDriverImage (file) {
+      var formdata = new FormData()
+      formdata.append('license_img', file)
+      uploadDriverLicense(formdata).then(res => {
+        console.log(res)
+        // if (res.code === 0) {
+        //   this.imgUrl = res.data.url
+        // }
+      })
     },
     createAction () {
       let req = {

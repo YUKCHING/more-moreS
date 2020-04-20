@@ -1,13 +1,13 @@
 <template>
   <div class='MyUser'>
-    <van-tabs v-model="active" title-active-color="#FF4242" @click="clickTabsAction" :swipeable="true" :animated="true" sticky>
-      <van-tab title="已邀粉丝">
+    <van-tabs v-model="active" title-active-color="#FF4242" @click="clickTabsAction" :swipeable="true" :animated="true" sticky @change="clickTabsAction">
+      <van-tab title="已邀粉丝" style="height: calc(100vh - 44px)">
         <user-tab :listData="listData" :total="total" @update="getInvited" @multi="multipleAction"></user-tab>
       </van-tab>
-      <van-tab title="已邀会员">
+      <van-tab title="已邀会员" style="height: calc(100vh - 44px)">
         <user-tab :listData="listData" :total="total" @update="getInvited" @multi="multipleAction"></user-tab>
       </van-tab>
-      <van-tab title="高级会员">
+      <van-tab title="高级会员" style="height: calc(100vh - 44px)">
         <user-tab :listData="listData" :total="total" @update="getInvited" @multi="multipleAction"></user-tab>
       </van-tab>
     </van-tabs>
@@ -63,8 +63,11 @@ export default {
 }
 </script>
 <style lang='stylus' rel='stylesheet/stylus' scoped>
-.MyUser
+.MyUser /deep/
   height 100%
   display flex
   flex-direction column
+
+  .van-tab__pane
+    height 100%
 </style>

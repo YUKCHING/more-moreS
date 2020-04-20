@@ -1,16 +1,14 @@
 import store from '@/store'
-import { toast } from '@/common/js/Toast.js'
+import { toast, tLoading } from '@/common/js/Toast.js'
 import { judgeWeixinBrowser, getWeixinCodeUrlToIndex } from '@/common/js/common.js'
 import { getOpenidByCode, getTokenByOpenId, getUserInfo } from '@/apis/api.js'
 
 export default async function initLoginCheckInfo (route) {
-  console.log(route)
   let query = route.query
   console.log(query)
   // const { isReady } = query
 
   if (window.isReady) {
-    console.log('isReady ', window.isReady)
     let res = await getUserInfo({
       openid: store.getters.openid,
       token: store.getters.token
@@ -22,14 +20,12 @@ export default async function initLoginCheckInfo (route) {
       store.dispatch('setUserInfo', {
         userInfo: JSON.stringify(memberInfo)
       })
-      console.log('getInfo finish')
       console.log(memberInfo)
       return memberInfo
     }
   }
   const { code } = query
   const { invite } = query
-  console.log('you code ', code)
   console.log('you invite ', invite)
 
   if (!code) { // 没有code 判断浏览器
@@ -64,20 +60,8 @@ export default async function initLoginCheckInfo (route) {
       })
     }
 
-    // let path = route.path
-    // let query = route.query
-    // if (query.hasOwnProperty('code')) {
-    //   delete query.code
-    // }
-    // await router.replace({
-    //   path: path,
-    //   query: {
-    //     ...query,
-    //     isReady: true
-    //   }
-    // })
-
     // 获取用户信息
+    tLoading()
     let thirdRes = await getUserInfo({
       openid: firstRes.data.openid,
       token: secondRes.data.token

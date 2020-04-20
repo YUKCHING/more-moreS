@@ -44,12 +44,19 @@ export default {
         if (res.code === 0) {
           if (res.data.functions.length > 0) {
             let showCodeArr = []
-            JSON.parse(this.$store.getters.configInfo).forEach(ele => {
+            this.$store.getters.configInfo.forEach(ele => {
               if (ele.is_show === 1) {
                 showCodeArr.push(ele.code)
               }
             })
-            res.data.functions.forEach(ele => {
+
+            let grade = this.$store.getters.userInfo.grade
+
+            let baseData = res.data.functions.filter(ele => {
+              return ele.visible_grade.indexOf(String(grade)) !== -1
+            })
+
+            baseData.forEach(ele => {
               let isShow = showCodeArr.indexOf(ele.code) !== -1
               if (isShow) {
                 this.showArr.push({
