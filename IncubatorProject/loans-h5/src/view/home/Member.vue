@@ -108,11 +108,13 @@ export default {
   },
   data () {
     return {
-      swipeArr: []
+      swipeArr: [
+        {picture_url: require('@/assets/order/img-bannar.png'), route: '/ordersignup'}
+      ]
     }
   },
   created () {
-    this.getPicture()
+    // this.getPicture()
   },
   methods: {
     copyInviteCode () {
@@ -138,9 +140,9 @@ export default {
     },
     swipeSelectAction (item) {
       console.log(item)
-      if (item.attribute === 1) {
+      if (item.route) {
         this.$router.push({
-          path: '/invitefans'
+          path: item.route
         })
       }
     },
@@ -153,6 +155,7 @@ export default {
         if (res.code === 0) {
           console.log(res)
           this.swipeArr = res.data
+          console.log(this.swipeArr)
         }
       })
     }
@@ -161,7 +164,6 @@ export default {
 </script>
 <style lang='stylus' rel='stylesheet/stylus' scoped>
 .Member
-  height 100%
   background #FAFAFA
 
   .swipe

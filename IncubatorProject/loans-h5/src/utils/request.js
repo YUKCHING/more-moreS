@@ -1,6 +1,6 @@
 import axios from 'axios'
 import Config from '@/config'
-import { toast, tClear } from '@/common/js/Toast.js'
+import { toast } from '@/common/js/Toast.js'
 import store from '@/store'
 import Qs from 'qs'
 
@@ -12,8 +12,6 @@ const request = axios.create({
 })
 
 request.interceptors.request.use(config => {
-  // tLoading('加载中...')
-
   config.headers.Authorization = store.getters.token
 
   if (config.isForm) {
@@ -36,16 +34,15 @@ request.interceptors.request.use(config => {
 request.interceptors.response.use(res => {
   const data = res.data
   if (data.code !== 0) {
-    toast(data.msg)
-    return Promise.reject(data.msg)
-  } else {
-    tClear()
+    if (data.msg !== '违章查询报告失败') {
+      toast(data.msg)
+    }
+
+    return Promise.reject(data)
   }
 
   return data
 }, error => {
-  // tClear()
-
   toast({
     message: '错误：[' + error.response.status + ']' + error.response.statusText
   })

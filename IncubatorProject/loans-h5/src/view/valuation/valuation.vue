@@ -66,6 +66,7 @@
     >
       <city-popup @select="selectCityItem"></city-popup>
     </van-popup>
+    <qr-overlay></qr-overlay>
   </div>
 </template>
 <script>
@@ -73,9 +74,10 @@ import { Toast } from 'mint-ui'
 import CarPopup from './components/CarPopup'
 import CityPopup from './components/CityPopup'
 import initLoginCheckInfo from '@/common/js/login.js'
+import QrOverlay from '@/components/QrOverlay'
 export default {
   components: {
-    CarPopup, CityPopup
+    CarPopup, CityPopup, QrOverlay
   },
   data () {
     return {
@@ -100,7 +102,6 @@ export default {
   },
   beforeCreate () {
     window.shareUrl = location.href.split('#')[0]
-    console.log('beforeCreate ', window.shareUrl)
   },
   created () {
     this.init()
@@ -111,9 +112,15 @@ export default {
       let des = '基于海量真实成交记录，采用人工智能和大数据，保证估值的真实可靠性。'
       if (!window.isReady) {
         initLoginCheckInfo(this.$route).then(info => {
-        // 分享设置
+          if (info.code === -1000104) {
+            console.log('emit showQrOverlay')
+            this.bus.$emit('showQrOverlay')
+            return
+          }
+          // 分享设置
           let shareLink = 'http://api.tainuocar.com/home/' + this.$route.name + '?invite=' + this.$store.getters.userInfo['invite_code']
           this.initWxShare(window.shareUrl, title, des, shareLink)
+          window.isReady = true
         })
       } else {
         // 分享设置

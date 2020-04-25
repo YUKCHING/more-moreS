@@ -51,38 +51,66 @@
   </div>
 </template>
 <script>
-import { getBreakRule } from '@/apis/api.js'
+import { getBreakRule, createBreakRule } from '@/apis/api.js'
 export default {
   data () {
     return {
-      id: this.$route.query.id,
-      ocrId: this.$route.query.ocrId,
+      vin: '',
+      engine_number: '',
+      license_no: '',
+      ocr_id: '',
       query_time: '',
       report: {},
       cardInfo: {},
       allTime: 0,
       allDegree: 0,
-      allCount: 0
+      allCount: 0,
+      reportTimer: ''
     }
   },
-  created () {
+  mounted () {
+    this.vin = this.$route.query.vin
+    this.engine_no = this.$route.query.engine_no
+    this.license_no = this.$route.query.license_no
+    this.ocr_id = this.$route.query.ocr_id
     this.init()
+  },
+  destroyed () {
+    clearInterval(this.reportTimer)
   },
   methods: {
     init () {
       if (this.$store.getters.violationInfo) {
         this.cardInfo = this.$store.getters.violationInfo
       }
-      this.getReport()
+      this.getRule()
     },
-    getReport () {
+    getRule () {
       let req = {
-        // token: this.$store.getters.token,
-        query_id: this.id,
-        ocr_id: this.ocrId
+        vin: this.vin,
+        engine_number: this.engine_no,
+        license_no: this.license_no,
+        ocr_id: this.ocr_id
       }
-      this.tLoading()
+      this.tLoading('查询中...')
+      createBreakRule(req).then(res => {
+        if (res.code === 0) {
+          if (res.data.query_id) {
+            this.reportTimer = setInterval(() => {
+              this.getReport(res.data.query_id)
+            }, 1000)
+          }
+        }
+      })
+    },
+    getReport (queryId) {
+      let req = {
+        token: this.$store.getters.token,
+        query_id: queryId,
+        ocr_id: this.ocr_id
+      }
       getBreakRule(req).then(res => {
+        clearInterval(this.reportTimer)
         this.tClear()
         if (res.code === 0) {
           this.report = res.data.report

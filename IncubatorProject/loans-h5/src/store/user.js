@@ -10,6 +10,7 @@ const recentCityKey = 'recentCity_key'
 const recentBrandKey = 'recentBrand_key'
 const configInfoKey = 'configInfo_key'
 const violationInfoKey = 'violationInfo_key'
+const webInviteCodeKey = 'webInviteCode_key'
 
 const user = {
   state: {
@@ -22,7 +23,8 @@ const user = {
     recentCity: getStorageByKey(recentCityKey),
     recentBrand: getStorageByKey(recentBrandKey),
     configInfo: getStorageByKey(configInfoKey),
-    violationInfo: getStorageByKey(violationInfoKey)
+    violationInfo: getStorageByKey(violationInfoKey),
+    webInviteCode: getStorageByKey(webInviteCodeKey)
   },
 
   mutations: {
@@ -52,6 +54,9 @@ const user = {
     },
     SET_VIOLATIONINFO (state) {
       state.violationInfo = getStorageByKey(violationInfoKey)
+    },
+    SET_WEBINVITECODE (state) {
+      state.webInviteCode = getStorageByKey(webInviteCodeKey)
     }
   },
   actions: {
@@ -90,6 +95,10 @@ const user = {
     setViolationInfo ({ commit }, { violationInfo }) {
       setStorageByKey(violationInfoKey, violationInfo)
       commit('SET_VIOLATIONINFO')
+    },
+    setWebInviteCode ({ commit }, { webInviteCode }) {
+      setStorageByKey(webInviteCodeKey, webInviteCode)
+      commit('SET_WEBINVITECODE')
     }
   }
 }

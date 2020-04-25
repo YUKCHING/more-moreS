@@ -3,8 +3,10 @@
     <div class='content' v-if="isWeixinBrowser || !isProduction">
       <div class="panel">
         <home-page v-if="active === 0" :info="memberInfo" @showTool="showToolPicker = true"></home-page>
-        <member v-else-if="active === 1" :info="memberInfo"></member>
-        <my v-else-if="active === 2" :info="memberInfo"></my>
+        <deal v-else-if="active === 1" :info="memberInfo"></deal>
+        <member v-else-if="active === 2" :info="memberInfo"></member>
+        <order v-else-if="active === 3" :info="memberInfo"></order>
+        <my v-else-if="active === 4" :info="memberInfo"></my>
       </div>
       <van-tabbar v-model="active" active-color="#FE3525">
         <van-tabbar-item>
@@ -14,15 +16,27 @@
             </template>
         </van-tabbar-item>
         <van-tabbar-item>
-          <span>{{gradeName}}</span>
+          <span>交易</span>
             <template #icon="props">
               <img :src="props.active ? tabIcon2.active : tabIcon2.inactive"/>
             </template>
         </van-tabbar-item>
         <van-tabbar-item>
-          <span>我的</span>
+          <span>{{gradeName}}</span>
             <template #icon="props">
               <img :src="props.active ? tabIcon3.active : tabIcon3.inactive"/>
+            </template>
+        </van-tabbar-item>
+        <van-tabbar-item>
+          <span>订单</span>
+            <template #icon="props">
+              <img :src="props.active ? tabIcon4.active : tabIcon4.inactive"/>
+            </template>
+        </van-tabbar-item>
+        <van-tabbar-item>
+          <span>我的</span>
+            <template #icon="props">
+              <img :src="props.active ? tabIcon5.active : tabIcon5.inactive"/>
             </template>
         </van-tabbar-item>
       </van-tabbar>
@@ -45,6 +59,7 @@
         <img src="@/assets/icon/icon-cha.png" @click="showToolPicker = false">
       </div>
     </van-popup>
+    <qr-overlay></qr-overlay>
   </div>
 </template>
 <script>
@@ -52,12 +67,14 @@ import { getOpenidByCode, getTokenByOpenId, getUserInfo } from '@/apis/api.js'
 import HomePage from './HomePage'
 import Member from './Member'
 import My from './My'
+import Order from '@/view/order/index'
+import Deal from '@/view/deal/index'
 import initLoginCheckInfo from '@/common/js/login.js'
-// import merge from 'webpack-merge'
+import QrOverlay from '@/components/QrOverlay'
 
 export default {
   components: {
-    HomePage, Member, My
+    HomePage, Member, My, Order, Deal, QrOverlay
   },
   computed: {
     isProduction () {
@@ -91,16 +108,24 @@ export default {
   data () {
     return {
       inviteCode: '',
-      active: 0,
+      active: 2,
       tabIcon1: {
         active: require('@/assets/icon/tab_home_fill.png'),
         inactive: require('@/assets/icon/tab_home.png')
       },
       tabIcon2: {
+        active: require('@/assets/icon/tab_deal_fill.png'),
+        inactive: require('@/assets/icon/tab_deal.png')
+      },
+      tabIcon3: {
         active: require('@/assets/icon/tab_member_fill.png'),
         inactive: require('@/assets/icon/tab_member.png')
       },
-      tabIcon3: {
+      tabIcon4: {
+        active: require('@/assets/icon/tab_business_fill.png'),
+        inactive: require('@/assets/icon/tab_business.png')
+      },
+      tabIcon5: {
         active: require('@/assets/icon/tab_my_fill.png'),
         inactive: require('@/assets/icon/tab_my.png')
       },
@@ -115,7 +140,6 @@ export default {
   },
   beforeCreate () {
     window.shareUrl = location.href.split('#')[0]
-    console.log('beforeCreate ', location.href.split('#')[0])
   },
   methods: {
     init () {
@@ -124,6 +148,10 @@ export default {
       }
       if (this.isProduction) {
         initLoginCheckInfo(this.$route, 'index').then(info => {
+          if (info.code === -1000104) {
+            this.bus.$emit('showQrOverlay')
+            return
+          }
           this.memberInfo = info
           // 分享设置
           let shareLink = 'http://api.tainuocar.com/home/index?invite=' + info['invite_code']
@@ -131,7 +159,7 @@ export default {
           window.isReady = true
         })
       } else {
-        // this.getOpenId('0618ENHX0gDEpW1YPvKX0zwAHX08ENHe') // 调试 直接获取openId
+        // this.getOpenId('001ZamqD1kNP2909fsqD114DqD1Zamqz') // 调试 直接获取openId
         this.getInfo()
       }
     },
@@ -163,7 +191,6 @@ export default {
         invite_code: this.inviteCode
       }
       getTokenByOpenId(req).then(res => {
-        console.log(res)
         if (res.code === 0) {
           this.$store.dispatch('setToken', {
             token: res.data.token
@@ -178,7 +205,6 @@ export default {
         openid: this.$store.getters.openid,
         token: this.$store.getters.token
       }
-      this.tLoading()
       getUserInfo(req).then(res => {
         if (res.code === 0) {
           this.memberInfo = {
@@ -187,7 +213,6 @@ export default {
           this.$store.dispatch('setUserInfo', {
             userInfo: JSON.stringify(this.memberInfo)
           })
-          // this.resetRoute()
         }
       })
     },
@@ -217,7 +242,8 @@ export default {
     height 100%
 
     .panel
-      height calc(100% - 50px)
+      background #fafafa
+      height calc(100vh - 50px)
       overflow auto
       -webkit-overflow-scrolling touch
 

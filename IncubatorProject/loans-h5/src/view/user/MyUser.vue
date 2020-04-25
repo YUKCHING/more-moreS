@@ -48,13 +48,15 @@ export default {
         grade: this.active,
         limit: 500
       }
-      this.total = 0
-      this.listData = []
+
       getInvitedUser(req).then(res => {
         if (res.code === 0) {
           if (res.data.list.length > 0) {
             this.total = res.data.total
             this.listData = res.data.list
+          } else {
+            this.total = 0
+            this.listData = []
           }
         }
       })

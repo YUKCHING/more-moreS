@@ -115,6 +115,7 @@ export default {
         valuation_id: this.valId
       }
       createValQrcode(req).then(res => {
+        this.tClear()
         if (res.code === 0) {
           let url = res.data.url
           this.getQrcodeImage(url)

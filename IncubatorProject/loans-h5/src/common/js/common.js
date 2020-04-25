@@ -1,11 +1,14 @@
 import Vue from 'vue'
 
+Vue.prototype.bus = new Vue()
 Vue.prototype.checkMainlandIdcard = checkMainlandIdcard
 Vue.prototype.checkHongkongIdcard = checkHongkongIdcard
 Vue.prototype.checkGangAoTaiIdCard = checkGangAoTaiIdCard
 Vue.prototype.judgeWeixinBrowser = judgeWeixinBrowser
 Vue.prototype.getWeixinCodeUrlToIndex = getWeixinCodeUrlToIndex
 Vue.prototype.getWeixinCodeUrlToTest = getWeixinCodeUrlToTest
+Vue.prototype.packagePhoneNumber = packagePhoneNumber
+Vue.prototype.splitMonet = splitMonet
 
 // 微信获取code链接跳转到Index
 export function getWeixinCodeUrlToIndex (link, code) {
@@ -129,4 +132,33 @@ export function judgeWeixinBrowser () {
   } else {
     return false
   }
+}
+
+function packagePhoneNumber (num) {
+  let arr = String(num).split('')
+  let str = ''
+  arr.forEach((key, index) => {
+    if (index >= 3 && index <= 6) {
+      str = str + '*'
+    } else {
+      str = str + key
+    }
+  })
+  return str
+}
+
+function splitMonet (num) {
+  let arr = String(num).split('').reverse()
+  let str = ''
+  arr.forEach((key, index) => {
+    let indexS = index + 1
+    let isThird = indexS % 3 === 0
+    let isLast = indexS === arr.length
+    if (isThird && !isLast) {
+      str = str + key + ','
+    } else {
+      str = str + key
+    }
+  })
+  return str.split('').reverse().join('')
 }

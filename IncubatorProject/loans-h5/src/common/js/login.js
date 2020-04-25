@@ -1,5 +1,5 @@
 import store from '@/store'
-import { toast, tLoading } from '@/common/js/Toast.js'
+import { toast, tLoading, tClear } from '@/common/js/Toast.js'
 import { judgeWeixinBrowser, getWeixinCodeUrlToIndex } from '@/common/js/common.js'
 import { getOpenidByCode, getTokenByOpenId, getUserInfo } from '@/apis/api.js'
 
@@ -26,7 +26,11 @@ export default async function initLoginCheckInfo (route) {
   }
   const { code } = query
   const { invite } = query
-  console.log('you invite ', invite)
+  console.log('web invite ', invite)
+
+  await store.dispatch('setWebInviteCode', {
+    webInviteCode: invite
+  })
 
   if (!code) { // 没有code 判断浏览器
     if (judgeWeixinBrowser()) {
@@ -49,11 +53,19 @@ export default async function initLoginCheckInfo (route) {
     }
 
     // 获取token信息
+    var secondErr = ''
     let secondRes = await getTokenByOpenId({
       openid: firstRes.data.openid,
       from: 'web',
       invite_code: invite
+    }).catch(err => {
+      secondErr = err
     })
+
+    if (!secondRes) {
+      return secondErr
+    }
+
     if (secondRes.code === 0) {
       await store.dispatch('setToken', {
         token: secondRes.data.token
@@ -75,7 +87,7 @@ export default async function initLoginCheckInfo (route) {
         userInfo: JSON.stringify(memberInfo)
       })
     }
-
+    tClear()
     return memberInfo
   }
 }

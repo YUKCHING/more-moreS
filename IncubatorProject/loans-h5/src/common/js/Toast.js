@@ -16,7 +16,8 @@ export function tLoading (text) {
   let message = text || '加载中...'
   Toast.loading({
     message: message,
-    forbidClick: true
+    forbidClick: true,
+    duration: 0
   })
 }
 

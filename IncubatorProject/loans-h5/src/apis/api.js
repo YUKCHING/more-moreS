@@ -71,7 +71,7 @@ export function uploadDriverLicense (data) {
   tLoading('上传中...')
   return axios({
     baseURL: Config.apiUrl,
-    url: api + '/ocr/driver-license?token=' + store.getters.token,
+    url: api + '/ocr/vehicle-license?token=' + store.getters.token,
     method: 'post',
     data: data,
     dataType: 'text',
@@ -286,7 +286,7 @@ export function getVinHistory (data) {
 /**
  * 微信分享
  */
-// 获取VIN历史记录
+// 获取微信分享
 export function getWxShare (data) {
   let url = '/wx/get-js-sdk'
   return sendPostRequest(url, data)

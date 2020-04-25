@@ -1,6 +1,10 @@
 <template>
   <div class='MyOrder'>
-    <van-tabs v-model="active" title-active-color="#FF4242" @click="clickTabsAction">
+    <van-tabs
+      v-model="active"
+      title-active-color="#FF4242"
+      @click="clickTabsAction"
+      :swipe-threshold="5">
       <van-tab title="全部"></van-tab>
       <van-tab title="待付款"></van-tab>
       <van-tab title="待发货"></van-tab>

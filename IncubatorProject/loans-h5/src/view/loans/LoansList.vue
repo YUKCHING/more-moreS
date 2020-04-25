@@ -4,6 +4,7 @@
                  :key="item.id"
                  :data="item"
                  @click="showDetail"></loans-block>
+    <qr-overlay></qr-overlay>
   </div>
 </template>
 <style lang='scss' scoped>
@@ -18,12 +19,13 @@
 </style>
 <script>
 import LoansBlock from './components/LoansBlock'
+import QrOverlay from '@/components/QrOverlay'
 import { getProductList } from '@/apis/api'
 import initLoginCheckInfo from '@/common/js/login.js'
 
 export default {
   components: {
-    LoansBlock
+    LoansBlock, QrOverlay
   },
   beforeCreate () {
     window.shareUrl = location.href.split('#')[0]
@@ -39,12 +41,17 @@ export default {
   methods: {
     init () {
       let title = '泰诺汽车平台-泰诺产品'
-      let des = '超10款车贷产品，总有一款适合您。'
+      let des = '超10款车贷产品\r\n总有一款适合您!'
       if (!window.isReady) {
         initLoginCheckInfo(this.$route).then(info => {
-        // 分享设置
+          if (info.code === -1000104) {
+            this.bus.$emit('showQrOverlay')
+            return
+          }
+          // 分享设置
           let shareLink = 'http://api.tainuocar.com/home/' + this.$route.name + '?invite=' + this.$store.getters.userInfo['invite_code']
           this.initWxShare(window.shareUrl, title, des, shareLink)
+          window.isReady = true
         })
       } else {
         // 分享设置

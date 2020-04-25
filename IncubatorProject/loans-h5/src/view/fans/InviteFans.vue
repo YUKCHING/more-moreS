@@ -13,7 +13,7 @@
         <p class="p2">超10款车贷产品，总有一款适合您！</p>
         <p class="p2">咱们做车贷找泰诺！</p>
         <div class="img-block">
-          <img :src="imgUrl">
+          <img :src="imgUrl" ref="imgUrlBlock">
           <van-uploader
             class="uploader"
             :after-read="afterRead"
@@ -21,6 +21,15 @@
             v-if="showInput"
           />
         </div>
+        <!-- <canvas
+          id="mycanvas"
+          :style="{
+            width: canvarWidth + 'px',
+            height: canvarHeight + 'px'
+          }"
+          v-else
+        >
+        </canvas> -->
         <div class="edit-block">
           <div class="left">
             <van-field
@@ -57,6 +66,7 @@
     </div>
     <van-image-preview v-model="showPreview" :images="[shareUrl]" @close="closePreviewAction">
     </van-image-preview>
+    <qr-overlay></qr-overlay>
   </div>
 </template>
 <script>
@@ -64,8 +74,12 @@ import { createQrCode, uploadImageRequest } from '@/apis/api.js'
 import imgProcessor from '@/common/js/ImageProcessor.js'
 import jrQrcode from 'jr-qrcode'
 import html2canvas from 'html2canvas'
-import initLoginCheckInfo from '@/common/js/login.js'
+// import initLoginCheckInfo from '@/common/js/login.js'
+import QrOverlay from '@/components/QrOverlay'
 export default {
+  components: {
+    QrOverlay
+  },
   data () {
     return {
       imgUrl: require('@/assets/imgs/img-share-bg.png'),
@@ -74,31 +88,37 @@ export default {
       userInfo: this.$store.getters.userInfo,
       writing: '',
       showPreview: false,
-      showInput: true
+      showInput: true,
+      canvarWidth: '',
+      canvarHeight: ''
     }
   },
   beforeCreate () {
     window.shareUrl = location.href.split('#')[0]
-    console.log('beforeCreate ', window.shareUrl)
   },
   created () {
     this.init()
   },
   methods: {
     init () {
-      let title = '泰诺汽车平台-邀请粉丝'
-      let des = '超10款车贷产品，总有一款适合您！做车贷，找泰诺。'
-      if (!window.isReady) {
-        initLoginCheckInfo(this.$route).then(info => {
-        // 分享设置
-          let shareLink = 'http://api.tainuocar.com/home/' + this.$route.name + '?invite=' + this.$store.getters.userInfo['invite_code']
-          this.initWxShare(window.shareUrl, title, des, shareLink)
-        })
-      } else {
-        // 分享设置
-        let shareLink = 'http://api.tainuocar.com/home/' + this.$route.name + '?invite=' + this.$store.getters.userInfo['invite_code']
-        this.initWxShare(window.shareUrl, title, des, shareLink)
-      }
+      // let title = '泰诺汽车平台-邀请粉丝'
+      // let des = '超10款车贷产品，总有一款适合您！做车贷，找泰诺。'
+      // if (!window.isReady) {
+      //   initLoginCheckInfo(this.$route).then(info => {
+      //     if (info.hasOwnProperty('code') && info.code === -1000104) {
+      //       this.bus.$emit('showQrOverlay')
+      //       return
+      //     }
+      //     // 分享设置
+      //     let shareLink = 'http://api.tainuocar.com/home/' + this.$route.name + '?invite=' + this.$store.getters.userInfo['invite_code']
+      //     this.initWxShare(window.shareUrl, title, des, shareLink)
+      //     window.isReady = true
+      //   })
+      // } else {
+      //   // 分享设置
+      //   let shareLink = 'http://api.tainuocar.com/home/' + this.$route.name + '?invite=' + this.$store.getters.userInfo['invite_code']
+      //   this.initWxShare(window.shareUrl, title, des, shareLink)
+      // }
 
       this.getCode()
     },
@@ -138,11 +158,13 @@ export default {
       uploadImageRequest(file).then(res => {
         if (res.code === 0) {
           this.imgUrl = res.data.url
+          console.log(this.imgUrl)
         }
       })
     },
     getHtmlImage () {
       this.showInput = !this.showInput
+      // this.creatCanvas()
       this.tLoading()
       setTimeout(() => {
         html2canvas(document.querySelector('#share-block'), {
@@ -153,7 +175,32 @@ export default {
           this.shareUrl = canvas.toDataURL('image/png')
           this.showPreview = true
         })
-      }, 500)
+      }, 1000)
+    },
+    creatCanvas () {
+      let width = this.$refs['imgUrlBlock'].offsetWidth
+      let height = this.$refs['imgUrlBlock'].offsetHeight
+      this.canvarWidth = width
+      this.canvarHeight = height
+
+      var img = new Image()
+      img.src = this.imgUrl
+      img.onload = function () {
+        var canvas = document.getElementById('mycanvas')
+        var context = canvas.getContext('2d')
+        var that = this
+        var w = that.width
+        var h = that.height
+        var scale = w / h
+        h = (w / scale)
+        var anw = document.createAttribute('width')
+        anw.nodeValue = w
+        var anh = document.createAttribute('height')
+        anh.nodeValue = h
+        canvas.setAttributeNode(anw)
+        canvas.setAttributeNode(anh)
+        context.drawImage(that, 0, 0, w, h)
+      }
     },
     closePreviewAction () {
       this.showInput = true
@@ -163,9 +210,9 @@ export default {
 </script>
 <style lang='stylus' rel='stylesheet/stylus' scoped>
 .InviteFans /deep/
-  height 100%
   padding 3px 2rem
   box-sizing border-box
+  background #ffffff
 
   .van-cell
     padding 0

@@ -11,6 +11,8 @@ import '@/config/vantuiConfig.js'
 import '@/common/js/common.js'
 import '@/common/js/wechat.js'
 import _ from 'lodash'
+import QrOverlay from '@/components/QrOverlay'
+Vue.use(QrOverlay)
 // import VConsole from 'vconsole'
 // // eslint-disable-next-line
 // let vConsole = new VConsole()

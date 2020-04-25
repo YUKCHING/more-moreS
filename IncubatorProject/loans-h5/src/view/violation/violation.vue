@@ -69,13 +69,18 @@
         @confirm="onPickerConfirm"
       />
     </van-popup>
+    <qr-overlay></qr-overlay>
   </div>
 </template>
 <script>
-import { createBreakRule, getVinHistory, uploadDriverLicense } from '@/apis/api'
+import { uploadDriverLicense } from '@/apis/api'
 import initLoginCheckInfo from '@/common/js/login.js'
 // import imgProcessor from '@/common/js/ImageProcessor.js'
+import QrOverlay from '@/components/QrOverlay'
 export default {
+  components: {
+    QrOverlay
+  },
   data () {
     return {
       vin: '',
@@ -100,9 +105,14 @@ export default {
       let des = '一键识别，有违章，早知道，免费查询，官方同步。'
       if (!window.isReady) {
         initLoginCheckInfo(this.$route).then(info => {
-        // 分享设置
+          if (info.code === -1000104) {
+            this.bus.$emit('showQrOverlay')
+            return
+          }
+          // 分享设置
           let shareLink = 'http://api.tainuocar.com/home/' + this.$route.name + '?invite=' + this.$store.getters.userInfo['invite_code']
           this.initWxShare(window.shareUrl, title, des, shareLink)
+          window.isReady = true
         })
       } else {
         // 分享设置
@@ -116,6 +126,7 @@ export default {
         this.engine_no = item.engine_no
         this.plate_first = item.plate_first
         this.plate_show = item.plate_show
+        this.ocr_id = item.ocr_id
       }
     },
     onSubmit (values) {
@@ -136,51 +147,32 @@ export default {
       var formdata = new FormData()
       formdata.append('license_img', file)
       uploadDriverLicense(formdata).then(res => {
-        console.log(res)
-        // if (res.code === 0) {
-        //   this.imgUrl = res.data.url
-        // }
+        if (res.code === 0) {
+          this.vin = res.data.vin
+          this.engine_no = res.data.engine_no
+          this.plate_first = res.data.plate_no.slice(0, 1)
+          this.plate_show = res.data.plate_no.slice(1)
+          this.ocr_id = res.data.ocr_id
+        }
       })
     },
     createAction () {
-      let req = {
-        vin: this.vin,
-        engine_number: this.engine_no,
-        license_no: this.plate_first + this.plate_show,
-        ocr_id: this.ocr_id
-      }
       this.$store.dispatch('setViolationInfo', {
         violationInfo: JSON.stringify({
           vin: this.vin,
           engine_no: this.engine_no,
           plate_first: this.plate_first,
-          plate_show: this.plate_show
+          plate_show: this.plate_show,
+          ocr_id: this.ocr_id
         })
       })
-      this.tLoading()
-      createBreakRule(req).then(res => {
-        console.log(res)
-        this.tClear()
-        if (res.code === 0) {
-          if (res.data.query_id) {
-            this.$router.push({
-              path: '/violationdetail',
-              query: {
-                id: res.data.query_id,
-                ocrId: this.ocr_id
-              }
-            })
-          }
-        }
-      })
-    },
-    getHistory () {
-      let req = {
-        token: this.$store.getters.token
-      }
-      getVinHistory(req).then(res => {
-        if (res.code === 0) {
-          console.log(res)
+      this.$router.push({
+        path: '/violationdetail',
+        query: {
+          vin: this.vin,
+          engine_no: this.engine_no,
+          license_no: this.plate_first + this.plate_show,
+          ocr_id: this.ocr_id
         }
       })
     }

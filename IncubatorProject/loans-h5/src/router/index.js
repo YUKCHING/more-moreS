@@ -119,15 +119,15 @@ const router = new Router({
     },
     {
       path: '/loanslist',
-      name: '贷款',
+      name: 'loanslist',
       component: resolve => require(['@/view/loans/LoansList'], resolve),
       meta: {
-        title: '车抵贷'
+        title: '泰诺产品'
       }
     },
     {
       path: '/loansdetail',
-      name: '详情',
+      name: 'loansdetail',
       component: resolve => require(['@/view/loans/LoansDetail'], resolve),
       meta: {
         title: '车抵贷'
@@ -135,7 +135,7 @@ const router = new Router({
     },
     {
       path: '/success',
-      name: '成功',
+      name: 'success',
       component: resolve => require(['@/view/loans/components/Success'], resolve),
       meta: {
         title: '车抵贷'
@@ -211,6 +211,38 @@ const router = new Router({
       component: resolve => require(['@/view/valuation/components/ShareImage'], resolve),
       meta: {
         title: '估值分享'
+      }
+    },
+    {
+      path: '/ordersignup',
+      name: 'ordersignup',
+      component: resolve => require(['@/view/order/signUp'], resolve),
+      meta: {
+        title: '泰诺金融'
+      }
+    },
+    {
+      path: '/businessdetail',
+      name: 'businessdetail',
+      component: resolve => require(['@/view/order/component/OrderDetail'], resolve),
+      meta: {
+        title: '订单'
+      }
+    },
+    {
+      path: '/recordprocess',
+      name: 'recordprocess',
+      component: resolve => require(['@/view/order/component/OrderRecordDetail'], resolve),
+      meta: {
+        title: '进度记录'
+      }
+    },
+    {
+      path: '/systemscreen',
+      name: 'systemscreen',
+      component: resolve => require(['@/view/order/component/SystemScreen'], resolve),
+      meta: {
+        title: '系统初筛'
       }
     }
   ]

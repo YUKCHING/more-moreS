@@ -58,11 +58,14 @@ export default {
             // 读缓存的配置
             let configInfo = this.$store.getters.configInfo
             let showArr = []
-            configInfo.forEach(ele => {
-              if (ele.is_show === 1) {
-                showArr.push(ele.code)
-              }
-            })
+            if (configInfo) {
+              configInfo.forEach(ele => {
+                if (ele.is_show === 1) {
+                  showArr.push(ele.code)
+                }
+              })
+            }
+
             if (showArr.length > 0) {
               let temArr = baseData.map((ele, index) => {
                 return {
@@ -74,8 +77,6 @@ export default {
               this.configs = temArr
               this.$store.dispatch('setConfigInfo', {
                 configInfo: JSON.stringify(temArr)
-              }).then(() => {
-
               })
             } else {
               let temArr = baseData.map((ele, index) => {
@@ -88,8 +89,6 @@ export default {
               this.configs = temArr
               this.$store.dispatch('setConfigInfo', {
                 configInfo: JSON.stringify(temArr)
-              }).then(() => {
-
               })
             }
 
