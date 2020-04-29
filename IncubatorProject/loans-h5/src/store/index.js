@@ -16,7 +16,8 @@ const store = new Vuex.Store({
     recentBrand: state => state.user.recentBrand,
     configInfo: state => JSON.parse(state.user.configInfo),
     violationInfo: state => JSON.parse(state.user.violationInfo),
-    webInviteCode: state => state.user.webInviteCode
+    webInviteCode: state => state.user.webInviteCode,
+    nowTab: state => Number(state.user.nowTab)
   },
   mutitons: {},
   modules: {

@@ -222,9 +222,17 @@ const router = new Router({
       }
     },
     {
-      path: '/businessdetail',
-      name: 'businessdetail',
-      component: resolve => require(['@/view/order/component/OrderDetail'], resolve),
+      path: '/orderinit',
+      name: 'orderinit',
+      component: resolve => require(['@/view/order/component/OrderInit'], resolve),
+      meta: {
+        title: '订单'
+      }
+    },
+    {
+      path: '/ordersubmit',
+      name: 'ordersubmit',
+      component: resolve => require(['@/view/order/component/OrderSubmit'], resolve),
       meta: {
         title: '订单'
       }
@@ -243,6 +251,14 @@ const router = new Router({
       component: resolve => require(['@/view/order/component/SystemScreen'], resolve),
       meta: {
         title: '系统初筛'
+      }
+    },
+    {
+      path: '/sucpage',
+      name: 'sucpage',
+      component: resolve => require(['@/view/order/component/SuccssPage'], resolve),
+      meta: {
+        title: '订单'
       }
     }
   ]

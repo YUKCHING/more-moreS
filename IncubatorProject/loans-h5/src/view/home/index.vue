@@ -8,7 +8,7 @@
         <order v-else-if="active === 3" :info="memberInfo"></order>
         <my v-else-if="active === 4" :info="memberInfo"></my>
       </div>
-      <van-tabbar v-model="active" active-color="#FE3525">
+      <van-tabbar v-model="active" active-color="#FE3525" @change="changeTabbar">
         <van-tabbar-item>
           <span>首页</span>
             <template #icon="props">
@@ -143,6 +143,9 @@ export default {
   },
   methods: {
     init () {
+      if (this.$store.getters.nowTab) {
+        this.active = this.$store.getters.nowTab
+      }
       if (this.$store.getters.userInfo) {
         this.memberInfo = this.$store.getters.userInfo
       }
@@ -159,7 +162,7 @@ export default {
           window.isReady = true
         })
       } else {
-        // this.getOpenId('001ZamqD1kNP2909fsqD114DqD1Zamqz') // 调试 直接获取openId
+        // this.getOpenId('021LQzyW04bs102rPuAW0JAxyW0LQzy8') // 调试 直接获取openId
         this.getInfo()
       }
     },
@@ -228,6 +231,11 @@ export default {
           ...query,
           isReady: true
         }
+      })
+    },
+    changeTabbar (name, title) {
+      this.$store.dispatch('setNowTab', {
+        nowTab: name
       })
     }
   }

@@ -24,7 +24,8 @@ const user = {
     recentBrand: getStorageByKey(recentBrandKey),
     configInfo: getStorageByKey(configInfoKey),
     violationInfo: getStorageByKey(violationInfoKey),
-    webInviteCode: getStorageByKey(webInviteCodeKey)
+    webInviteCode: getStorageByKey(webInviteCodeKey),
+    nowTab: ''
   },
 
   mutations: {
@@ -57,6 +58,9 @@ const user = {
     },
     SET_WEBINVITECODE (state) {
       state.webInviteCode = getStorageByKey(webInviteCodeKey)
+    },
+    SET_NOWTAB (state, nowTab) {
+      state.nowTab = nowTab
     }
   },
   actions: {
@@ -99,6 +103,9 @@ const user = {
     setWebInviteCode ({ commit }, { webInviteCode }) {
       setStorageByKey(webInviteCodeKey, webInviteCode)
       commit('SET_WEBINVITECODE')
+    },
+    setNowTab ({ commit }, { nowTab }) {
+      commit('SET_NOWTAB', nowTab)
     }
   }
 }

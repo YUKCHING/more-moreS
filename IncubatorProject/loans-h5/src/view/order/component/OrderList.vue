@@ -27,7 +27,7 @@ export default {
   methods: {
     selectCard (item) {
       this.$router.push({
-        path: '/businessdetail',
+        path: '/orderinit',
         query: {
           id: '123'
         }

@@ -54,7 +54,7 @@ export default {
           str = '超时未处理，订单已取消！'
           break
         case 2:
-          str = '订单初待提交'
+          str = '订单待提交'
           break
       }
       return str
