@@ -74,7 +74,7 @@ import { createQrCode, uploadImageRequest } from '@/apis/api.js'
 import imgProcessor from '@/common/js/ImageProcessor.js'
 import jrQrcode from 'jr-qrcode'
 import html2canvas from 'html2canvas'
-// import initLoginCheckInfo from '@/common/js/login.js'
+import initLoginCheckInfo from '@/common/js/login.js'
 import QrOverlay from '@/components/QrOverlay'
 export default {
   components: {
@@ -101,24 +101,24 @@ export default {
   },
   methods: {
     init () {
-      // let title = '泰诺汽车平台-邀请粉丝'
-      // let des = '超10款车贷产品，总有一款适合您！做车贷，找泰诺。'
-      // if (!window.isReady) {
-      //   initLoginCheckInfo(this.$route).then(info => {
-      //     if (info.hasOwnProperty('code') && info.code === -1000104) {
-      //       this.bus.$emit('showQrOverlay')
-      //       return
-      //     }
-      //     // 分享设置
-      //     let shareLink = 'http://api.tainuocar.com/home/' + this.$route.name + '?invite=' + this.$store.getters.userInfo['invite_code']
-      //     this.initWxShare(window.shareUrl, title, des, shareLink)
-      //     window.isReady = true
-      //   })
-      // } else {
-      //   // 分享设置
-      //   let shareLink = 'http://api.tainuocar.com/home/' + this.$route.name + '?invite=' + this.$store.getters.userInfo['invite_code']
-      //   this.initWxShare(window.shareUrl, title, des, shareLink)
-      // }
+      let title = '泰诺汽车平台-邀请粉丝'
+      let des = '超10款车贷产品，总有一款适合您！做车贷，找泰诺。'
+      if (!window.isReady) {
+        initLoginCheckInfo(this.$route).then(info => {
+          if (info && info.code === -1000104) {
+            this.bus.$emit('showQrOverlay')
+            return
+          }
+          // 分享设置
+          let shareLink = 'http://api.tainuocar.com/home/' + this.$route.name + '?invite=' + this.$store.getters.userInfo['invite_code']
+          this.initWxShare(window.shareUrl, title, des, shareLink)
+          window.isReady = true
+        })
+      } else {
+        // 分享设置
+        let shareLink = 'http://api.tainuocar.com/home/' + this.$route.name + '?invite=' + this.$store.getters.userInfo['invite_code']
+        this.initWxShare(window.shareUrl, title, des, shareLink)
+      }
 
       this.getCode()
     },

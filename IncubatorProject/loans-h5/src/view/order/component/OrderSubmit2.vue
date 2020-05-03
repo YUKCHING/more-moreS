@@ -8,6 +8,9 @@
         </div>
       </div>
       <div class="content">
+        <div>
+          <order-step :list="list" :active="active"></order-step>
+        </div>
         <div class="info-label">
           <span class="label">订单状态</span>
           <p class="value">初始化</p>
@@ -56,7 +59,7 @@
       <div class="title">
         <span>系统初筛</span>
         <div class="right" @click="screenAction">
-          审核系统初筛
+          查看
           <img src="@/assets/icon/icon-arrow-right2.png">
         </div>
       </div>
@@ -79,6 +82,22 @@
         </div>
       </div>
     </div>
+    <div class="panel">
+      <div class="title">
+        <span>佣金分配</span>
+      </div>
+      <div class="content setting">
+        <van-field v-model="number" type="number" label="高级会员" placeholder="请输入百分比">
+          <span slot="right-icon">%</span>
+        </van-field>
+        <van-field v-model="number" type="number" label="会员" placeholder="请输入百分比">>
+          <span slot="right-icon">%</span>
+        </van-field>
+        <van-field v-model="number" type="number" label="粉丝" placeholder="请输入百分比">>
+          <span slot="right-icon">%</span>
+        </van-field>
+      </div>
+    </div>
     <div class="buttonPanel">
       <van-button class="button1" disabled @click="assignControl">指派内控</van-button>
       <van-button class="button2" disabled type="danger" @click="submitIncomming">提交进件</van-button>
@@ -86,10 +105,19 @@
   </div>
 </template>
 <script>
+import OrderStep from './OrderStep'
 export default {
+  components: {
+    OrderStep
+  },
   data () {
     return {
-      otherCost: ''
+      list: [
+        '待提交', '已提交', '已批复', '已签约', '已放款'
+      ],
+      active: 1,
+      otherCost: '',
+      number: '1%'
     }
   },
   methods: {
@@ -130,7 +158,7 @@ export default {
     display flex
     justify-content space-around
     align-items center
-    margin-top 40px
+    margin 40px 0
 
     .van-button
       width 40%
@@ -142,7 +170,7 @@ export default {
     .button2
       background #EE5150
 
-  .panel
+  .panel /deep/
     border-top 10px solid #F2F3F5
     background #ffffff
 
@@ -249,4 +277,15 @@ export default {
               height imageWidth
               border-radius 5px
               margin-right 10px
+
+    .setting
+      .van-field__label
+        text-align right
+        width 60px
+        margin-right 10px
+
+      .van-field__control
+        background rgba(245, 245, 245, 1)
+        text-align center
+        padding 2px
 </style>

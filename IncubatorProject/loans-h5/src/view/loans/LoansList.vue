@@ -44,7 +44,7 @@ export default {
       let des = '超10款车贷产品\r\n总有一款适合您!'
       if (!window.isReady) {
         initLoginCheckInfo(this.$route).then(info => {
-          if (info.code === -1000104) {
+          if (info && info.code === -1000104) {
             this.bus.$emit('showQrOverlay')
             return
           }

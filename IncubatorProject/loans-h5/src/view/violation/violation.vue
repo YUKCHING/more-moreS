@@ -10,7 +10,7 @@
         <van-field
           v-model="vin"
           placeholder="请输入17位VIN码"
-          :rules="[{ required: true, message: '请输入17位VIN码' }]"
+          :rules="[{ required: false, message: '请输入17位VIN码', trigger: 'onBlur' }]"
           class="border-bottom"
           clearable
         >
@@ -27,7 +27,7 @@
         <van-field
           v-model="engine_no"
           placeholder="请输入发动机号"
-          :rules="[{ required: true, message: '请输入发动机号' }]"
+          :rules="[{ required: false, message: '请输入发动机号' }]"
           class="border-bottom"
           clearable
         >
@@ -94,7 +94,6 @@ export default {
   },
   beforeCreate () {
     window.shareUrl = location.href.split('#')[0]
-    console.log('beforeCreate ', window.shareUrl)
   },
   created () {
     this.init()
@@ -105,7 +104,7 @@ export default {
       let des = '一键识别，有违章，早知道，免费查询，官方同步。'
       if (!window.isReady) {
         initLoginCheckInfo(this.$route).then(info => {
-          if (info.code === -1000104) {
+          if (info && info.code === -1000104) {
             this.bus.$emit('showQrOverlay')
             return
           }
@@ -204,8 +203,8 @@ export default {
     .van-cell
       padding 0
 
-      .van-field__error-message
-        display none
+      // .van-field__error-message
+      //   display none
 
     .van-cell:not(:last-child)::after
       display none

@@ -238,6 +238,30 @@ const router = new Router({
       }
     },
     {
+      path: '/ordersubmit2',
+      name: 'ordersubmit2',
+      component: resolve => require(['@/view/order/component/OrderSubmit2'], resolve),
+      meta: {
+        title: '订单'
+      }
+    },
+    {
+      path: '/ordersubmit3',
+      name: 'ordersubmit3',
+      component: resolve => require(['@/view/order/component/OrderSubmit3'], resolve),
+      meta: {
+        title: '订单'
+      }
+    },
+    {
+      path: '/orderreply',
+      name: 'orderreply',
+      component: resolve => require(['@/view/order/component/OrderReply'], resolve),
+      meta: {
+        title: '订单审批'
+      }
+    },
+    {
       path: '/recordprocess',
       name: 'recordprocess',
       component: resolve => require(['@/view/order/component/OrderRecordDetail'], resolve),
@@ -249,6 +273,14 @@ const router = new Router({
       path: '/systemscreen',
       name: 'systemscreen',
       component: resolve => require(['@/view/order/component/SystemScreen'], resolve),
+      meta: {
+        title: '系统初筛'
+      }
+    },
+    {
+      path: '/systemscreen2',
+      name: 'systemscreen2',
+      component: resolve => require(['@/view/order/component/SystemScreen2'], resolve),
       meta: {
         title: '系统初筛'
       }

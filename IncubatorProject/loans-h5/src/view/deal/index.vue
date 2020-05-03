@@ -10,7 +10,7 @@
         class="orderItem"
         v-for="(item, index) in dealList"
         :key="index">
-        <div class="block">{{packagePhoneNumber(item.phone)}}</div>
+        <div class="block">{{packagePhoneNumber(item.mobile)}}</div>
         <div class="block">{{item.createTime}}</div>
         <div class="block">
           <div class="stealButton" @click="stealDealAction(item)">抢单</div>
@@ -25,6 +25,7 @@
   </div>
 </template>
 <script>
+import { getPublicOrder, grabPublicOrder } from '@/apis/api.js'
 export default {
   data () {
     return {
@@ -45,6 +46,9 @@ export default {
       ]
     }
   },
+  created () {
+    this.getList()
+  },
   methods: {
     stealDealAction (item) {
       console.log(item)
@@ -52,6 +56,44 @@ export default {
         path: '/sucpage',
         query: {
           style: 2
+        }
+      })
+
+      let test = true
+      if (test) {
+        return
+      }
+
+      let req = {
+        order_id: item.id
+      }
+      grabPublicOrder(req).then(res => {
+        if (res.code === 0) {
+          this.$router.push({
+            path: '/sucpage',
+            query: {
+              style: 2
+            }
+          })
+        } else {
+          this.toast('抢单失败')
+        }
+      })
+    },
+    getList () {
+      getPublicOrder({}).then(res => {
+        console.log(res)
+        if (res.code === 0) {
+          if (res.data.length > 0) {
+            this.dealList = res.data.map(ele => {
+              return {
+                ...ele,
+                createTime: ''
+              }
+            })
+          } else {
+            this.dealList = []
+          }
         }
       })
     }

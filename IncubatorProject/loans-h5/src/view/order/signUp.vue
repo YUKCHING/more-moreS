@@ -17,19 +17,24 @@
       </van-swipe-item>
     </van-swipe>
     <div class="middle">
-      <van-field placeholder="您的姓名"/>
-      <van-field placeholder="手机号码"/>
-      <van-field placeholder="请输入验证码">
+      <van-field v-model="username" clearable placeholder="您的姓名"/>
+      <van-field v-model="mobile" clearable placeholder="手机号码"/>
+      <van-field v-model="verify_code" clearable placeholder="请输入验证码">
         <template #button>
-          <van-button size="small" type="danger" style="border-radius: 15px; background: #F15F2A" @click="getCodeAction">获取验证码</van-button>
+          <van-button size="small" type="danger" @click="getCodeAction"
+          :style="{
+            borderRadius: '15px',
+            background: codeTime > 0 ? 'rgba(0,0,0,.3)' : '#F15F2A',
+            border: 'none'
+          }">{{codeTime > 0 ? '(' + codeTime + ')s' : '获取验证码'}}</van-button>
         </template>
       </van-field>
-      <van-field placeholder="预约金额(万元)">
+      <van-field v-model="amount" clearable placeholder="预约金额(万元)">
         <template #button>
           <span style="color: #C0C0C0; font-size: 1rem">最高70万元</span>
         </template>
       </van-field>
-      <van-button size="big" type="danger" style="border-radius: 22px; width: 100%;margin-top: 1.5rem;background: #F15F2A" @click="getCodeAction">我要预约</van-button>
+      <van-button size="big" type="danger" style="border-radius: 22px; width: 100%;margin-top: 1.5rem;background: #F15F2A" @click="loanAction">我要预约</van-button>
     </div>
     <div class="middle">
       <p class="title">贷款流程</p>
@@ -80,6 +85,7 @@
 </template>
 <script>
 import $ from 'jquery'
+import { postLoanApply, sendVerifyCode } from '@/apis/api.js'
 export default {
   data () {
     return {
@@ -105,7 +111,14 @@ export default {
         {title: '深圳', phone: '13713697967', num: 7.6}
       ],
       scrollTimer: '',
-      swipeHeight: '0px'
+      codeTimer: '',
+      codeTime: 0,
+      swipeHeight: '0px',
+      username: '',
+      mobile: '',
+      amount: '',
+      verify_code: '',
+      invite_code: ''
     }
   },
   created () {
@@ -115,6 +128,7 @@ export default {
   },
   destroyed () {
     clearInterval(this.scrollTimer)
+    clearInterval(this.codeTimer)
   },
   mounted () {
     this.scrollAction()
@@ -132,7 +146,50 @@ export default {
       }, 1500)
     },
     getCodeAction () {
+      console.log(this.mobile)
+      if (this.codeTime > 0) {
+        return
+      }
+      let req = {
+        phone: this.mobile,
+        scene: 'bind_phone'
+      }
 
+      sendVerifyCode(req).then(res => {
+        console.log(res)
+        if (res.code === 0) {
+          this.tSuccess('获取成功')
+          this.codeTime = 60
+          this.codeTimer = setInterval(() => {
+            this.codeTime--
+            if (this.codeTime <= 0) {
+              clearInterval(this.codeTimer)
+            }
+          }, 1000)
+        }
+      })
+    },
+    loanAction () {
+      let req = {
+        username: this.username,
+        mobile: this.mobile,
+        amount: this.amount,
+        invite_code: this.$store.getters.webInviteCode,
+        verify_code: this.verify_code
+      }
+      postLoanApply(req).then(res => {
+        console.log(res)
+        if (res.code === 0) {
+          this.tSuccess('预约成功')
+          this.$store.dispatch('setNowTab', {
+            nowTab: 3
+          }).then(() => {
+            this.$router.push({
+              path: '/index'
+            })
+          })
+        }
+      })
     }
   }
 }

@@ -112,7 +112,7 @@ export default {
       let des = '基于海量真实成交记录，采用人工智能和大数据，保证估值的真实可靠性。'
       if (!window.isReady) {
         initLoginCheckInfo(this.$route).then(info => {
-          if (info.code === -1000104) {
+          if (info && info.code === -1000104) {
             console.log('emit showQrOverlay')
             this.bus.$emit('showQrOverlay')
             return

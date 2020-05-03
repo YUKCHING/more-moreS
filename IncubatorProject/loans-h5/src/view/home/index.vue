@@ -9,31 +9,31 @@
         <my v-else-if="active === 4" :info="memberInfo"></my>
       </div>
       <van-tabbar v-model="active" active-color="#FE3525" @change="changeTabbar">
-        <van-tabbar-item>
+        <van-tabbar-item :name="0">
           <span>首页</span>
             <template #icon="props">
               <img :src="props.active ? tabIcon1.active : tabIcon1.inactive"/>
             </template>
         </van-tabbar-item>
-        <van-tabbar-item>
+        <van-tabbar-item v-if="isShowDeal" :name="1">
           <span>交易</span>
             <template #icon="props">
               <img :src="props.active ? tabIcon2.active : tabIcon2.inactive"/>
             </template>
         </van-tabbar-item>
-        <van-tabbar-item>
+        <van-tabbar-item :name="2">
           <span>{{gradeName}}</span>
             <template #icon="props">
               <img :src="props.active ? tabIcon3.active : tabIcon3.inactive"/>
             </template>
         </van-tabbar-item>
-        <van-tabbar-item>
+        <van-tabbar-item :name="3">
           <span>订单</span>
             <template #icon="props">
               <img :src="props.active ? tabIcon4.active : tabIcon4.inactive"/>
             </template>
         </van-tabbar-item>
-        <van-tabbar-item>
+        <van-tabbar-item :name="4">
           <span>我的</span>
             <template #icon="props">
               <img :src="props.active ? tabIcon5.active : tabIcon5.inactive"/>
@@ -103,6 +103,10 @@ export default {
           break
       }
       return name
+    },
+    isShowDeal () {
+      // return this.memberInfo.grade === 2
+      return true
     }
   },
   data () {
@@ -151,7 +155,7 @@ export default {
       }
       if (this.isProduction) {
         initLoginCheckInfo(this.$route, 'index').then(info => {
-          if (info.code === -1000104) {
+          if (info && info.code === -1000104) {
             this.bus.$emit('showQrOverlay')
             return
           }
@@ -162,7 +166,7 @@ export default {
           window.isReady = true
         })
       } else {
-        // this.getOpenId('021LQzyW04bs102rPuAW0JAxyW0LQzy8') // 调试 直接获取openId
+        // this.getOpenId('071LsKJC1fsKU60U2YHC1OTVJC1LsKJ0') // 调试 直接获取openId
         this.getInfo()
       }
     },
