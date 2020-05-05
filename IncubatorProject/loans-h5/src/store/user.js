@@ -11,6 +11,7 @@ const recentBrandKey = 'recentBrand_key'
 const configInfoKey = 'configInfo_key'
 const violationInfoKey = 'violationInfo_key'
 const webInviteCodeKey = 'webInviteCode_key'
+const carSearchInfoKey = 'carSearchInfo_key'
 
 const user = {
   state: {
@@ -25,7 +26,8 @@ const user = {
     configInfo: getStorageByKey(configInfoKey),
     violationInfo: getStorageByKey(violationInfoKey),
     webInviteCode: getStorageByKey(webInviteCodeKey),
-    nowTab: ''
+    nowTab: '',
+    carSearchInfo: getStorageByKey(carSearchInfoKey)
   },
 
   mutations: {
@@ -61,6 +63,9 @@ const user = {
     },
     SET_NOWTAB (state, nowTab) {
       state.nowTab = nowTab
+    },
+    SET_CARSEARCHINFO (state, carSearchInfo) {
+      state.carSearchInfo = getStorageByKey(carSearchInfoKey)
     }
   },
   actions: {
@@ -106,6 +111,10 @@ const user = {
     },
     setNowTab ({ commit }, { nowTab }) {
       commit('SET_NOWTAB', nowTab)
+    },
+    setCarSearchInfo ({ commit }, { carSearchInfo }) {
+      setStorageByKey(carSearchInfoKey, carSearchInfo)
+      commit('SET_CARSEARCHINFO')
     }
   }
 }

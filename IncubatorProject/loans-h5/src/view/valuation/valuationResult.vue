@@ -168,6 +168,7 @@ export default {
     },
     evaluateAction () {
       let req = {
+        evaluate_provider: 2,
         brand_id: this.info.brand_id,
         brand_name: this.info.brand_name,
         series_id: this.info.series_id,

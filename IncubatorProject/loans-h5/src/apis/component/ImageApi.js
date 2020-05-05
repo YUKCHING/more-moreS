@@ -45,3 +45,27 @@ export function uploadDriverLicense (data) {
     return result
   })
 }
+
+// 识别身份证
+export function uploadIdCard (data) {
+  let api = process.env.NODE_ENV === 'production' ? '' : '/api'
+  tLoading('上传中...')
+  return axios({
+    baseURL: Config.apiUrl,
+    url: api + '/ocr/id-card?token=' + store.getters.token,
+    method: 'post',
+    data: data,
+    dataType: 'text',
+    header: {
+      'Content-Type': 'multipart/format-data'
+    }
+  }).then(res => {
+    let result = res.data
+    if (result.code !== 0) {
+      toast(result.msg)
+    } else {
+      tClear()
+    }
+    return result
+  })
+}

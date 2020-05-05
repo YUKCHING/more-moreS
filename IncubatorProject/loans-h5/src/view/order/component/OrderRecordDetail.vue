@@ -7,7 +7,7 @@
           客户名称
         </span>
         <span class="value" style="border-bottom: none">
-          张珊
+          {{info.user_name}}
         </span>
       </div>
       <div class="labelBlock">
@@ -15,37 +15,62 @@
           产品名称
         </span>
         <span class="value">
-          平安车抵贷
+          {{product.product_name || '-'}}
         </span>
       </div>
     </div>
-    <div class="step-block">
-      <van-steps
-        direction="vertical"
-        :active="-1">
-        <van-step
-          v-for="item in record"
-          :key="item.id">
-          <div
-            class="step-icon"
-            slot="inactive-icon">
-            <div class="step-icon-center"></div>
-          </div>
-          <p class="step-label">{{item.Location}}</p>
-          <p class="step-label">{{item.Time}}</p>
-          <p class="step-label">惩罚：扣分{{item.degree}},罚款{{item.count}}元</p>
-          <p class="step-label">原因：{{item.Reason}}</p>
-          <p class="step-label">备注：null</p>
-        </van-step>
-      </van-steps>
-    </div>
+    <order-step2 :list="record"></order-step2>
   </div>
 </template>
 <script>
+import { getLoanOrderRecord, getLoanOrderInfo } from '@/apis/api.js'
+import OrderStep2 from './OrderStep2'
 export default {
+  components: {
+    OrderStep2
+  },
   data () {
     return {
-      record: []
+      record: [],
+      info: {},
+      product: {}
+    }
+  },
+  created () {
+    this.getInfo()
+    this.getDetail()
+  },
+  methods: {
+    getInfo () {
+      let req = {
+        order_id: this.$route.query.order_id
+      }
+      getLoanOrderInfo(req).then(res => {
+        console.log(res)
+        if (res.code === 0) {
+          this.info = {
+            ...res.data
+          }
+          this.product = res.data.product
+        }
+      })
+    },
+    getDetail () {
+      let req = {
+        order_id: this.$route.query.order_id
+      }
+      getLoanOrderRecord(req).then(res => {
+        console.log(res)
+        if (res.code === 0) {
+          if (res.data) {
+            this.record = res.data.map(ele => {
+              return {
+                ...ele
+              }
+            })
+          }
+        }
+      })
     }
   }
 }
@@ -86,27 +111,4 @@ export default {
 
       .value
         flex-grow 1
-
-  .step-block
-    margin-top 1rem
-
-    .step-icon
-      width 1.5rem
-      height 1.5rem
-      border-radius 50%
-      background rgba(165, 155, 154, .28)
-      display inline-flex
-      justify-content center
-      align-items center
-
-      .step-icon-center
-        display inline-block
-        width .67rem
-        height .67rem
-        border-radius 50%
-        background rgba(167, 159, 158, 1)
-
-    .step-label
-      color #030303
-      font-size 1.17rem
 </style>

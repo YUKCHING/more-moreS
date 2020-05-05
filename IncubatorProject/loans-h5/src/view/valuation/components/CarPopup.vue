@@ -1,13 +1,14 @@
 <template>
   <div class="car-popup">
     <div class="search-topbar">
-      <van-field v-model="searchKey" :placeholder="searchPlaceholder" clearable>
+      <van-field v-model="searchKey" :placeholder="searchPlaceholder" @focus="searchBarFocus" clearable>
         <van-icon slot="left-icon" color="#F9CFD0" name="search" />
-        <span slot="button" class="search-button" @click="searchButtonAction">返回</span>
+        <span slot="button" class="search-button" @click="searchButtonAction" v-show="!searchState">返回</span>
       </van-field>
+      <span class="cancel" v-show="searchState" @click="cancelSearchState">取消</span>
     </div>
     <div class="content-block" id="first-content">
-      <van-index-bar :index-list="brandIndexList" :sticky="false">
+      <van-index-bar :index-list="brandIndexList" :sticky="false" v-show="!searchState">
         <div v-for="(key, i) in brandIndexList" :key="key">
           <div v-if="i === 0 && (brandIndexList.length !== 1)">
             <van-index-anchor :index="key">最近浏览</van-index-anchor>
@@ -26,12 +27,55 @@
               </span>
             </div>
           </div>
+          <div v-else-if="i === 1 && (brandIndexList.length !== 1)">
+            <van-index-anchor :index="key">热门</van-index-anchor>
+            <div class="hot-block">
+              <div
+                class="hot-item"
+                v-for="item in brandData[key]"
+                :key="item.name"
+                @click="selectBrandAction(item)">
+                <img :src="item.picurl">
+                <span>{{item.name}}</span>
+              </div>
+            </div>
+          </div>
           <div v-else>
             <van-index-anchor :index="key" />
-            <van-cell v-for="brand in brandData[key]" :key="brand.id" :title="brand.name" @click="selectBrandAction(brand)"/>
+            <van-cell v-for="brand in brandData[key]" :key="brand.id" :title="brand.name" @click="selectBrandAction(brand)">
+              <img slot="icon" :src="brand.picurl" style="width: 30px;  height: 30px; margin-right: 10px" />
+            </van-cell>
           </div>
         </div>
       </van-index-bar>
+      <div class="search-state-content" v-show="searchState">
+        <div v-show="searchResults.length === 0">
+          <div class="search-hot-block">
+            <p class="title">热门搜索</p>
+            <div class="hot-content">
+              <span
+                class="hot-item"
+                v-for="(item, index) in hotSearch"
+                :key="index"
+                @click="selectHistoryItem(item)"
+              >{{item}}</span>
+            </div>
+          </div>
+          <div class="search-history-block">
+            <p class="title">
+              历史搜索
+              <img class="delete" src="@/assets/icon/icon-rubbish.png" @click="deleteHistorySearch">
+            </p>
+            <van-cell v-for="(item, index) in searchHistory" :key="index" :title="item" @click="selectHistoryItem(item)">
+            </van-cell>
+          </div>
+        </div>
+        <div v-show="searchResults.length > 0">
+          <van-cell v-for="item in searchResults" :key="item.id" :title="item.name" @click="selectSearchItem(item)">
+            <img v-if="item.type === 'brand'" slot="icon" :src="item.picurl" style="width: 30px; height: 30px; margin-right: 10px" />
+          </van-cell>
+        </div>
+      </div>
       <van-popup
         get-container="#first-content"
         v-model="showSeriesPopup"
@@ -79,14 +123,14 @@
   </div>
 </template>
 <script>
-import { evaluateBrandRequest, evaluateSeriesRequest, evaluateModelsRequest } from '@/apis/api.js'
+import { evaluateBrandRequest, evaluateSeriesRequest, evaluateModelsRequest, evaluationSearchGlobal } from '@/apis/api.js'
 import commonJs from '@/common/js/public.js'
 export default {
   computed: {
     searchPlaceholder () {
       let key = ''
       if (this.state === 1) {
-        key = '品牌'
+        key = ''
       } else if (this.state === 2) {
         key = '系列'
       } else {
@@ -135,7 +179,13 @@ export default {
       searchKey: '',
       recentBrand: [],
       showSeriesPopup: false,
-      showModelPopup: false
+      showModelPopup: false,
+      hotSearch: [
+        '大众', '丰田', '奥迪', '阿斯顿-马丁', '奔驰', '别克', '雪佛兰', '宝马', '克莱斯勒'
+      ],
+      searchHistory: [],
+      searchResults: [],
+      searchState: false
     }
   },
   created () {
@@ -146,10 +196,13 @@ export default {
       if (this.searchKey) {
         this.searchDataAction()
       }
-    }, 300),
+    }, 1000),
     init () {
       if (this.$store.getters.recentBrand) {
         this.recentBrand = JSON.parse(this.$store.getters.recentBrand)
+      }
+      if (this.$store.getters.carSearchInfo) {
+        this.searchHistory = this.$store.getters.carSearchInfo
       }
       this.loadBrand()
     },
@@ -157,11 +210,19 @@ export default {
       if (this.state === 1) {
         this.$emit('select')
         this.resetData()
+      } else if (this.state === 2) {
+        this.showSeriesPopup = false
+        this.state = 1
       } else {
-        this.state--
+        this.showModelPopup = false
+        this.state = this.showSeriesPopup ? 2 : 1
       }
     },
     searchDataAction () {
+      if (this.searchState) {
+        this.searchGlobal()
+        return
+      }
       let keys = this.searchKey.split(' ').filter(ele => ele !== '')
       if (this.state === 1) {
         this.searchBrand(keys)
@@ -169,6 +230,78 @@ export default {
         this.searchSeries(keys)
       } else if (this.state === 3) {
         this.searchModel(keys)
+      }
+    },
+    cancelSearchState () {
+      this.searchState = false
+      this.searchResults = []
+      this.showSeriesPopup = false
+      this.showModelPopup = false
+      this.originData = []
+      this.state = 1
+    },
+    searchGlobal () {
+      let newIndex = this.searchHistory.findIndex(ele => ele === this.searchKey)
+
+      if (newIndex === -1) {
+        this.searchHistory.unshift(this.searchKey)
+        this.$store.dispatch('setCarSearchInfo', {
+          carSearchInfo: JSON.stringify(this.searchHistory)
+        }).then(() => {
+          this.searchHistory = this.$store.getters.carSearchInfo
+        })
+      }
+
+      let req = {
+        evaluate_provider: 2,
+        keyword: this.searchKey
+      }
+      this.searchResults = []
+      evaluationSearchGlobal(req).then(res => {
+        if (res.code === 0) {
+          if (res.data.brands) {
+            res.data.brands.forEach(brand => {
+              this.searchResults.push({
+                id: brand.id,
+                name: brand.name,
+                picurl: brand.picurl || '',
+                type: 'brand'
+              })
+              if (brand.series.length > 0) {
+                brand.series.forEach(series => {
+                  this.searchResults.push({
+                    id: series.id,
+                    name: series.name,
+                    type: 'series',
+                    brandId: brand.id,
+                    brandName: brand.name
+                  })
+                })
+              }
+            })
+          }
+        }
+      })
+    },
+    selectHistoryItem (item) {
+      this.searchKey = item
+    },
+    selectSearchItem (item) {
+      if (this.state !== 1) {
+        return
+      }
+      if (item.type === 'brand') {
+        this.state = 1
+        this.tLoading()
+        this.selectBrandAction(item)
+      } else if (item.type === 'series') {
+        this.state = 2
+        this.originData.push({
+          id: item.brandId,
+          name: item.brandName
+        })
+        this.tLoading()
+        this.selectSeriesAction(item)
       }
     },
     searchBrand (keys) {
@@ -187,8 +320,7 @@ export default {
       this.brandData = {
         '': resultArr.map(ele => {
           return {
-            id: ele.id,
-            name: ele.brandName
+            ...ele
           }
         })
       }
@@ -240,19 +372,34 @@ export default {
       }
       this.modelIndexList = ['']
     },
+    searchBarFocus (event) {
+      if (this.state === 1) {
+        this.searchState = true
+      }
+    },
+    deleteHistorySearch () {
+      this.$store.dispatch('setCarSearchInfo', {
+        carSearchInfo: '[]'
+      }).then(() => {
+        this.searchHistory = this.$store.getters.carSearchInfo
+      })
+    },
     loadBrand () {
       this.brandIndexListBackup = []
       this.brandDataBackup = {}
       this.brandArrData = []
       this.brandIndexList = []
       this.brandData = {}
-      evaluateBrandRequest({}).then(res => {
+      evaluateBrandRequest({
+        evaluate_provider: 2
+      }).then(res => {
         if (res.code === 0) {
           let arr = res.data.map(ele => {
             return ele.brandNamePinyin
           })
 
           this.brandIndexListBackup = Array.from(new Set(arr)).sort()
+          this.brandIndexListBackup.unshift('热')
           this.brandIndexListBackup.unshift('最')
 
           this.brandIndexListBackup.forEach((ele, index) => {
@@ -263,12 +410,22 @@ export default {
             }
           })
 
+          let hotBrand = ['大众', '丰田', '本田', '奥迪', '宝马', '奔驰']
           res.data.forEach(ele => {
-            this.brandDataBackup[ele.brandNamePinyin].push({
+            let item = {
               id: ele.id,
-              name: ele.brandName
+              name: ele.brandName,
+              picurl: ele.picurl
+            }
+            if (hotBrand.indexOf(ele.brandName) !== -1) {
+              this.brandDataBackup['热'].push(item)
+            }
+
+            this.brandDataBackup[ele.brandNamePinyin].push(item)
+            this.brandArrData.push({
+              ...ele,
+              ...item
             })
-            this.brandArrData.push({...ele})
           })
 
           this.brandIndexList = this.brandIndexListBackup
@@ -278,6 +435,7 @@ export default {
     },
     loadBrandSeries (brand) {
       let req = {
+        evaluate_provider: 2,
         brand_id: brand
       }
       this.seriesIndexListBackup = []
@@ -286,6 +444,7 @@ export default {
       this.seriesIndexList = []
       this.seriesData = {}
       evaluateSeriesRequest(req).then(res => {
+        this.tClear()
         if (res.code === 0) {
           res.data.forEach(ele => {
             this.seriesIndexListBackup.push(ele.manufacturer)
@@ -310,7 +469,7 @@ export default {
             })
           }
 
-          this.state++
+          this.state = 2
 
           this.seriesIndexList = this.seriesIndexListBackup
           this.seriesData = this.seriesDataBackup
@@ -321,6 +480,7 @@ export default {
     },
     loadSeriesModels (series) {
       let req = {
+        evaluate_provider: 2,
         series_id: series
       }
       this.modelIndexListBackup = []
@@ -332,25 +492,26 @@ export default {
         this.modelIndexListBackup = []
         this.modelDataBackup = {}
         this.modelArrData = []
-
+        this.tClear()
         if (res.code === 0) {
-          let arr = res.data.map(ele => {
-            let text = ele.model
-            let index = text.indexOf('款')
-            let key = index === -1 ? '其它款' : text.slice(index - 4, index + 1)
-            return key
+          let yearArr = res.data.map(ele => {
+            // let text = ele.model
+            // let index = text.indexOf('款')
+            // let key = index === -1 ? '其它款' : text.slice(index - 4, index + 1)
+            // return key
+            return ele.makeyear
           })
-          this.modelIndexListBackup = Array.from(new Set(arr)).sort((a, b) => a - b)
-
+          this.modelIndexListBackup = Array.from(new Set(yearArr)).sort((a, b) => a - b)
           this.modelDataBackup = {}
           this.modelIndexListBackup.forEach((ele, index) => {
             this.modelDataBackup[ele] = []
           })
 
           res.data.forEach(ele => {
-            let text = ele.model
-            let index = text.indexOf('款')
-            let key = index === -1 ? '其它款' : text.slice(index - 4, index + 1)
+            // let text = ele.model
+            // let index = text.indexOf('款')
+            // let key = index === -1 ? '其它款' : text.slice(index - 4, index + 1)
+            let key = ele.makeyear
             this.modelDataBackup[key].push({
               id: ele.id,
               name: ele.model
@@ -361,21 +522,29 @@ export default {
           this.modelIndexList = this.modelIndexListBackup
           this.modelData = this.modelDataBackup
 
-          this.state++
+          this.state = 3
           this.showModelPopup = true
         }
       })
     },
     seriesBackAction () {
       if (this.state === 2) {
-        this.state--
+        this.state = 1
         this.showSeriesPopup = false
         this.searchKey = ''
+        this.originData.splice(-1, 1)
       }
     },
     modelBackAction () {
       if (this.state === 3) {
         this.state--
+        if (this.showSeriesPopup) {
+          this.state = 2
+          this.originData.splice(-2, 2)
+        } else {
+          this.state = 1
+          this.originData.splice(-1, 1)
+        }
         this.showModelPopup = false
         this.searchKey = ''
       }
@@ -421,6 +590,8 @@ export default {
       this.searchKey = ''
       this.showSeriesPopup = false
       this.showModelPopup = false
+      this.searchState = false
+      this.searchResults = []
       this.loadBrand()
     }
   }
@@ -438,6 +609,8 @@ export default {
   .search-topbar {
     background: #E02020;
     padding: 7px 8px;
+    display: flex;
+    align-items: center;
 
     .van-cell {
       padding: 0;
@@ -445,10 +618,14 @@ export default {
 
     .van-field {
       display: inline-flex;
-      width: 100%;
+      flex-grow: 1;
       padding: 5px 7px 5px 12px;
       border-radius: 8px;
       background: rgba(255, 255, 255, .5);
+    }
+
+    .van-cell:not(:last-child)::after {
+      display: none;
     }
 
     input::-webkit-input-placeholder {
@@ -457,6 +634,14 @@ export default {
 
     .search-button {
       color: rgba(255, 255, 255, .6);
+    }
+
+    .cancel {
+      color: #ffffff;
+      font-size: 16px;
+      display: inline-block;
+      width: 10%;
+      margin-left: 10px;
     }
   }
 
@@ -479,6 +664,28 @@ export default {
         background-color: rgba(0, 0, 0, 0.1);
         padding: 5px 17px;
         margin: 5px 10px 0px 0px;
+      }
+    }
+
+    .hot-block {
+      display: flex;
+
+      align-items: center;
+      flex-wrap: nowrap;
+      box-sizing: border-box;
+      padding: 10px 15px;
+
+      .hot-item {
+        display: inline-flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        font-size: 14px;
+        margin-right: 15px;
+
+        img {
+          width: 36px;
+        }
       }
     }
 
@@ -538,6 +745,54 @@ export default {
           overflow: auto;
         }
 
+      }
+    }
+
+    .search-state-content {
+      height: 100%;
+      overflow: auto;
+
+      .search-hot-block {
+        padding: 24px 12px 0;
+
+        .title {
+          font-size: 16px;
+          font-weight: 600;
+        }
+
+        .hot-content {
+          padding: 8px 0px 16px;
+          display: flex;
+          align-items: center;
+          flex-wrap: wrap;
+          color: rgba(100, 100, 100, 1);
+          font-size: 11px;
+
+          .hot-item {
+            border-radius: 2px;
+            background-color: rgba(0, 0, 0, 0.1);
+            padding: 5px 17px;
+            margin: 8px 10px 0px 0px;
+          }
+        }
+      }
+
+      .search-history-block {
+        border-top: 10px solid #F2F3F5;
+
+        .title {
+          font-size: 16px;
+          font-weight: 600;
+          padding: 8px 12px;
+          border-bottom: 2px solid #F2F3F5;
+          display: flex;
+          align-items: center;
+
+          .delete {
+            width: 20px;
+            margin-left: auto;
+          }
+        }
       }
     }
   }

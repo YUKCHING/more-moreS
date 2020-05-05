@@ -20,7 +20,7 @@
     <div class="bottom">
       <span class="label">订单总数</span>
       <span class="total">{{dealList.length}}</span>
-      <van-button type="danger">开 始 接 单</van-button>
+      <van-button type="danger" icon="replay" @click="getList">刷 新</van-button>
     </div>
   </div>
 </template>
@@ -29,21 +29,7 @@ import { getPublicOrder, grabPublicOrder } from '@/apis/api.js'
 export default {
   data () {
     return {
-      orderTotal: 3,
-      dealList: [
-        {id: '1', phone: '13713697967', createTime: '2020-03-28'},
-        {id: '2', phone: '13713697967', createTime: '2020-03-28'},
-        {id: '3', phone: '13713697967', createTime: '2020-03-28'},
-        {id: '4', phone: '13713697967', createTime: '2020-03-28'},
-        {id: '5', phone: '13713697967', createTime: '2020-03-28'},
-        {id: '6', phone: '13713697967', createTime: '2020-03-28'},
-        {id: '7', phone: '13713697967', createTime: '2020-03-28'},
-        {id: '8', phone: '13713697967', createTime: '2020-03-28'},
-        {id: '9', phone: '13713697967', createTime: '2020-03-28'},
-        {id: '10', phone: '13713697967', createTime: '2020-03-28'},
-        {id: '11', phone: '13713697967', createTime: '2020-03-28'},
-        {id: '12', phone: '13713697967', createTime: '2020-03-28'}
-      ]
+      dealList: []
     }
   },
   created () {
@@ -51,21 +37,8 @@ export default {
   },
   methods: {
     stealDealAction (item) {
-      console.log(item)
-      this.$router.push({
-        path: '/sucpage',
-        query: {
-          style: 2
-        }
-      })
-
-      let test = true
-      if (test) {
-        return
-      }
-
       let req = {
-        order_id: item.id
+        order_id: item.order_id
       }
       grabPublicOrder(req).then(res => {
         if (res.code === 0) {
@@ -82,13 +55,12 @@ export default {
     },
     getList () {
       getPublicOrder({}).then(res => {
-        console.log(res)
         if (res.code === 0) {
           if (res.data.length > 0) {
             this.dealList = res.data.map(ele => {
               return {
                 ...ele,
-                createTime: ''
+                createTime: this.moment(ele.created_at).format('YYYY-MM-DD')
               }
             })
           } else {
@@ -182,5 +154,5 @@ export default {
       height 100%
       background #EE5150
       margin-left auto
-      width 55%
+      width 35%
 </style>

@@ -10,39 +10,44 @@
       <div class="content">
         <div class="info-label">
           <span class="label">订单状态</span>
-          <p class="value">初始化</p>
+          <span class="status">
+            {{getOrderStatusName(info.status)}}
+          </span>
+          <span class="value time">
+            计时{{info.expire_time}}
+          </span>
         </div>
         <div class="info-label">
           <span class="label">客户名称</span>
-          <p class="value">张珊</p>
+          <p class="value">{{info.user_name}}</p>
         </div>
         <div class="info-label">
           <span class="label">客户身份证号</span>
-          <p class="value">123123123</p>
+          <p class="value">{{info.id_card || '-'}}</p>
         </div>
         <div class="info-label">
           <span class="label">联系电话</span>
-          <p class="value">137136918838</p>
+          <p class="value">{{info.mobile || '-'}}</p>
         </div>
         <div class="button" @click="recordDetailAction">
           交易记录详情
         </div>
         <div class="loansBlock">
           <div class="loansTitle">
-            <span>产品标题</span>
+            <span>{{product.product_name || '-'}}</span>
             <div class="button">选择产品</div>
           </div>
           <div class="loansInfo">
             <div class="item">
-              <p>-</p>
+              <p>{{audit.amount ? audit.amount + '万元' : '-'}}</p>
               <p>审批额度</p>
             </div>
             <div class="item">
-              <p>-</p>
+              <p>{{audit.monthly_rate ? audit.monthly_rate + '%' : '-'}}</p>
               <p>月利率</p>
             </div>
             <div class="item">
-              <p>-</p>
+              <p>{{audit.time_limit || '-'}}</p>
               <p>申请期限</p>
             </div>
           </div>
@@ -55,9 +60,13 @@
     <div class="panel">
       <div class="title">
         <span>系统初筛</span>
-        <div class="right" @click="screenAction">
+        <div v-if="!isSetProduct" class="right" @click="screenAction(false)">
           审核系统初筛
           <img src="@/assets/icon/icon-arrow-right2.png">
+        </div>
+        <div v-else class="right" style="color: #78797A" @click="screenAction(true)">
+          查看
+          <img src="@/assets/icon/icon-arrow-right3.png">
         </div>
       </div>
       <div class="content">
@@ -65,47 +74,103 @@
           <div class="part">
             <p>身份证</p>
             <div class="imageBlock">
-              <div class="image"></div>
-              <div class="image"></div>
+              <div class="image">
+                <img @click="showImagePreview(0)" :src="screenInfo.id_card_front_img_url">
+              </div>
+              <div class="image">
+                <img @click="showImagePreview(1)" :src="screenInfo.id_card_back_img_url">
+              </div>
             </div>
           </div>
           <div class="part">
             <p>行驶证</p>
             <div class="imageBlock">
-              <div class="image"></div>
-              <div class="image"></div>
+              <div class="image">
+                <img @click="showImagePreview(2)" :src="screenInfo.vehicle_license_front_img_url">
+              </div>
+              <div class="image">
+                <img @click="showImagePreview(3)" :src="screenInfo.vehicle_license_duplicate_img_url">
+              </div>
             </div>
           </div>
         </div>
       </div>
     </div>
     <div class="buttonPanel">
-      <van-button class="button1" disabled @click="assignControl">指派内控</van-button>
-      <van-button class="button2" disabled type="danger" @click="submitIncomming">提交进件</van-button>
+      <van-button class="button1" :disabled="!isSetProduct" @click="assignControl">指派内控</van-button>
+      <van-button class="button2" :disabled="!isSetProduct" type="danger" @click="submitIncomming">提交进件</van-button>
     </div>
+    <van-image-preview v-model="showPreview" :images="showImages" :startPosition="previewIndex" @change="onChange">
+      <template v-slot:index>第{{ previewIndex + 1 }}页</template>
+    </van-image-preview>
   </div>
 </template>
 <script>
+import { getLoanOrderInfo } from '@/apis/api.js'
 export default {
   data () {
     return {
-      otherCost: ''
+      otherCost: '',
+      info: {},
+      product: {},
+      audit: {},
+      screenInfo: {},
+      showPreview: false,
+      showImages: '',
+      previewIndex: 0
     }
   },
+  computed: {
+    isSetProduct () {
+      return this.product.product_name
+    }
+  },
+  created () {
+    this.getInfo()
+  },
   methods: {
+    getInfo () {
+      let req = {
+        order_id: this.$route.query.order_id
+      }
+      getLoanOrderInfo(req).then(res => {
+        console.log(res)
+        if (res.code === 0) {
+          let date1 = this.moment(res.data.expire_in * 1000)
+          let date2 = this.moment(new Date())
+          let date3 = date1.diff(date2, 'minute')// 计算相差的分钟数
+          let h = Math.floor(date3 / 60)// 相差的小时数
+          let mm = date3 % 60// 计算相差小时后余下的分钟
+          this.info = {
+            ...res.data,
+            expire_time: h + ':' + mm
+          }
+          this.product = res.data.product
+          this.audit = res.data.audit
+          this.screenInfo = res.data.screen_info
+          this.showImages = [
+            this.screenInfo.id_card_front_img_url,
+            this.screenInfo.id_card_back_img_url,
+            this.screenInfo.vehicle_license_front_img_url,
+            this.screenInfo.vehicle_license_duplicate_img_url
+          ]
+        }
+      })
+    },
     recordDetailAction () {
       this.$router.push({
         path: '/recordprocess',
         query: {
-          id: '1312'
+          order_id: this.info.order_id
         }
       })
     },
-    screenAction () {
+    screenAction (val) {
       this.$router.push({
-        path: '/systemscreen',
+        path: '/systemscreen2',
         query: {
-          id: '1312'
+          set: val ? '1' : '0',
+          order_id: this.info.order_id
         }
       })
     },
@@ -117,6 +182,13 @@ export default {
     },
     submitIncomming () {
       console.log('提交进件')
+    },
+    showImagePreview (index) {
+      this.previewIndex = index
+      this.showPreview = true
+    },
+    onChange (index) {
+      this.previewIndex = index
     }
   }
 }
@@ -153,7 +225,8 @@ export default {
       padding 6px 10px
       background #E8E9EB
       color rgba(0, 0, 0, .5)
-      font-size .5rem
+      font-size 1rem
+      font-weight 600
 
       .right
         display inline-flex
@@ -182,6 +255,16 @@ export default {
 
         .value
           flex-grow 1
+
+        .status
+          border 1px solid #E02020
+          color #E02020
+          padding 2px 10px
+          font-size 12px
+
+        .time
+          color #E11B1B
+          margin-left 20px
 
       .button
         display inline-block
@@ -249,4 +332,8 @@ export default {
               height imageWidth
               border-radius 5px
               margin-right 10px
+
+              img
+                width 100%
+                height 100%
 </style>

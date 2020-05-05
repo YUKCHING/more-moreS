@@ -56,3 +56,9 @@ export function createValQrcode (data) {
   let url = '/tools/create-qr-code?type=1'
   return sendPostRequest(url, data)
 }
+
+// 全局搜索
+export function evaluationSearchGlobal (data) {
+  let url = '/quick-evaluate/search'
+  return sendGetRequest(url, data)
+}

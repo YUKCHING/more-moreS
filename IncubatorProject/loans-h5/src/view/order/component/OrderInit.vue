@@ -5,27 +5,25 @@
       <div class="content">
         <div class="info-label">
           <span class="label">订单状态</span>
-          <p class="value">初始化</p>
+          <p class="value">{{isInit ? '-' : '初始化'}}</p>
         </div>
         <div class="info-label">
           <span class="label">客户名称</span>
-          <p class="value">张珊</p>
+          <p class="value">{{isInit ? '-' : '张珊'}}</p>
         </div>
         <div class="info-label">
           <span class="label">客户身份证号</span>
-          <p class="value">123123123</p>
+          <p class="value">{{isInit ? '-' : '123123123'}}</p>
         </div>
         <div class="info-label">
           <span class="label">联系电话</span>
-          <p class="value">137136918838</p>
+          <p class="value">{{isInit ? '-' : '137136918838'}}</p>
         </div>
-        <div class="button" @click="recordDetailAction">
-          交易记录详情
-        </div>
+        <van-button class="button" type="danger" :disabled="isInit" @click="recordDetailAction">交易记录详情</van-button>
         <div class="loansBlock">
           <div class="loansTitle">
             <span>产品标题</span>
-            <div class="button">选择产品</div>
+            <van-button class="button" type="danger" :disabled="isInit">选择产品</van-button>
           </div>
           <div class="loansInfo">
             <div class="item">
@@ -80,8 +78,13 @@
 export default {
   data () {
     return {
+      isInit: false,
       otherCost: ''
     }
+  },
+  created () {
+    this.isInit = this.$route.query.isInit === '1'
+    console.log(this.isInit)
   },
   methods: {
     recordDetailAction () {
@@ -96,6 +99,8 @@ export default {
       this.$router.push({
         path: '/systemscreen',
         query: {
+          isInit: '1',
+          order_id: this.$route.query.order_id,
           id: '1312'
         }
       })
@@ -119,7 +124,8 @@ export default {
       padding 6px 10px
       background #E8E9EB
       color rgba(0, 0, 0, .5)
-      font-size .5rem
+      font-size 1rem
+      font-weight 600
 
       .right
         display inline-flex
@@ -154,6 +160,8 @@ export default {
         border-radius 5px
         font-size 12px
         margin-bottom .8rem
+        height 32px
+        line-height 12px
 
       .loansBlock
         border .6px solid rgba(0, 0, 0, .25)

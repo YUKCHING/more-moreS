@@ -26,12 +26,7 @@ export default {
   },
   methods: {
     selectCard (item) {
-      this.$router.push({
-        path: '/orderinit',
-        query: {
-          id: '123'
-        }
-      })
+      this.$emit('select', item)
     }
   }
 }

@@ -30,6 +30,7 @@ export default {
       width: 100%;
       height: 100%;
       box-sizing: border-box;
+      font-family: PingFangSC-Regular;
 
       .loadNew {
         min-height: 200rpx;

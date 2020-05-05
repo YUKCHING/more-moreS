@@ -153,6 +153,9 @@ export default {
       this.showDatePicker = false
       var year = value.getFullYear()
       var month = value.getMonth() + 1
+      if (String(month).length <= 1) {
+        month = '0' + String(month)
+      }
       this.info.time = year + ' 年' + month + ' 月'
       this.selectTime = year + '-' + month
     },
@@ -167,6 +170,7 @@ export default {
       }
     },
     selectCarModel (items) {
+      console.log(items)
       this.showBrandPicker = false
       if (items) {
         this.selectCarInfo = items

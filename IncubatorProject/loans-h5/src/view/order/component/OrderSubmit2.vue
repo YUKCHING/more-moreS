@@ -181,7 +181,8 @@ export default {
       padding 6px 10px
       background #E8E9EB
       color rgba(0, 0, 0, .5)
-      font-size .5rem
+      font-size 1rem
+      font-weight 600
 
       .right
         display inline-flex

@@ -66,7 +66,7 @@ export default {
         token: this.$store.getters.token,
         limit: '99',
         page: '1',
-        search: '',
+        search: '平安',
         sort: ''
       }
       getProductList(req)

@@ -105,8 +105,8 @@ export default {
       return name
     },
     isShowDeal () {
-      // return this.memberInfo.grade === 2
-      return true
+      return this.memberInfo.grade === 2
+      // return true
     }
   },
   data () {
@@ -166,7 +166,7 @@ export default {
           window.isReady = true
         })
       } else {
-        // this.getOpenId('071LsKJC1fsKU60U2YHC1OTVJC1LsKJ0') // 调试 直接获取openId
+        // this.getOpenId('061vmCU92RbP6N0WyMV92ByoU92vmCUl') // 调试 直接获取openId
         this.getInfo()
       }
     },

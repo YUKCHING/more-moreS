@@ -24,6 +24,12 @@ export function getLoanOrderList (data) {
   return sendGetRequest(url, data)
 }
 
+// 获取订单记录
+export function getLoanOrderRecord (data) {
+  let url = '/loan/get-order-record'
+  return sendGetRequest(url, data)
+}
+
 // 系统初筛
 export function postSystemScreen (data) {
   let url = '/loan/system-screen'
@@ -34,4 +40,16 @@ export function postSystemScreen (data) {
 export function postLoanApply (data) {
   let url = '/loan/apply'
   return sendPostRequest(url, data)
+}
+
+// 生成系统初筛二维码
+export function createSystemScreenQrcode (data) {
+  let url = '/tools/create-qr-code?type=2'
+  return sendPostRequest(url, data)
+}
+
+// 我要预约
+export function getLoanOrderInfo (data) {
+  let url = '/loan/get-order-info'
+  return sendGetRequest(url, data)
 }

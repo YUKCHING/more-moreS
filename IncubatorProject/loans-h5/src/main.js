@@ -12,13 +12,17 @@ import '@/common/js/common.js'
 import '@/common/js/wechat.js'
 import _ from 'lodash'
 import QrOverlay from '@/components/QrOverlay'
-Vue.use(QrOverlay)
 // import VConsole from 'vconsole'
 // // eslint-disable-next-line
 // let vConsole = new VConsole()
+import moment from 'moment'
+import 'moment/locale/zh-cn'
+moment.locale('zh-cn')
 
+Vue.use(QrOverlay)
 Vue.config.productionTip = false
 Vue.prototype._ = _
+Vue.prototype.moment = moment
 
 /* eslint-disable no-new */
 new Vue({

@@ -2,20 +2,20 @@
   <div class='SystemScreen'>
     <div class="loansBlock">
       <div class="loansTitle">
-        <span>产品标题</span>
+        <span>{{product.product_name || '-'}}</span>
         <div class="button">选择产品</div>
       </div>
       <div class="loansInfo">
         <div class="item">
-          <p>-</p>
+          <p>{{audit.amount ? audit.amount + '万元' : '-'}}</p>
           <p>审批额度</p>
         </div>
         <div class="item">
-          <p>-</p>
+          <p>{{audit.monthly_rate ? audit.monthly_rate + '%' : '-'}}</p>
           <p>月利率</p>
         </div>
         <div class="item">
-          <p>-</p>
+          <p>{{audit.time_limit || '-'}}</p>
           <p>申请期限</p>
         </div>
       </div>
@@ -24,9 +24,9 @@
       </div>
     </div>
     <div class="panel">
-      <van-field v-model="form.name" label="姓名" readonly />
-      <van-field v-model="form.idcard" label="身份证号码" readonly />
-      <van-field v-model="form.phone" label="联系电话" readonly />
+      <van-field v-model="info.user_name" label="姓名" readonly />
+      <van-field v-model="info.id_card" label="身份证号码" readonly />
+      <van-field v-model="info.mobile" label="联系电话" readonly />
     </div>
     <div class="panel panel2">
       <div class="title">
@@ -74,12 +74,12 @@
       <div class="img-content">
         <div class="img-panel">
           <div class="content">
-            <img class="real-img" :src="imgIdcard1">
+            <img class="real-img" @click="showImagePreview(0)" :src="screenInfo.id_card_front_img_url">
           </div>
         </div>
         <div class="img-panel">
           <div class="content">
-            <img class="real-img" :src="imgIdcard2">
+            <img class="real-img" @click="showImagePreview(1)" :src="screenInfo.id_card_back_img_url">
           </div>
         </div>
       </div>
@@ -90,12 +90,12 @@
       <div class="img-content">
         <div class="img-panel">
           <div class="content">
-            <img class="real-img" :src="imgCar1">
+            <img class="real-img" @click="showImagePreview(2)" :src="screenInfo.vehicle_license_front_img_url">
           </div>
         </div>
         <div class="img-panel">
           <div class="content">
-            <img class="real-img" :src="imgCar2">
+            <img class="real-img" @click="showImagePreview(3)" :src="screenInfo.vehicle_license_duplicate_img_url">
           </div>
         </div>
       </div>
@@ -104,19 +104,31 @@
       </div>
     </div>
     <div class="buttonPanel">
-      <van-button class="button1" @click="callCustomerAction">通知客人修改</van-button>
-      <van-button class="button2" type="danger" @click="submitAction">确定OK</van-button>
+      <van-button class="button1" @click="createQrcode">通知客人修改</van-button>
+      <van-button class="button2" type="danger" :disabled="!isSetProduct" @click="submitAction">确定OK</van-button>
     </div>
     <van-popup v-model="showQrcodePicker" position="bottom">
-      <div class="qrcode-block">
-        <img src="@/assets/order/share-bottom.png">
-        <p class="exp">- 长按可保存图片 -</p>
-        <img class="qrcode-img" :src="qrcode">
+      <div class="pop-block" id="content" ref="content">
+        <div class="top">
+          <div class="button">
+            请扫码进行系统初筛
+          </div>
+        </div>
+        <div class="qrcode-block">
+          <img src="@/assets/order/share-bottom.png">
+          <p class="exp">- 长按可保存图片 -</p>
+          <img class="qrcode-img" :src="qrcode">
+        </div>
+        <img class="show-img" :src="dataURL">
       </div>
     </van-popup>
+    <van-image-preview v-model="showPreview" :images="showImages" :startPosition="previewIndex" @change="onChange">
+      <template v-slot:index>第{{ previewIndex + 1 }}页</template>
+    </van-image-preview>
   </div>
 </template>
 <script>
+import { getLoanOrderInfo, createSystemScreenQrcode } from '@/apis/api.js'
 import html2canvas from 'html2canvas'
 import jrQrcode from 'jr-qrcode'
 export default {
@@ -133,55 +145,77 @@ export default {
         mileage: '10.0',
         standard: '国5'
       },
-      imgIdcard1: '',
-      imgIdcard2: '',
-      imgCar1: '',
-      imgCar2: '',
+      dataURL: '',
       showQrcodePicker: false,
       qrcode: '',
       timerSec: 0,
-      timer: ''
+      timer: '',
+      info: {},
+      product: {},
+      audit: {},
+      screenInfo: {},
+      showPreview: false,
+      showImages: '',
+      previewIndex: 0
 
     }
   },
-  mounted () {
-    this.createQrcode()
+  computed: {
+    isSetProduct () {
+      return this.product.product_name
+    }
+  },
+  created () {
+    this.getInfo()
   },
   destroyed () {
     clearTimeout(this.timer)
   },
   methods: {
-    callCustomerAction () {
+    getInfo () {
+      let req = {
+        order_id: this.$route.query.order_id
+      }
+      getLoanOrderInfo(req).then(res => {
+        console.log(res)
+        if (res.code === 0) {
+          let date1 = this.moment(res.data.expire_in * 1000)
+          let date2 = this.moment(new Date())
+          let date3 = date1.diff(date2, 'minute')// 计算相差的分钟数
+          let h = Math.floor(date3 / 60)// 相差的小时数
+          let mm = date3 % 60// 计算相差小时后余下的分钟
+          this.info = {
+            ...res.data,
+            expire_time: h + ':' + mm
+          }
+          this.product = res.data.product
+          this.audit = res.data.audit
+          this.screenInfo = res.data.screen_info
+          this.showImages = [
+            this.screenInfo.id_card_front_img_url,
+            this.screenInfo.id_card_back_img_url,
+            this.screenInfo.vehicle_license_front_img_url,
+            this.screenInfo.vehicle_license_duplicate_img_url
+          ]
+        }
+      })
     },
     submitAction () {
-    },
-    afterReadIdCard (file) {
-      console.log(file)
-    },
-    afterRead1 (file) {
-      console.log(file)
-    },
-    afterRead2 (file) {
-      console.log(file)
-    },
-    afterRead3 (file) {
-      console.log(file)
-    },
-    afterRead4 (file) {
-      console.log(file)
+      this.$router.go(-1)
     },
     createQrcode () {
-      // this.tLoading('请稍等...')
-      // let req = {
-      //   valuation_id: this.valId
-      // }
-      // createValQrcode(req).then(res => {
-      //   this.tClear()
-      //   if (res.code === 0) {
-      //     let url = res.data.url
-      //     this.getQrcodeImage(url)
-      //   }
-      // })
+      let req = {
+        order_id: this.$route.query.order_id
+      }
+      this.tLoading()
+      createSystemScreenQrcode(req).then(res => {
+        if (res.code === 0) {
+          let url = res.data.url
+          this.getQrcodeImage(url)
+        } else {
+          this.tClear()
+        }
+      })
     },
     getQrcodeImage (url) {
       let option = {
@@ -193,28 +227,30 @@ export default {
         foreground: '#000000' // 二维码颜色（默认黑色
       }
       this.qrcode = jrQrcode.getQrBase64(url, option)
-
-      // var timer = null
-      // timer = setInterval(() => {
-      //   let img1Height = window.getComputedStyle(this.$refs.img1).height
-      //   let img2Height = window.getComputedStyle(this.$refs.img2).height
-      //   console.log('setInterval')
-      //   if (img1Height !== '0px' && img2Height !== '0px') {
-      //     console.log('getHtmlImage')
-      //     this.contentHeight = window.getComputedStyle(this.$refs.content).height
-      //     clearInterval(timer)
-      //     this.getHtmlImage()
-      //   }
-      // }, 100)
+      this.showQrcodePicker = true
+      setTimeout(() => {
+        this.getHtmlImage()
+      }, 2000)
     },
     getHtmlImage () {
+      var scrollY = this.$refs['content'].scrollTop
+      var scrollX = this.$refs['content'].scrollLeft
       html2canvas(document.querySelector('#content'), {
-        async: true
+        async: true,
+        scrollY: -scrollY,
+        scrollX: -scrollX
       }).then(canvas => {
         let dataURL = canvas.toDataURL('image/png')
         this.dataURL = dataURL
         this.tClear()
       })
+    },
+    showImagePreview (index) {
+      this.previewIndex = index
+      this.showPreview = true
+    },
+    onChange (index) {
+      this.previewIndex = index
     }
   }
 }
@@ -273,25 +309,46 @@ export default {
             transform scale(.9)
             margin-top 1rem
 
-  .qrcode-block
+  .pop-block
     position relative
 
-    .exp
-      position absolute
-      bottom 15%
-      left 5%
-      font-weight 550
+    .top
+      text-align center
+      padding 5px 0
 
-    img
+      .button
+        display inline-block
+        color #ffffff
+        font-size 12px
+        border-radius 5px
+        padding 9px 19px
+        background #EE5150
+
+    .qrcode-block
+      position relative
+
+      .exp
+        position absolute
+        bottom 15%
+        left 5%
+        font-weight 550
+
+      img
+        width 100%
+
+      .qrcode-img
+        display inline-block
+        position absolute
+        right 3%
+        top 12%
+        width 80px
+        height 80px
+
+    .show-img
+      position absolute
+      top 0
+      height 100%
       width 100%
-
-    .qrcode-img
-      display inline-block
-      position absolute
-      right 3%
-      top 12%
-      width 80px
-      height 80px
 
   .button-block
     text-align center
@@ -376,7 +433,8 @@ export default {
       padding 6px 10px
       background #E8E9EB
       color rgba(0, 0, 0, .5)
-      font-size .5rem
+      font-size 1rem
+      font-weight 600
 
       .right
         display inline-flex
