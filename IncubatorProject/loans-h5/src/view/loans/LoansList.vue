@@ -1,22 +1,23 @@
 <template>
   <div class="loans-list">
-    <loans-block v-for="item in lists"
+    <div class="top-block">
+      <van-field v-model="searchKey" placeholder="请输入产品名" clearable>
+        <van-icon slot="left-icon" color="#F9CFD0" name="search" />
+      </van-field>
+    </div>
+    <div class="content">
+      <loans-block v-for="item in lists"
                  :key="item.id"
                  :data="item"
-                 @click="showDetail"></loans-block>
+                 :select="select"
+                 ref="loansBlock"
+                 @click="showDetail"
+                 @change="loadnsBlockChange"></loans-block>
+    </div>
+    <van-button class="confirmButton" v-if="select" @click="confirmAction">确 定</van-button>
     <qr-overlay></qr-overlay>
   </div>
 </template>
-<style lang='scss' scoped>
-.loans-list {
-  box-sizing: border-box;
-  background: #fafafa;
-  padding: 15px;
-  width: 100%;
-  height: 100%;
-  overflow: auto;
-}
-</style>
 <script>
 import LoansBlock from './components/LoansBlock'
 import QrOverlay from '@/components/QrOverlay'
@@ -27,12 +28,19 @@ export default {
   components: {
     LoansBlock, QrOverlay
   },
+  props: {
+    select: {
+      type: Boolean,
+      default: false
+    }
+  },
   beforeCreate () {
     window.shareUrl = location.href.split('#')[0]
   },
   data () {
     return {
-      lists: []
+      lists: [],
+      searchKey: ''
     }
   },
   created () {
@@ -91,7 +99,88 @@ export default {
           productid: id
         }
       })
+    },
+    loadnsBlockChange (val, blockId) {
+      if (val) {
+        this.$refs['loansBlock'].forEach(ele => {
+          if (ele.data.id !== blockId) {
+            ele.isChoice = false
+          }
+        })
+      }
+    },
+    confirmAction () {
+      let blockId = ''
+      this.$refs['loansBlock'].forEach(ele => {
+        if (ele.isChoice) {
+          blockId = ele.data.id
+        }
+      })
+      if (blockId) {
+        let item = {}
+        item = this.lists.find(ele => ele.id === blockId)
+        this.$emit('select', item)
+      } else {
+        this.toast('请选择产品')
+      }
     }
   }
 }
 </script>
+<style lang='scss' scoped>
+.loans-list {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+
+  .content {
+    height: calc(100vh - 48px);
+    overflow: auto;
+    box-sizing: border-box;
+    background: #fafafa;
+    padding: 15px;
+  }
+
+  .confirmButton {
+    position: fixed;
+    bottom: 2%;
+    left: calc(50% - 89px);
+    background: #EE5150;
+    color: #FFFFFF;
+    padding: 10px 70px;
+    border-radius: 5px;
+    font-size: 16px;
+    height: 40px;
+    line-height: 12px;
+  }
+
+  $searchBarHeight: 48px;
+  .top-block {
+    background: #E02020;
+    padding: 7px 8px;
+    display: flex;
+    align-items: center;
+
+    .van-cell {
+      padding: 0;
+    }
+
+    .van-field {
+      display: inline-flex;
+      flex-grow: 1;
+      padding: 5px 7px 5px 12px;
+      border-radius: 8px;
+      background: rgba(255, 255, 255, .5);
+    }
+
+    .van-cell:not(:last-child)::after {
+      display: none;
+    }
+
+    input::-webkit-input-placeholder {
+      color: #ffffff;
+    }
+  }
+}
+</style>

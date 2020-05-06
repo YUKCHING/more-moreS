@@ -98,7 +98,6 @@
         </div>
         <img class="show-img" :src="dataURL">
       </div>
-
     </van-popup>
   </div>
 </template>

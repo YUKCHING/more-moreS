@@ -3,15 +3,15 @@
     <div class="loansBlock">
       <div class="loansTitle">
         <span>{{product.product_name || '-'}}</span>
-        <div class="button">选择产品</div>
+        <div class="button" @click="selectProductAction">选择产品</div>
       </div>
       <div class="loansInfo">
         <div class="item">
-          <p>{{audit.amount ? audit.amount + '万元' : '-'}}</p>
+          <p>{{audit.amount ? audit.amount : '-'}}</p>
           <p>审批额度</p>
         </div>
         <div class="item">
-          <p>{{audit.monthly_rate ? audit.monthly_rate + '%' : '-'}}</p>
+          <p>{{audit.monthly_rate ? audit.monthly_rate : '-'}}</p>
           <p>月利率</p>
         </div>
         <div class="item">
@@ -103,7 +103,7 @@
         备注：
       </div>
     </div>
-    <div class="buttonPanel">
+    <div class="buttonPanel" v-if="!isSetProduct">
       <van-button class="button1" @click="createQrcode">通知客人修改</van-button>
       <van-button class="button2" type="danger" :disabled="!isSetProduct" @click="submitAction">确定OK</van-button>
     </div>
@@ -125,13 +125,20 @@
     <van-image-preview v-model="showPreview" :images="showImages" :startPosition="previewIndex" @change="onChange">
       <template v-slot:index>第{{ previewIndex + 1 }}页</template>
     </van-image-preview>
+    <van-popup v-model="showProductPopup" position="bottom" class="product-popup">
+      <loans-list :select="true" @select="loansSelectAction"></loans-list>
+    </van-popup>
   </div>
 </template>
 <script>
-import { getLoanOrderInfo, createSystemScreenQrcode } from '@/apis/api.js'
+import { getLoanOrderInfo, createSystemScreenQrcode, postLoanPassScreen } from '@/apis/api.js'
 import html2canvas from 'html2canvas'
 import jrQrcode from 'jr-qrcode'
+import LoansList from '@/view/loans/LoansList'
 export default {
+  components: {
+    LoansList
+  },
   data () {
     return {
       otherCost: '',
@@ -156,8 +163,8 @@ export default {
       screenInfo: {},
       showPreview: false,
       showImages: '',
-      previewIndex: 0
-
+      previewIndex: 0,
+      showProductPopup: false
     }
   },
   computed: {
@@ -177,7 +184,6 @@ export default {
         order_id: this.$route.query.order_id
       }
       getLoanOrderInfo(req).then(res => {
-        console.log(res)
         if (res.code === 0) {
           let date1 = this.moment(res.data.expire_in * 1000)
           let date2 = this.moment(new Date())
@@ -201,7 +207,17 @@ export default {
       })
     },
     submitAction () {
-      this.$router.go(-1)
+      let req = {
+        screen_id: this.screenInfo.screen_id,
+        product_id: this.audit.id
+      }
+      postLoanPassScreen(req).then(res => {
+        if (res.code === 0) {
+          this.tSuccess('选择成功').then(res => {
+            this.$router.go(-1)
+          })
+        }
+      })
     },
     createQrcode () {
       let req = {
@@ -251,6 +267,17 @@ export default {
     },
     onChange (index) {
       this.previewIndex = index
+    },
+    selectProductAction () {
+      this.showProductPopup = true
+    },
+    loansSelectAction (item) {
+      console.log(item)
+      this.showProductPopup = false
+      this.audit.id = item.id
+      this.audit.amount = item.amount
+      this.audit.monthly_rate = item.monthly_rate
+      this.product.product_name = item.product_name
     }
   }
 }

@@ -53,3 +53,9 @@ export function getLoanOrderInfo (data) {
   let url = '/loan/get-order-info'
   return sendGetRequest(url, data)
 }
+
+// 确定初筛ok
+export function postLoanPassScreen (data) {
+  let url = '/loan/pass-screen'
+  return sendPostRequest(url, data)
+}

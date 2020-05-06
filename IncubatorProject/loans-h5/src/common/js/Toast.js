@@ -26,8 +26,18 @@ export function tClear () {
 }
 
 function tSuccess (text) {
-  let message = text || '成功'
-  Toast.success(message)
+  return new Promise((resolve, reject) => {
+    let durTime = 2000
+    let message = text || '成功'
+    Toast.success({
+      message: message,
+      duration: durTime,
+      forbidClick: true
+    })
+    setTimeout(() => {
+      resolve()
+    }, durTime)
+  })
 }
 
 function tFail (text) {

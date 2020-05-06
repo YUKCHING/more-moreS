@@ -192,26 +192,26 @@ export default {
           let obj = res.data.evaluationVO
           this.sliderInfo = {
             '1': { // 一般
-              minRed: obj.general_retail_bottomprice, // 经销商卖出
-              midRed: obj.general_retail_price,
-              maxRed: obj.general_retail_topprice,
-              minBlue: obj.general_personal_bottomprice, // 个人交易
-              midBlue: obj.general_personal_price,
-              maxBlue: obj.general_personal_topprice},
+              minRed: obj[1].general_retail_bottomprice, // 经销商卖出
+              midRed: obj[1].general_retail_price,
+              maxRed: obj[1].general_retail_topprice,
+              minBlue: obj[1].general_personal_bottomprice, // 个人交易
+              midBlue: obj[1].general_personal_price,
+              maxBlue: obj[1].general_personal_topprice},
             '2': { // 良好
-              minRed: obj.good_retail_bottomprice, // 经销商卖出
-              midRed: obj.good_retail_price,
-              maxRed: obj.good_retail_topprice,
-              minBlue: obj.good_personal_bottomprice, // 个人交易
-              midBlue: obj.good_personal_price,
-              maxBlue: obj.good_personal_topprice},
+              minRed: obj[2].good_retail_bottomprice, // 经销商卖出
+              midRed: obj[2].good_retail_price,
+              maxRed: obj[2].good_retail_topprice,
+              minBlue: obj[2].good_personal_bottomprice, // 个人交易
+              midBlue: obj[2].good_personal_price,
+              maxBlue: obj[2].good_personal_topprice},
             '3': { // 优秀
-              minRed: obj.best_retail_bottomprice, // 经销商卖出
-              midRed: obj.best_retail_price,
-              maxRed: obj.best_retail_topprice,
-              minBlue: obj.best_personal_bottomprice, // 个人交易
-              midBlue: obj.best_personal_price,
-              maxBlue: obj.best_personal_topprice}
+              minRed: obj[0].best_retail_bottomprice, // 经销商卖出
+              midRed: obj[0].best_retail_price,
+              maxRed: obj[0].best_retail_topprice,
+              minBlue: obj[0].best_personal_bottomprice, // 个人交易
+              midBlue: obj[0].best_personal_price,
+              maxBlue: obj[0].best_personal_topprice}
           }
           this.curSliderInfo = {
             minRed: Number(Number(this.sliderInfo['2'].minRed).toFixed(2)),

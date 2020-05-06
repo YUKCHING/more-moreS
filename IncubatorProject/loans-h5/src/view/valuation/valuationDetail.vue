@@ -14,8 +14,8 @@
     </div>
     <div class="block2">
       <van-tabs v-model="activeName" title-active-color="rgba(0,0,0,.85)" title-inactive-color="rgba(0,0,0,.25)">
-        <van-tab title="一般" name="a" >
-          <div class="tab-block">
+        <van-tab title="一般" name="a">
+          <div class="tab-block" v-if="evaluationVO[1]">
             <table border="1">
               <tr>
                 <th></th>
@@ -25,15 +25,15 @@
               </tr>
               <tr>
                 <th>经销商收购</th>
-                <th>{{evaluationVO.general_acquisition_bottomprice}}</th>
-                <th>{{evaluationVO.general_acquisition_price}}</th>
-                <th>{{evaluationVO.general_acquisition_topprice}}</th>
+                <th>{{evaluationVO[1].general_acquisition_bottomprice}}</th>
+                <th>{{evaluationVO[1].general_acquisition_price}}</th>
+                <th>{{evaluationVO[1].general_acquisition_topprice}}</th>
               </tr>
               <tr>
                 <th>经销商卖出</th>
-                <th>{{evaluationVO.general_retail_bottomprice}}</th>
-                <th>{{evaluationVO.general_retail_price}}</th>
-                <th>{{evaluationVO.general_retail_topprice}}</th>
+                <th>{{evaluationVO[1].general_retail_bottomprice}}</th>
+                <th>{{evaluationVO[1].general_retail_price}}</th>
+                <th>{{evaluationVO[1].general_retail_topprice}}</th>
               </tr>
               <!-- <tr>
                 <th>个人交易</th>
@@ -45,7 +45,7 @@
           </div>
         </van-tab>
         <van-tab title="良好" name="b">
-          <div class="tab-block">
+          <div class="tab-block" v-if="evaluationVO[2]">
             <table border="1">
               <tr>
                 <th></th>
@@ -55,15 +55,15 @@
               </tr>
               <tr>
                 <th>经销商收购</th>
-                <th>{{evaluationVO.good_acquisition_bottomprice}}</th>
-                <th>{{evaluationVO.good_acquisition_price}}</th>
-                <th>{{evaluationVO.good_acquisition_topprice}}</th>
+                <th>{{evaluationVO[2].good_acquisition_bottomprice}}</th>
+                <th>{{evaluationVO[2].good_acquisition_price}}</th>
+                <th>{{evaluationVO[2].good_acquisition_topprice}}</th>
               </tr>
               <tr>
                 <th>经销商卖出</th>
-                <th>{{evaluationVO.good_retail_bottomprice}}</th>
-                <th>{{evaluationVO.good_retail_price}}</th>
-                <th>{{evaluationVO.good_retail_topprice}}</th>
+                <th>{{evaluationVO[2].good_retail_bottomprice}}</th>
+                <th>{{evaluationVO[2].good_retail_price}}</th>
+                <th>{{evaluationVO[2].good_retail_topprice}}</th>
               </tr>
               <!-- <tr>
                 <th>个人交易</th>
@@ -75,7 +75,7 @@
           </div>
         </van-tab>
         <van-tab title="优秀" name="c">
-          <div class="tab-block">
+          <div class="tab-block" v-if="evaluationVO[0]">
             <table border="1">
               <tr>
                 <th></th>
@@ -85,15 +85,15 @@
               </tr>
               <tr>
                 <th>经销商收购</th>
-                <th>{{evaluationVO.best_acquisition_bottomprice}}</th>
-                <th>{{evaluationVO.best_acquisition_price}}</th>
-                <th>{{evaluationVO.best_acquisition_topprice}}</th>
+                <th>{{evaluationVO[0].best_acquisition_bottomprice}}</th>
+                <th>{{evaluationVO[0].best_acquisition_price}}</th>
+                <th>{{evaluationVO[0].best_acquisition_topprice}}</th>
               </tr>
               <tr>
                 <th>经销商卖出</th>
-                <th>{{evaluationVO.best_retail_bottomprice}}</th>
-                <th>{{evaluationVO.best_retail_price}}</th>
-                <th>{{evaluationVO.best_retail_topprice}}</th>
+                <th>{{evaluationVO[0].best_retail_bottomprice}}</th>
+                <th>{{evaluationVO[0].best_retail_price}}</th>
+                <th>{{evaluationVO[0].best_retail_topprice}}</th>
               </tr>
               <!-- <tr>
                 <th>个人交易</th>

@@ -19,6 +19,7 @@
       <span v-for="item in data.feature"
             :key="item">{{item}}</span>
     </div>
+    <van-checkbox v-if="select" v-model="isChoice" @change="checkBoxSelect" checked-color="#E02020"></van-checkbox>
   </div>
 </template>
 <style lang='scss' scoped>
@@ -35,6 +36,13 @@
   cursor: pointer;
   font-family: PingFangSC-Regular;
   box-shadow: 0px 3px 5px 0px rgba(191, 192, 197, 0.5);
+  position: relative;
+
+  .van-checkbox {
+    position: absolute;
+    right: 5%;
+    top: calc(50% - 10px);
+  }
 
   .top {
     flex-direction: row;
@@ -96,10 +104,32 @@
 </style>
 <script>
 export default {
-  props: ['data'],
+  props: {
+    data: {
+      type: Object,
+      default: () => {
+        return {}
+      }
+    },
+    select: {
+      type: Boolean,
+      default: false
+    }
+  },
+  data () {
+    return {
+      isChoice: false
+    }
+  },
   methods: {
     showDetail () {
+      if (this.select) {
+        return
+      }
       this.$emit('click', this.data.id)
+    },
+    checkBoxSelect (Event) {
+      this.$emit('change', Event, this.data.id)
     }
   }
 }

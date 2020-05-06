@@ -123,7 +123,7 @@
   </div>
 </template>
 <script>
-import { evaluateBrandRequest, evaluateSeriesRequest, evaluateModelsRequest, evaluationSearchGlobal } from '@/apis/api.js'
+import { evaluateBrandRequest, evaluateSeriesRequest, evaluateModelsRequest, evaluationSearchGlobal, evaluationHotSearch } from '@/apis/api.js'
 import commonJs from '@/common/js/public.js'
 export default {
   computed: {
@@ -180,9 +180,7 @@ export default {
       recentBrand: [],
       showSeriesPopup: false,
       showModelPopup: false,
-      hotSearch: [
-        '大众', '丰田', '奥迪', '阿斯顿-马丁', '奔驰', '别克', '雪佛兰', '宝马', '克莱斯勒'
-      ],
+      hotSearch: [],
       searchHistory: [],
       searchResults: [],
       searchState: false
@@ -205,6 +203,7 @@ export default {
         this.searchHistory = this.$store.getters.carSearchInfo
       }
       this.loadBrand()
+      this.loadHotSearch()
     },
     searchButtonAction () {
       if (this.state === 1) {
@@ -527,6 +526,19 @@ export default {
         }
       })
     },
+    loadHotSearch () {
+      evaluationHotSearch({
+        evaluate_provider: 2
+      }).then(res => {
+        if (res.code === 0) {
+          if (res.data.length > 0) {
+            this.hotSearch = res.data.map(ele => {
+              return ele.type_name
+            })
+          }
+        }
+      })
+    },
     seriesBackAction () {
       if (this.state === 2) {
         this.state = 1
@@ -640,7 +652,7 @@ export default {
       color: #ffffff;
       font-size: 16px;
       display: inline-block;
-      width: 10%;
+      width: 13%;
       margin-left: 10px;
     }
   }

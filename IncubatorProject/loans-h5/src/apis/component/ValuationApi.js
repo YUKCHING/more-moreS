@@ -62,3 +62,9 @@ export function evaluationSearchGlobal (data) {
   let url = '/quick-evaluate/search'
   return sendGetRequest(url, data)
 }
+
+// 热门搜索
+export function evaluationHotSearch (data) {
+  let url = '/quick-evaluate/hot-search'
+  return sendGetRequest(url, data)
+}

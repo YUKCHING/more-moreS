@@ -29,13 +29,11 @@
           <span class="label">联系电话</span>
           <p class="value">{{info.mobile || '-'}}</p>
         </div>
-        <div class="button" @click="recordDetailAction">
-          交易记录详情
-        </div>
+        <van-button class="button" @click="recordDetailAction">交易记录详情</van-button>
         <div class="loansBlock">
           <div class="loansTitle">
             <span>{{product.product_name || '-'}}</span>
-            <div class="button">选择产品</div>
+            <van-button class="button" :disabled="!isSetProduct">选择产品</van-button>
           </div>
           <div class="loansInfo">
             <div class="item">
@@ -198,6 +196,10 @@ export default {
   height 100%
   background #F2F3F5
 
+  .product-popup
+    height 100%
+    background red
+
   .buttonPanel
     display flex
     justify-content space-around
@@ -274,6 +276,8 @@ export default {
         border-radius 5px
         font-size 12px
         margin-bottom .8rem
+        height 32px
+        line-height 12px
 
       .loansBlock
         border .6px solid rgba(0, 0, 0, .25)
