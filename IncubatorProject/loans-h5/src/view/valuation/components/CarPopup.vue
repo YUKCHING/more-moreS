@@ -256,7 +256,9 @@ export default {
         keyword: this.searchKey
       }
       this.searchResults = []
+      this.tLoading()
       evaluationSearchGlobal(req).then(res => {
+        this.tClear()
         if (res.code === 0) {
           if (res.data.brands) {
             res.data.brands.forEach(brand => {

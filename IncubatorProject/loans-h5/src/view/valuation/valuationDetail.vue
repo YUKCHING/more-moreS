@@ -107,7 +107,7 @@
       </van-tabs>
     </div>
     <div class="block3">
-      <line-chart chartId="linechart" :data="chartData" style="height: 100%; width: 100%;"></line-chart>
+      <line-chart chartId="linechart" :data="chartData" style="height: 100%; width: 100%;" v-if="chartData.year"></line-chart>
     </div>
   </div>
 </template>

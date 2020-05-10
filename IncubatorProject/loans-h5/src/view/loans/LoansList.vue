@@ -23,6 +23,7 @@ import LoansBlock from './components/LoansBlock'
 import QrOverlay from '@/components/QrOverlay'
 import { getProductList } from '@/apis/api'
 import initLoginCheckInfo from '@/common/js/login.js'
+import commonJs from '@/common/js/public.js'
 
 export default {
   components: {
@@ -36,6 +37,11 @@ export default {
   },
   beforeCreate () {
     window.shareUrl = location.href.split('#')[0]
+  },
+  watch: {
+    'searchKey' () {
+      this.searchAction()
+    }
   },
   data () {
     return {
@@ -69,13 +75,18 @@ export default {
 
       this.getProductList()
     },
+    searchAction: commonJs._debounce(function (_type, index, item) {
+      this.getProductList()
+    }, 1000),
     getProductList () {
       let req = {
         token: this.$store.getters.token,
         limit: '99',
         page: '1',
-        search: '平安',
         sort: ''
+      }
+      if (this.searchKey) {
+        req['search[keyword]'] = this.searchKey
       }
       getProductList(req)
         .then(res => {
@@ -156,7 +167,7 @@ export default {
   }
 
   $searchBarHeight: 48px;
-  .top-block {
+  .top-block /deep/ {
     background: #E02020;
     padding: 7px 8px;
     display: flex;

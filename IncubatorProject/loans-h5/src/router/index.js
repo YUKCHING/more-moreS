@@ -292,6 +292,30 @@ const router = new Router({
       meta: {
         title: '订单'
       }
+    },
+    {
+      path: '/commission',
+      name: 'commission',
+      component: resolve => require(['@/view/commission/index'], resolve),
+      meta: {
+        title: '产品佣金列表'
+      }
+    },
+    {
+      path: '/setcommission',
+      name: 'setcommission',
+      component: resolve => require(['@/view/commission/SetCommission'], resolve),
+      meta: {
+        title: '设置产品佣金'
+      }
+    },
+    {
+      path: '/checkcommission',
+      name: 'checkcommission',
+      component: resolve => require(['@/view/commission/CheckCommission'], resolve),
+      meta: {
+        title: '设置产品佣金'
+      }
     }
   ]
 })

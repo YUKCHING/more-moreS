@@ -1,15 +1,30 @@
 import Vue from 'vue'
-import { Toast } from 'vant'
+import { Toast, Dialog } from 'vant'
 
 Vue.prototype.toast = toast
+Vue.prototype.toastLong = toastLong
 Vue.prototype.tLoading = tLoading
 Vue.prototype.tClear = tClear
 Vue.prototype.tSuccess = tSuccess
 Vue.prototype.tFail = tFail
+Vue.prototype.dConfirm = dConfirm
 
 export function toast (text) {
   let message = text || ' '
   Toast(message)
+}
+
+export function toastLong (text) {
+  let message = text || ' '
+  Toast({
+    message: message,
+    duration: 0,
+    closeOnClick: true,
+    closeOnClickOverlay: true,
+    forbidClick: false,
+    overlay: true,
+    className: 'tosat-style'
+  })
 }
 
 export function tLoading (text) {
@@ -43,4 +58,18 @@ function tSuccess (text) {
 function tFail (text) {
   let message = text || '失败'
   Toast.fail(message)
+}
+
+function dConfirm (text) {
+  return new Promise((resolve, reject) => {
+    let message = text || '失败'
+    Dialog.confirm({
+      title: '提醒',
+      message: message
+    }).then(() => {
+      resolve(true)
+    }).catch(() => {
+      resolve(false)
+    })
+  })
 }

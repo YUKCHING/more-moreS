@@ -50,6 +50,10 @@ body {
 body {
   font-size: 16px;
   background-color: #ebf0f4;
+
+  .tosat-style {
+    text-align: left;
+  }
 }
 
 ul,
