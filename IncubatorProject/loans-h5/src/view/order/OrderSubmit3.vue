@@ -82,30 +82,14 @@
         </div>
       </div>
     </div>
-    <div class="panel">
-      <div class="title">
-        <span>佣金分配</span>
-      </div>
-      <div class="content setting">
-        <van-field v-model="number" type="number" label="高级会员" placeholder="请输入百分比">
-          <span slot="right-icon">%</span>
-        </van-field>
-        <van-field v-model="number" type="number" label="会员" placeholder="请输入百分比">>
-          <span slot="right-icon">%</span>
-        </van-field>
-        <van-field v-model="number" type="number" label="粉丝" placeholder="请输入百分比">>
-          <span slot="right-icon">%</span>
-        </van-field>
-      </div>
-    </div>
     <div class="buttonPanel">
-      <van-button class="button1" disabled @click="assignControl">指派内控</van-button>
-      <van-button class="button2" disabled type="danger" @click="submitIncomming">提交进件</van-button>
+      <van-button class="button1" disabled @click="assignControl">退审批</van-button>
+      <van-button class="button2" disabled type="danger" @click="submitIncomming">批复</van-button>
     </div>
   </div>
 </template>
 <script>
-import OrderStep from './OrderStep'
+import OrderStep from './component/OrderStep'
 export default {
   components: {
     OrderStep
@@ -116,8 +100,7 @@ export default {
         '待提交', '已提交', '已批复', '已签约', '已放款'
       ],
       active: 1,
-      otherCost: '',
-      number: '1%'
+      otherCost: ''
     }
   },
   methods: {

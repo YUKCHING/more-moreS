@@ -27,3 +27,9 @@ export function bookTraning (data) {
   let url = '/training/book'
   return sendPostRequest(url, data)
 }
+
+// 获取通讯录中的总代理成员
+export function getGeneralEmployees (data) {
+  let url = '/address-book/employee/get-general-employees'
+  return sendGetRequest(url, data)
+}

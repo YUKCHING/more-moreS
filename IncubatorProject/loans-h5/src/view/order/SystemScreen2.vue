@@ -3,7 +3,7 @@
     <div class="loansBlock">
       <div class="loansTitle">
         <span>{{product.product_name || '-'}}</span>
-        <div class="button" @click="selectProductAction">选择产品</div>
+        <div class="button" @click="selectProductAction" v-if="!isSetProduct">选择产品</div>
       </div>
       <div class="loansInfo">
         <div class="item">
@@ -25,7 +25,7 @@
     </div>
     <div class="panel">
       <van-field v-model="info.user_name" label="姓名" readonly />
-      <van-field v-model="info.id_card" label="身份证号码" readonly />
+      <van-field v-model="info.id_card_no" label="身份证号码" readonly />
       <van-field v-model="info.mobile" label="联系电话" readonly />
     </div>
     <div class="panel panel2">
@@ -104,7 +104,7 @@
       </div>
     </div>
     <div class="buttonPanel" v-if="!isSetProduct">
-      <van-button class="button1" @click="createQrcode">通知客人修改</van-button>
+      <van-button class="button1" @click="noticeModifyAction">通知客人修改</van-button>
       <van-button class="button2" type="danger" :disabled="!isSetProduct" @click="submitAction">确定OK</van-button>
     </div>
     <van-popup v-model="showQrcodePicker" position="bottom">
@@ -131,7 +131,7 @@
   </div>
 </template>
 <script>
-import { getLoanOrderInfo, createSystemScreenQrcode, postLoanPassScreen } from '@/apis/api.js'
+import { getLoanOrderInfo, createSystemScreenQrcode, postLoanPassScreen, noticeModifyScreen } from '@/apis/api.js'
 import html2canvas from 'html2canvas'
 import jrQrcode from 'jr-qrcode'
 import LoansList from '@/view/loans/LoansList'
@@ -278,6 +278,16 @@ export default {
       this.audit.amount = item.amount
       this.audit.monthly_rate = item.monthly_rate
       this.product.product_name = item.product_name
+    },
+    noticeModifyAction () {
+      let req = {
+        screen_id: this.screenInfo.screen_id
+      }
+      noticeModifyScreen(req).then(res => {
+        if (res.code === 0) {
+          this.tSuccess('通知成功')
+        }
+      })
     }
   }
 }

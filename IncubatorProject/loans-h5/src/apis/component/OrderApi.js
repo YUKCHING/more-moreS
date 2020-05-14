@@ -59,3 +59,27 @@ export function postLoanPassScreen (data) {
   let url = '/loan/pass-screen'
   return sendPostRequest(url, data)
 }
+
+// 通知修改初筛
+export function noticeModifyScreen (data) {
+  let url = '/loan/notice-modify-screen'
+  return sendGetRequest(url, data)
+}
+
+// 订单提交
+export function postLoanCommit (data) {
+  let url = '/loan/commit'
+  return sendPostRequest(url, data)
+}
+
+// 订单批复
+export function postLoanApproval (data) {
+  let url = '/loan/approval'
+  return sendPostRequest(url, data)
+}
+
+// 退审核后重新审核
+export function postLoanReApproval (data) {
+  let url = '/loan/re-approval'
+  return sendPostRequest(url, data)
+}

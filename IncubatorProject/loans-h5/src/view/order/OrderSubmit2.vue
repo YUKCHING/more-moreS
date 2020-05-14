@@ -8,44 +8,44 @@
         </div>
       </div>
       <div class="content">
+        <!-- <div>
+          <order-step :list="list" :active="active"></order-step>
+        </div> -->
         <div class="info-label">
           <span class="label">订单状态</span>
-          <span class="status">
-            {{getOrderStatusName(info.status)}}
-          </span>
-          <span class="value time">
-            计时{{info.expire_time}}
-          </span>
+          <p class="value">初始化</p>
         </div>
         <div class="info-label">
           <span class="label">客户名称</span>
-          <p class="value">{{info.user_name}}</p>
+          <p class="value">张珊</p>
         </div>
         <div class="info-label">
           <span class="label">客户身份证号</span>
-          <p class="value">{{info.id_card || '-'}}</p>
+          <p class="value">123123123</p>
         </div>
         <div class="info-label">
           <span class="label">联系电话</span>
-          <p class="value">{{info.mobile || '-'}}</p>
+          <p class="value">137136918838</p>
         </div>
-        <van-button class="button" @click="recordDetailAction">交易记录详情</van-button>
+        <div class="button" @click="recordDetailAction">
+          交易记录详情
+        </div>
         <div class="loansBlock">
           <div class="loansTitle">
-            <span>{{product.product_name || '-'}}</span>
-            <van-button class="button" :disabled="!isSetProduct">选择产品</van-button>
+            <span>产品标题</span>
+            <div class="button">选择产品</div>
           </div>
           <div class="loansInfo">
             <div class="item">
-              <p>{{audit.amount ? audit.amount + '万元' : '-'}}</p>
+              <p>-</p>
               <p>审批额度</p>
             </div>
             <div class="item">
-              <p>{{audit.monthly_rate ? audit.monthly_rate + '%' : '-'}}</p>
+              <p>-</p>
               <p>月利率</p>
             </div>
             <div class="item">
-              <p>{{audit.time_limit || '-'}}</p>
+              <p>-</p>
               <p>申请期限</p>
             </div>
           </div>
@@ -58,13 +58,9 @@
     <div class="panel">
       <div class="title">
         <span>系统初筛</span>
-        <div v-if="!isSetProduct" class="right" @click="screenAction(false)">
-          审核系统初筛
-          <img src="@/assets/icon/icon-arrow-right2.png">
-        </div>
-        <div v-else class="right" style="color: #78797A" @click="screenAction(true)">
+        <div class="right" @click="screenAction">
           查看
-          <img src="@/assets/icon/icon-arrow-right3.png">
+          <img src="@/assets/icon/icon-arrow-right2.png">
         </div>
       </div>
       <div class="content">
@@ -72,103 +68,72 @@
           <div class="part">
             <p>身份证</p>
             <div class="imageBlock">
-              <div class="image">
-                <img @click="showImagePreview(0)" :src="screenInfo.id_card_front_img_url">
-              </div>
-              <div class="image">
-                <img @click="showImagePreview(1)" :src="screenInfo.id_card_back_img_url">
-              </div>
+              <div class="image"></div>
+              <div class="image"></div>
             </div>
           </div>
           <div class="part">
             <p>行驶证</p>
             <div class="imageBlock">
-              <div class="image">
-                <img @click="showImagePreview(2)" :src="screenInfo.vehicle_license_front_img_url">
-              </div>
-              <div class="image">
-                <img @click="showImagePreview(3)" :src="screenInfo.vehicle_license_duplicate_img_url">
-              </div>
+              <div class="image"></div>
+              <div class="image"></div>
             </div>
           </div>
         </div>
       </div>
     </div>
-    <div class="buttonPanel">
-      <van-button class="button1" :disabled="!isSetProduct" @click="assignControl">指派内控</van-button>
-      <van-button class="button2" :disabled="!isSetProduct" type="danger" @click="submitIncomming">提交进件</van-button>
+    <div class="panel">
+      <div class="title">
+        <span>佣金分配</span>
+      </div>
+      <div class="content setting">
+        <van-field v-model="number" type="number" label="高级会员" placeholder="请输入百分比">
+          <span slot="right-icon">%</span>
+        </van-field>
+        <van-field v-model="number" type="number" label="会员" placeholder="请输入百分比">>
+          <span slot="right-icon">%</span>
+        </van-field>
+        <van-field v-model="number" type="number" label="粉丝" placeholder="请输入百分比">>
+          <span slot="right-icon">%</span>
+        </van-field>
+      </div>
     </div>
-    <van-image-preview v-model="showPreview" :images="showImages" :startPosition="previewIndex" @change="onChange">
-      <template v-slot:index>第{{ previewIndex + 1 }}页</template>
-    </van-image-preview>
+    <div class="buttonPanel">
+      <van-button class="button1" disabled @click="assignControl">指派内控</van-button>
+      <van-button class="button2" disabled type="danger" @click="submitIncomming">提交进件</van-button>
+    </div>
   </div>
 </template>
 <script>
-import { getLoanOrderInfo } from '@/apis/api.js'
+import OrderStep from './component/OrderStep'
 export default {
+  components: {
+    OrderStep
+  },
   data () {
     return {
+      list: [
+        '待提交', '已提交', '已批复', '已签约', '已放款'
+      ],
+      active: 1,
       otherCost: '',
-      info: {},
-      product: {},
-      audit: {},
-      screenInfo: {},
-      showPreview: false,
-      showImages: '',
-      previewIndex: 0
+      number: '1%'
     }
-  },
-  computed: {
-    isSetProduct () {
-      return this.product.product_name
-    }
-  },
-  created () {
-    this.getInfo()
   },
   methods: {
-    getInfo () {
-      let req = {
-        order_id: this.$route.query.order_id
-      }
-      getLoanOrderInfo(req).then(res => {
-        console.log(res)
-        if (res.code === 0) {
-          let date1 = this.moment(res.data.expire_in * 1000)
-          let date2 = this.moment(new Date())
-          let date3 = date1.diff(date2, 'minute')// 计算相差的分钟数
-          let h = Math.floor(date3 / 60)// 相差的小时数
-          let mm = date3 % 60// 计算相差小时后余下的分钟
-          this.info = {
-            ...res.data,
-            expire_time: h + ':' + mm
-          }
-          this.product = res.data.product
-          this.audit = res.data.audit
-          this.screenInfo = res.data.screen_info
-          this.showImages = [
-            this.screenInfo.id_card_front_img_url,
-            this.screenInfo.id_card_back_img_url,
-            this.screenInfo.vehicle_license_front_img_url,
-            this.screenInfo.vehicle_license_duplicate_img_url
-          ]
-        }
-      })
-    },
     recordDetailAction () {
       this.$router.push({
         path: '/recordprocess',
         query: {
-          order_id: this.info.order_id
+          id: '1312'
         }
       })
     },
-    screenAction (val) {
+    screenAction () {
       this.$router.push({
-        path: '/systemscreen2',
+        path: '/systemscreen',
         query: {
-          set: val ? '1' : '0',
-          order_id: this.info.order_id
+          id: '1312'
         }
       })
     },
@@ -180,13 +145,6 @@ export default {
     },
     submitIncomming () {
       console.log('提交进件')
-    },
-    showImagePreview (index) {
-      this.previewIndex = index
-      this.showPreview = true
-    },
-    onChange (index) {
-      this.previewIndex = index
     }
   }
 }
@@ -196,15 +154,11 @@ export default {
   height 100%
   background #F2F3F5
 
-  .product-popup
-    height 100%
-    background red
-
   .buttonPanel
     display flex
     justify-content space-around
     align-items center
-    margin-top 40px
+    margin 40px 0
 
     .van-button
       width 40%
@@ -216,7 +170,7 @@ export default {
     .button2
       background #EE5150
 
-  .panel
+  .panel /deep/
     border-top 10px solid #F2F3F5
     background #ffffff
 
@@ -258,16 +212,6 @@ export default {
         .value
           flex-grow 1
 
-        .status
-          border 1px solid #E02020
-          color #E02020
-          padding 2px 10px
-          font-size 12px
-
-        .time
-          color #E11B1B
-          margin-left 20px
-
       .button
         display inline-block
         background #EE5150
@@ -276,8 +220,6 @@ export default {
         border-radius 5px
         font-size 12px
         margin-bottom .8rem
-        height 32px
-        line-height 12px
 
       .loansBlock
         border .6px solid rgba(0, 0, 0, .25)
@@ -337,7 +279,14 @@ export default {
               border-radius 5px
               margin-right 10px
 
-              img
-                width 100%
-                height 100%
+    .setting
+      .van-field__label
+        text-align right
+        width 60px
+        margin-right 10px
+
+      .van-field__control
+        background rgba(245, 245, 245, 1)
+        text-align center
+        padding 2px
 </style>

@@ -224,7 +224,7 @@ const router = new Router({
     {
       path: '/orderinit',
       name: 'orderinit',
-      component: resolve => require(['@/view/order/component/OrderInit'], resolve),
+      component: resolve => require(['@/view/order/OrderInit'], resolve),
       meta: {
         title: '订单'
       }
@@ -232,7 +232,7 @@ const router = new Router({
     {
       path: '/ordersubmit',
       name: 'ordersubmit',
-      component: resolve => require(['@/view/order/component/OrderSubmit'], resolve),
+      component: resolve => require(['@/view/order/OrderSubmit'], resolve),
       meta: {
         title: '订单'
       }
@@ -240,7 +240,7 @@ const router = new Router({
     {
       path: '/ordersubmit2',
       name: 'ordersubmit2',
-      component: resolve => require(['@/view/order/component/OrderSubmit2'], resolve),
+      component: resolve => require(['@/view/order/OrderSubmit2'], resolve),
       meta: {
         title: '订单'
       }
@@ -248,23 +248,39 @@ const router = new Router({
     {
       path: '/ordersubmit3',
       name: 'ordersubmit3',
-      component: resolve => require(['@/view/order/component/OrderSubmit3'], resolve),
+      component: resolve => require(['@/view/order/OrderSubmit3'], resolve),
       meta: {
         title: '订单'
       }
     },
     {
-      path: '/orderreply',
-      name: 'orderreply',
-      component: resolve => require(['@/view/order/component/OrderReply'], resolve),
+      path: '/approvalreply',
+      name: 'approvalreply',
+      component: resolve => require(['@/view/order/ApprovalReply'], resolve),
       meta: {
         title: '订单审批'
       }
     },
     {
+      path: '/approvalsigning',
+      name: 'approvalsigning',
+      component: resolve => require(['@/view/order/ApprovalSigning'], resolve),
+      meta: {
+        title: '订单签约'
+      }
+    },
+    {
+      path: '/approvalloan',
+      name: 'approvalloan',
+      component: resolve => require(['@/view/order/ApprovalLoan'], resolve),
+      meta: {
+        title: '订单放款'
+      }
+    },
+    {
       path: '/recordprocess',
       name: 'recordprocess',
-      component: resolve => require(['@/view/order/component/OrderRecordDetail'], resolve),
+      component: resolve => require(['@/view/order/OrderRecordDetail'], resolve),
       meta: {
         title: '进度记录'
       }
@@ -272,7 +288,7 @@ const router = new Router({
     {
       path: '/systemscreen',
       name: 'systemscreen',
-      component: resolve => require(['@/view/order/component/SystemScreen'], resolve),
+      component: resolve => require(['@/view/order/SystemScreen'], resolve),
       meta: {
         title: '系统初筛'
       }
@@ -280,7 +296,15 @@ const router = new Router({
     {
       path: '/systemscreen2',
       name: 'systemscreen2',
-      component: resolve => require(['@/view/order/component/SystemScreen2'], resolve),
+      component: resolve => require(['@/view/order/SystemScreen2'], resolve),
+      meta: {
+        title: '系统初筛'
+      }
+    },
+    {
+      path: '/systemscreenedit',
+      name: 'systemscreenedit',
+      component: resolve => require(['@/view/order/SystemScreenEdit'], resolve),
       meta: {
         title: '系统初筛'
       }
@@ -288,7 +312,7 @@ const router = new Router({
     {
       path: '/sucpage',
       name: 'sucpage',
-      component: resolve => require(['@/view/order/component/SuccssPage'], resolve),
+      component: resolve => require(['@/view/order/SuccssPage'], resolve),
       meta: {
         title: '订单'
       }

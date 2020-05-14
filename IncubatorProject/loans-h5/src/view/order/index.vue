@@ -25,7 +25,7 @@
   </div>
 </template>
 <script>
-import OrderList from './component/OrderList'
+import OrderList from './OrderList'
 import { getLoanOrderList } from '@/apis/api.js'
 export default {
   components: {
@@ -49,15 +49,13 @@ export default {
         this.$router.push({
           path: '/orderinit',
           query: {
-            isInit: '1',
             order_id: item.order_id
           }
         })
-      } else if (item.status === 1) {
+      } else {
         this.$router.push({
           path: '/ordersubmit',
           query: {
-            isInit: '1',
             order_id: item.order_id
           }
         })

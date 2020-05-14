@@ -27,3 +27,9 @@ export function sendVerifyCode (data) {
   let url = '/sms/send-verify-code'
   return sendGetRequest(url, data)
 }
+
+// 校验验证码
+export function checkVerifyCode (data) {
+  let url = '/tools/check-verify-code'
+  return sendPostRequest(url, data)
+}

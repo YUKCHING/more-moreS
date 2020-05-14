@@ -1,7 +1,7 @@
 <template>
-  <div class='OrderReply'>
+  <div class='ApprovalReply'>
     <div style="padding-top: 1px">
-      <order-step :list="list" :active="active"></order-step>
+      <order-step :status="3"></order-step>
     </div>
     <p class="header">
       <span class="star">*</span>
@@ -11,20 +11,20 @@
       <van-radio-group v-model="replySelect" direction="horizontal">
         <van-radio :name="1">
           <template #icon="props">
-            <img class="img-icon" :src="props.checked ?require('@/assets/order/icon-step-circle1.png') : require('@/assets/order/icon-step-circle2.png')" />
+            <img class="img-icon" :src="props.checked ?require('@/assets/icon/icon-radio-active.png') : require('@/assets/icon/icon-radio-normal.png')" />
           </template>
           通过
         </van-radio>
         <van-radio :name="2">
           <template #icon="props">
-            <img class="img-icon" :src="props.checked ?require('@/assets/order/icon-step-circle1.png') : require('@/assets/order/icon-step-circle2.png')" />
+            <img class="img-icon" :src="props.checked ?require('@/assets/icon/icon-radio-active.png') : require('@/assets/icon/icon-radio-normal.png')" />
           </template>
           退审核</van-radio>
         <van-radio :name="3">
           <template #icon="props">
-            <img class="img-icon" :src="props.checked ?require('@/assets/order/icon-step-circle1.png') : require('@/assets/order/icon-step-circle2.png')" />
+            <img class="img-icon" :src="props.checked ?require('@/assets/icon/icon-radio-active.png') : require('@/assets/icon/icon-radio-normal.png')" />
           </template>
-          已拒绝</van-radio>
+          拒绝</van-radio>
       </van-radio-group>
     </div>
     <div v-if="replySelect === 1">
@@ -33,7 +33,7 @@
         批复额度
       </p>
       <div class="panel-white">
-        <van-field v-model="replyQuota" placeholder="请输入批复额度" type="number" clearable/>
+        <van-field v-model="replyAmount" placeholder="请输入批复额度" type="number" clearable/>
       </div>
       <p class="header">
         <span class="star">*</span>
@@ -49,7 +49,7 @@
         批复期限
       </p>
       <div class="panel-white">
-        <van-field v-model="replyDate" placeholder="请输入批复期限" type="number" clearable/>
+        <van-field v-model="replyTime" placeholder="请输入批复期限" type="number" clearable/>
       </div>
     </div>
     <p class="header">
@@ -57,7 +57,7 @@
       审核意见
     </p>
     <div class="panel-white">
-      <van-field v-model="replyAdvice" placeholder="请输入审核意见" clearable/>
+      <van-field v-model="replyOpinion" placeholder="请输入审核意见" clearable/>
     </div>
     <p class="header">
       <span class="star">*</span>
@@ -77,37 +77,92 @@
   </div>
 </template>
 <script>
-import OrderStep from './OrderStep'
+import OrderStep from './component/OrderStep'
+import { postLoanApproval } from '@/apis/api.js'
 export default {
   components: {
     OrderStep
   },
   data () {
     return {
-      list: [
-        '待提交', '已提交', '已批复', '已签约', '已放款'
-      ],
-      active: 1,
       replySelect: 1,
-      replyAdvice: '',
+      replyOpinion: '',
       replyConclusion: '',
-      replyQuota: '',
+      replyAmount: '',
       replyRate: '',
-      replyDate: ''
+      replyTime: '',
+      order_id: '',
+      product_id: ''
+    }
+  },
+  watch: {
+    'replySelect' () {
+      this.resetAction()
+    }
+  },
+  created () {
+    if (this.$route.query) {
+      this.order_id = this.$route.query.orderId
+      this.product_id = this.$route.query.productId
+      this.replySelect = Number(this.$route.query.reply)
     }
   },
   methods: {
     closeAction () {
       this.$router.go(-1)
     },
+    resetAction () {
+      this.replyOpinion = ''
+      this.replyConclusion = ''
+      this.replyAmount = ''
+      this.replyRate = ''
+      this.replyTime = ''
+    },
     submitAction () {
-
+      if (this.replySelect === 1) {
+        if (this.replyTime === '' || this.replyAmount === '' || this.replyRate === '' || this.replyOpinion === '' || this.replyConclusion === '') {
+          this.toast('请填写完整信息')
+          return
+        }
+      }
+      if (this.replySelect === 2 || this.replySelect === 3) {
+        if (this.replyOpinion === '' || this.replyConclusion === '') {
+          this.toast('请填写完整信息')
+          return
+        }
+      }
+      let req = {
+        result: this.replySelect,
+        order_id: this.order_id,
+        product_id: this.product_id,
+        amount: this.replyAmount,
+        monthly_rate: this.replyRate,
+        time_limit: this.replyTime,
+        opinion: this.replyOpinion,
+        conclusion: this.replyConclusion
+      }
+      this.tLoading()
+      postLoanApproval(req).then(res => {
+        console.log(res)
+        this.tClear()
+        if (res.code === 0) {
+          this.tSuccess('提交成功').then(() => {
+            this.$store.dispatch('setNowTab', {
+              nowTab: 3
+            }).then(() => {
+              this.$router.push({
+                path: '/index'
+              })
+            })
+          })
+        }
+      })
     }
   }
 }
 </script>
 <style lang='stylus' rel='stylesheet/stylus' scoped>
-.OrderReply
+.ApprovalReply
   height 100%
   background rgba(239, 240, 242, 1)
 

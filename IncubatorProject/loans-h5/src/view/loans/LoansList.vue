@@ -21,7 +21,7 @@
 <script>
 import LoansBlock from './components/LoansBlock'
 import QrOverlay from '@/components/QrOverlay'
-import { getProductList } from '@/apis/api'
+import { getProductList, getCommissionByProduct } from '@/apis/api'
 import initLoginCheckInfo from '@/common/js/login.js'
 import commonJs from '@/common/js/public.js'
 
@@ -130,7 +130,19 @@ export default {
       if (blockId) {
         let item = {}
         item = this.lists.find(ele => ele.id === blockId)
-        this.$emit('select', item)
+
+        let req = {
+          product_id: item.id
+        }
+        getCommissionByProduct(req).then(res => {
+          if (res.code === 0) {
+            if (res.data.length !== 0) {
+              this.$emit('select', item)
+            } else {
+              this.toast('该产品未设置佣金规则，\n请选择其它产品。')
+            }
+          }
+        })
       } else {
         this.toast('请选择产品')
       }

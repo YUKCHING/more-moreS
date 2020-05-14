@@ -5,44 +5,27 @@
       <div class="content">
         <div class="info-label">
           <span class="label">订单状态</span>
-          <p class="value">{{isInit ? '-' : '初始化'}}</p>
+          <span class="status">
+            {{getOrderStatusName(info.status)}}
+          </span>
+          <span class="value time">
+            计时{{info.expire_time}}
+          </span>
         </div>
         <div class="info-label">
           <span class="label">客户名称</span>
-          <p class="value">{{isInit ? '-' : '张珊'}}</p>
+          <p class="value">{{info.user_name}}</p>
         </div>
         <div class="info-label">
           <span class="label">客户身份证号</span>
-          <p class="value">{{isInit ? '-' : '123123123'}}</p>
+          <p class="value">{{info.id_card_no || '-'}}</p>
         </div>
         <div class="info-label">
           <span class="label">联系电话</span>
-          <p class="value">{{isInit ? '-' : '137136918838'}}</p>
+          <p class="value">{{info.mobile || '-'}}</p>
         </div>
-        <van-button class="button" type="danger" :disabled="isInit" @click="recordDetailAction">交易记录详情</van-button>
-        <div class="loansBlock">
-          <div class="loansTitle">
-            <span>产品标题</span>
-            <van-button class="button" type="danger" :disabled="isInit">选择产品</van-button>
-          </div>
-          <div class="loansInfo">
-            <div class="item">
-              <p>-</p>
-              <p>审批额度</p>
-            </div>
-            <div class="item">
-              <p>-</p>
-              <p>月利率</p>
-            </div>
-            <div class="item">
-              <p>-</p>
-              <p>申请期限</p>
-            </div>
-          </div>
-          <div class="other">
-            <van-field v-model="otherCost" type="number" label="其他费用：" placeholder="请输入" />
-          </div>
-        </div>
+        <van-button class="button" type="danger" @click="recordDetailAction">交易记录详情</van-button>
+        <order-loan-block></order-loan-block>
       </div>
     </div>
     <div class="panel">
@@ -75,23 +58,50 @@
   </div>
 </template>
 <script>
+import OrderLoanBlock from './component/OrderLoanBlock'
+import { getLoanOrderInfo } from '@/apis/api.js'
 export default {
+  components: {
+    OrderLoanBlock
+  },
   data () {
     return {
-      isInit: false,
-      otherCost: ''
+      info: {},
+      otherCost: '',
+      order_id: ''
     }
   },
   created () {
-    this.isInit = this.$route.query.isInit === '1'
-    console.log(this.isInit)
+    this.init()
   },
   methods: {
+    init () {
+      this.order_id = this.$route.query.order_id
+      this.getInfo()
+    },
+    getInfo () {
+      let req = {
+        order_id: this.order_id
+      }
+      getLoanOrderInfo(req).then(res => {
+        if (res.code === 0) {
+          let date1 = this.moment(res.data.expire_in * 1000)
+          let date2 = this.moment(new Date())
+          let date3 = date1.diff(date2, 'minute')// 计算相差的分钟数
+          let h = Math.floor(date3 / 60)// 相差的小时数
+          let mm = date3 % 60// 计算相差小时后余下的分钟
+          this.info = {
+            ...res.data,
+            expire_time: h + ':' + mm
+          }
+        }
+      })
+    },
     recordDetailAction () {
       this.$router.push({
         path: '/recordprocess',
         query: {
-          id: '1312'
+          order_id: this.info.order_id
         }
       })
     },
@@ -100,8 +110,7 @@ export default {
         path: '/systemscreen',
         query: {
           isInit: '1',
-          order_id: this.$route.query.order_id,
-          id: '1312'
+          order_id: this.$route.query.order_id
         }
       })
     }
@@ -152,6 +161,16 @@ export default {
         .value
           flex-grow 1
 
+        .status
+          border 1px solid #E02020
+          color #E02020
+          padding 2px 10px
+          font-size 12px
+
+        .time
+          color #E11B1B
+          margin-left 20px
+
       .button
         display inline-block
         background #EE5150
@@ -162,42 +181,6 @@ export default {
         margin-bottom .8rem
         height 32px
         line-height 12px
-
-      .loansBlock
-        border .6px solid rgba(0, 0, 0, .25)
-        box-shadow 0px 2px 4px 0px rgba(0, 0, 0, .1)
-        padding .8rem .8rem 0rem
-
-        .loansTitle
-          display flex
-          justify-content space-between
-          align-items center
-          font-size 14px
-
-        .loansInfo
-          display flex
-          justify-content space-around
-          align-items center
-
-          .item
-            width 30%
-            display inline-flex
-            flex-direction column
-            align-items center
-            font-size 12px
-
-            p
-              &:nth-child(2)
-                color rgba(0, 0, 0, .25)
-                font-size 12px
-                transform scale(.9)
-                margin-top 1rem
-      .other
-        .van-cell
-          background rgba(0, 0, 0, .1)
-          padding 6px 8px
-          margin .5rem 0
-          font-size 12px
 
       .certificates
         display flex
