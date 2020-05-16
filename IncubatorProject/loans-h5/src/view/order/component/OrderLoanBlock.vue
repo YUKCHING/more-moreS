@@ -57,23 +57,54 @@ export default {
       return this.product.product_name
     },
     changeButtonStatus () {
-      var value = !this.product.product_name
-      if (this.info.status === 13 || this.info.status === 14) {
-        value = false // false是不禁止
+      var isBan = true
+      var status = this.info.status
+      // 高级会员-业务员
+      if (this.grade === 2) {
+        if (status === 1 && this.product.product_name) {
+          isBan = false
+        } else if (status === 14) {
+          isBan = false
+        } else {
+          isBan = true
+        }
       }
-      if (this.info.status === 0 || this.info.status === 5 || this.info.status === 6 || this.info.status === 8) {
-        value = true // true是禁止
+
+      // 总代理/一级代理
+      if (this.grade === 4 || this.grade === 3) {
+        isBan = true
       }
-      return value
+
+      // 内控
+      if (this.isInternalControl) {
+        if (status === 3 || status === 13 || status === 14) {
+          isBan = false
+        } else {
+          isBan = true
+        }
+      }
+
+      return isBan
     }
   },
   data () {
     return {
       showProductPopup: false,
-      otherCost: ''
+      otherCost: '',
+      isInternalControl: false,
+      grade: ''
     }
   },
+  created () {
+    this.init()
+  },
   methods: {
+    init () {
+      this.isInternalControl = Boolean(this.$store.getters.userInfo.is_internal_control)
+      this.grade = Number(this.$store.getters.userInfo.grade)
+      // this.isInternalControl = false
+      // this.grade = 2
+    },
     selectProductAction () {
       this.showProductPopup = true
     },
@@ -82,8 +113,6 @@ export default {
       this.showProductPopup = false
       if (this.product.id !== item.id) {
         this.$emit('select', item)
-        // this.hasChangeProduct = true
-        // this.product = item
       }
     }
   }

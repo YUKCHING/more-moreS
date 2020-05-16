@@ -77,7 +77,6 @@ export default {
 </script>
 <style lang='stylus' rel='stylesheet/stylus' scoped>
 .OrderRecordDetail
-  height 100%
   background #F2F3F5
   padding 10px 0
 

@@ -310,6 +310,30 @@ const router = new Router({
       }
     },
     {
+      path: '/ordersettlement',
+      name: 'ordersettlement',
+      component: resolve => require(['@/view/order/OrderSettlement'], resolve),
+      meta: {
+        title: '订单申请结算'
+      }
+    },
+    {
+      path: '/ordersettlementback',
+      name: 'ordersettlementback',
+      component: resolve => require(['@/view/order/OrderSettlementBack'], resolve),
+      meta: {
+        title: '结算退回'
+      }
+    },
+    {
+      path: '/ordersettlementpass',
+      name: 'ordersettlementpass',
+      component: resolve => require(['@/view/order/OrderSettlementPass'], resolve),
+      meta: {
+        title: '结算通过'
+      }
+    },
+    {
       path: '/sucpage',
       name: 'sucpage',
       component: resolve => require(['@/view/order/SuccssPage'], resolve),

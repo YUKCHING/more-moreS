@@ -158,7 +158,9 @@ export default {
       timerSec: 0,
       timer: '',
       info: {},
-      product: {},
+      product: {
+        product_name: ''
+      },
       audit: {},
       screenInfo: {},
       showPreview: false,
@@ -326,6 +328,7 @@ export default {
       justify-content space-between
       align-items center
       font-size 14px
+      height 42px
 
     .loansInfo
       display flex

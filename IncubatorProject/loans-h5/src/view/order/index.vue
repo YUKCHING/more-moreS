@@ -65,6 +65,7 @@ export default {
       let req = {
         status: this.active === 0 ? '' : this.active
       }
+      this.listData = []
       getLoanOrderList(req).then(res => {
         if (res.code === 0) {
           if (res.data.list.length > 0) {
@@ -79,8 +80,6 @@ export default {
                 expire_time: h + '小时' + mm + '分'
               }
             })
-          } else {
-            this.listData = []
           }
         }
       })

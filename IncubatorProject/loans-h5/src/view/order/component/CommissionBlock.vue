@@ -21,13 +21,12 @@
   </div>
 </template>
 <script>
+import { getCommissionAssign } from '@/apis/api.js'
 export default {
   props: {
-    commission: {
-      type: Object,
-      default: () => {
-        return {}
-      }
+    orderId: {
+      type: String,
+      default: ''
     }
   },
   data () {
@@ -40,16 +39,40 @@ export default {
     }
   },
   created () {
-    this.getAcInfo()
+    this.getCommission()
   },
   methods: {
-    getAcInfo () {
-      let com = this.commission
-      this.ac_general_agent = (Number(com.general_agent) - Number(com.first_agent)).toFixed(1)
-      this.ac_first_agent = (Number(com.first_agent) - Number(com.senior_member)).toFixed(1)
-      this.ac_senior_member = (Number(com.senior_member) - Number(com.member)).toFixed(1)
-      this.ac_member = (Number(com.member) - Number(com.fans)).toFixed(1)
-      this.ac_fans = Number(com.fans).toFixed(1)
+    getCommission () {
+      let req = {
+        order_id: this.orderId
+      }
+      getCommissionAssign(req).then(res => {
+        if (res.code === 0) {
+          if (res.data.commissions.length > 0) {
+            let commissions = res.data.commissions
+            let general = commissions.find(ele => ele.grade === 4)
+            if (general) {
+              this.ac_general_agent = Number(general.rate).toFixed(1)
+            }
+            let first = commissions.find(ele => ele.grade === 3)
+            if (first) {
+              this.ac_first_agent = Number(first.rate).toFixed(1)
+            }
+            let senior = commissions.find(ele => ele.grade === 2)
+            if (senior) {
+              this.ac_senior_member = Number(senior.rate).toFixed(1)
+            }
+            let member = commissions.find(ele => ele.grade === 1)
+            if (member) {
+              this.ac_member = Number(member.rate).toFixed(1)
+            }
+            let fans = commissions.find(ele => ele.grade === 0)
+            if (fans) {
+              this.ac_fans = Number(fans.rate).toFixed(1)
+            }
+          }
+        }
+      })
     },
     showField (val) {
       var grade = this.$store.getters.userInfo.grade

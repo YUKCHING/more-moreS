@@ -75,7 +75,7 @@
 </template>
 <script>
 import OrderStep from './component/OrderStep'
-import { postLoanApproval } from '@/apis/api.js'
+import { postLoanApproval, getLoanOrderInfo } from '@/apis/api.js'
 export default {
   components: {
     OrderStep
@@ -89,22 +89,49 @@ export default {
       replyRate: '',
       replyTime: '',
       order_id: '',
-      product_id: ''
+      product_id: '',
+      audit: {}
     }
   },
   watch: {
     'replySelect' () {
       this.resetAction()
+      if (this.replySelect === 1) {
+        this.setAuditInfo()
+      }
     }
   },
   created () {
-    if (this.$route.query) {
-      this.order_id = this.$route.query.orderId
-      this.product_id = this.$route.query.productId
-      this.replySelect = Number(this.$route.query.reply)
-    }
+    this.init()
   },
   methods: {
+    init () {
+      if (this.$route.query) {
+        this.order_id = this.$route.query.orderId
+        this.product_id = this.$route.query.productId
+        this.replySelect = Number(this.$route.query.reply)
+        this.getInfo()
+      }
+    },
+    getInfo () {
+      let req = {
+        order_id: this.order_id
+      }
+      getLoanOrderInfo(req).then(res => {
+        console.log(res)
+        if (res.code === 0) {
+          this.audit = res.data.audit
+          this.setAuditInfo()
+        }
+      })
+    },
+    setAuditInfo () {
+      if (this.audit) {
+        this.replyAmount = Number(this.audit.amount)
+        this.replyRate = Number(this.audit.monthly_rate)
+        this.replyTime = Number(this.audit.time_limit)
+      }
+    },
     closeAction () {
       this.$router.go(-1)
     },

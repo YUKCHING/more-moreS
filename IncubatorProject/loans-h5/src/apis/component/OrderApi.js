@@ -83,3 +83,33 @@ export function postLoanReApproval (data) {
   let url = '/loan/re-approval'
   return sendPostRequest(url, data)
 }
+
+// 获取佣金分配
+export function getCommissionAssign (data) {
+  let url = '/loan/get-commission-assign'
+  return sendGetRequest(url, data)
+}
+
+// 申请结算
+export function postApplySettle (data) {
+  let url = '/loan/apply-settle'
+  return sendPostRequest(url, data)
+}
+
+// 结算申请退回
+export function postBackSettle (data) {
+  let url = '/loan/back-settle'
+  return sendPostRequest(url, data)
+}
+
+// 结算通过
+export function postPassSettle (data) {
+  let url = '/loan/pass-settle'
+  return sendPostRequest(url, data)
+}
+
+// 结算申请催办
+export function getLoanUrge (data) {
+  let url = '/loan/urge'
+  return sendGetRequest(url, data)
+}

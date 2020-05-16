@@ -45,10 +45,16 @@ import CommissionCard from './component/CommissionCard'
 import CommissionCard2 from './component/CommissionCard2'
 import CommissionCard3 from './component/CommissionCard3'
 import CommissionCard4 from './component/CommissionCard4'
+import initLoginCheckInfo from '@/common/js/login.js'
 import { deleteCommission, getCommissionList } from '@/apis/api'
 export default {
   components: {
     CommissionCard, CommissionCard2, CommissionCard3, CommissionCard4
+  },
+  computed: {
+    isProduction () {
+      return process.env.NODE_ENV === 'production'
+    }
   },
   data () {
     return {
@@ -56,13 +62,45 @@ export default {
       listData: []
     }
   },
+  beforeCreate () {
+    window.shareUrl = location.href.split('#')[0]
+  },
   created () {
-    // 0粉丝 1会员 2高级会员 3一级代理 4总代理
-    // this.grade = Number(this.$store.getters.userInfo.grade)
-    this.grade = 1
-    this.getList()
+    this.init()
   },
   methods: {
+    init () {
+      if (this.isProduction) {
+        let title = '泰诺汽车平台-佣金设置'
+        let des = '一站式汽车金融服务\r\n做车贷，找泰诺！。'
+        if (!window.isReady) {
+          initLoginCheckInfo(this.$route).then(info => {
+            if (info && info.code === -1000104) {
+              this.bus.$emit('showQrOverlay')
+              return
+            }
+            // 分享设置
+            let shareLink = 'http://api.tainuocar.com/home/' + this.$route.name + '?invite=' + this.$store.getters.userInfo['invite_code']
+            this.initWxShare(window.shareUrl, title, des, shareLink)
+            window.isReady = true
+            this.initSetting()
+          })
+        } else {
+        // 分享设置
+          let shareLink = 'http://api.tainuocar.com/home/' + this.$route.name + '?invite=' + this.$store.getters.userInfo['invite_code']
+          this.initWxShare(window.shareUrl, title, des, shareLink)
+          this.initSetting()
+        }
+      } else {
+        this.initSetting()
+      }
+    },
+    initSetting () {
+      // 0粉丝 1会员 2高级会员 3一级代理 4总代理
+      this.grade = Number(this.$store.getters.userInfo.grade)
+      // this.grade = 1
+      this.getList()
+    },
     getList () {
       getCommissionList({}).then(res => {
         console.log(res)

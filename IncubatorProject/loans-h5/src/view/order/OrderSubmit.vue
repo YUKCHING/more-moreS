@@ -13,10 +13,10 @@
         </div>
         <div class="info-label">
           <span class="label">订单状态</span>
-          <span class="status">
+          <span class="status" v-show="info.status">
             {{getOrderStatusName(info.status)}}
           </span>
-          <span class="value time">
+          <span class="value time" v-show="info.status">
             计时{{info.expire_time}}
           </span>
         </div>
@@ -62,25 +62,51 @@
     <!-- 佣金分配
      -->
     <div class="panel" v-if="Object.keys(commission).length > 0">
-      <!-- 内控 -->
-      <div v-if="isInternalControl">
+      <!-- 财务 -->
+      <div v-if="isFinance">
+        <!-- 11订单待支出 12订单已支出 -->
+        <div v-if="info.status === 11 || info.status === 12">
+          <commission-block2 :orderId="String(order_id)"></commission-block2>
+        </div>
+      </div>
+      <!-- 4 总代理 3 一级代理  -->
+      <div v-else-if="grade === 4 || grade === 3">
+        <!-- 9订单待结算-申请中 -->
+        <div v-if="info.status === 9 && settle_status === '0'">
+          <commission-detail :orderId="String(order_id)"></commission-detail>
+        </div>
       </div>
       <!-- 2 高级会员——业务 -->
       <div v-else-if="grade === 2">
         <!-- 1订单待提交 3订单待批复 13订单退审核 14订单已被拒绝 -->
         <div v-if="info.status === 1 || info.status === 3 || info.status === 13 || info.status === 14">
-          <commission-block :commission="commission"></commission-block>
+          <commission-block :orderId="String(order_id)"></commission-block>
         </div>
-        <!-- 5订单待签约 7订单待放款 9订单待结算 -->
-        <div v-else-if="info.status === 5 || info.status === 7 || info.status === 9">
-          <commission-block2 :commission="commission" :amount="Number(audit.amount)"></commission-block2>
+        <!-- 5订单待签约 7订单待放款 9订单待结算-未申请/申请中 -->
+        <div v-else-if="info.status === 5 || info.status === 7 || (info.status === 9 && settle_status !== '-1')">
+          <commission-block2 :orderId="String(order_id)"></commission-block2>
+        </div>
+        <!-- 9订单待结算-退回 -->
+        <div v-else-if="info.status === 9 && settle_status === '-1'">
+          <commission-detail-back :orderId="String(order_id)"></commission-detail-back>
         </div>
       </div>
-
+    </div>
+    <!-- 财务
+    -->
+    <div v-if="isFinance">
+      <!-- 11订单待支出 -->
+      <div class="buttonPanel" v-if="info.status === 11">
+        <van-button class="button4" type="danger" @click="expendAction">支 出</van-button>
+      </div>
+      <!-- 其它 -->
+      <div class="buttonPanel" v-else>
+        <van-button class="button3" @click="goBackAction">返 回</van-button>
+      </div>
     </div>
     <!-- 内控
     -->
-    <div v-if="isInternalControl">
+    <div v-else-if="isInternalControl">
       <!-- 3订单待批复 14订单已被拒绝 -->
       <div class="buttonPanel" v-if="info.status === 3 || info.status === 14">
         <van-button class="button1" @click="replyAction(2)">退审批</van-button>
@@ -88,7 +114,7 @@
       </div>
       <!-- 13订单退审核 -->
       <div class="buttonPanel" v-else-if="info.status === 13">
-        <van-button class="button2" type="danger" @click="submitReApproval">提 交</van-button>
+        <van-button class="button4" type="danger" @click="submitReApproval">提 交</van-button>
       </div>
       <!-- 5订单待签约 -->
       <div class="buttonPanel" v-else-if="info.status === 5">
@@ -105,23 +131,17 @@
         <van-button class="button3" @click="goBackAction">返 回</van-button>
       </div>
     </div>
-    <!-- 4 总代理
+    <!-- 4 总代理 3 一级代理
     -->
-    <div v-else-if="grade === 4">
+    <div v-else-if="grade === 4 || grade === 3">
       <!-- 0订单初始化 -->
       <div class="buttonPanel" v-if="info.status === 0">
-        <van-button class="button1" @click="cancelOrderActin">取消订单</van-button>
+        <van-button class="button4" type="danger" @click="cancelOrderActin">取消订单</van-button>
       </div>
-      <div class="buttonPanel" v-else>
-        <van-button class="button3" @click="goBackAction">返 回</van-button>
-      </div>
-    </div>
-    <!-- 3 一级代理
-    -->
-    <div v-else-if="grade === 3">
-      <!-- 0订单初始化 -->
-      <div class="buttonPanel" v-if="info.status === 0">
-        <van-button class="button1" @click="cancelOrderActin">取消订单</van-button>
+      <!-- 9订单待结算-已申请 -->
+      <div class="buttonPanel" v-else-if="info.status === 9 && settle_status === '0'">
+        <van-button class="button1" @click="backSettlementAction">退 回</van-button>
+        <van-button class="button2" type="danger" @click="passSettlementAction">通 过</van-button>
       </div>
       <div class="buttonPanel" v-else>
         <van-button class="button3" @click="goBackAction">返 回</van-button>
@@ -136,35 +156,51 @@
         <van-button class="button2" :disabled="!isSetProduct || !handler_id" type="danger" @click="submitIncomming">提交进件</van-button>
       </div>
       <!-- 9订单待结算 -->
-      <div class="buttonPanel" v-else-if="info.status === 9">
-        <van-button class="button2" @click="applySettlementAction">申请结算</van-button>
+      <div class="buttonPanel" v-else-if="info.status === 9 && settle_status === ''">
+        <van-button class="button4" type="danger" @click="applySettlementAction">申请结算</van-button>
+      </div>
+      <!-- 9订单待结算-已申请 -->
+      <div class="buttonPanel" v-else-if="info.status === 9 && settle_status === '0'">
+        <van-button class="button4" type="danger" @click="urgingSettlementAction" :icon="require('@/assets/icon/icon-bell-ring.png')">催 办</van-button>
+      </div>
+      <!-- 9订单待结算-已退回 -->
+      <div v-else-if="info.status === 9 && settle_status === '-1'">
       </div>
       <!-- 3订单待批复 5订单待签约 7订单待放款 13订单退审核 -->
       <div class="buttonPanel" v-else>
         <van-button class="button3" @click="goBackAction">返 回</van-button>
       </div>
     </div>
-
+    <!-- 其它
+    -->
+    <div v-else>
+      <div class="buttonPanel">
+        <van-button class="button3" @click="goBackAction">返 回</van-button>
+      </div>
+    </div>
     <van-popup v-model="showGeneralPopup" position="bottom" class="popup-class">
       <employees-list @select="getHandlerIdAction"></employees-list>
     </van-popup>
   </div>
 </template>
 <script>
-import { getLoanOrderInfo, postLoanCommit, getCommissionByProduct, postLoanReApproval, cancelPublicOrder } from '@/apis/api.js'
+import { getLoanOrderInfo, postLoanCommit, getCommissionByProduct, postLoanReApproval, cancelPublicOrder, getLoanUrge } from '@/apis/api.js'
 import EmployeesList from './EmployeesList'
 import OrderStep from './component/OrderStep'
 import OrderLoanBlock from './component/OrderLoanBlock'
 import CommissionBlock from './component/CommissionBlock'
 import CommissionBlock2 from './component/CommissionBlock2'
+import CommissionDetail from './component/CommissionDetail'
+import CommissionDetailBack from './component/CommissionDetailBack'
 import ScreenInfoPreview from './component/ScreenInfoPreview'
 
 export default {
   components: {
-    EmployeesList, OrderStep, OrderLoanBlock, CommissionBlock, CommissionBlock2, ScreenInfoPreview
+    EmployeesList, OrderStep, OrderLoanBlock, CommissionBlock, CommissionBlock2, CommissionDetail, CommissionDetailBack, ScreenInfoPreview
   },
   data () {
     return {
+      isFinance: false,
       isInternalControl: false,
       grade: '',
       order_id: '',
@@ -176,7 +212,8 @@ export default {
       showImages: [],
       showGeneralPopup: false,
       hasChangeProduct: false,
-      handler_id: ''
+      handler_id: '',
+      settle_status: ''
     }
   },
   computed: {
@@ -189,13 +226,14 @@ export default {
   },
   methods: {
     init () {
+      this.isFinance = Boolean(this.$store.getters.userInfo.is_finance_staff)
       this.isInternalControl = Boolean(this.$store.getters.userInfo.is_internal_control)
       this.grade = Number(this.$store.getters.userInfo.grade)
       this.order_id = this.$route.query.order_id
       this.getInfo()
       // 测试
-      // this.isInternalControl = false
-      // this.grade = 2
+      this.isInternalControl = false
+      this.grade = 2
     },
     getInfo () {
       let req = {
@@ -225,6 +263,9 @@ export default {
           ]
           if (res.data.handler_id) {
             this.handler_id = res.data.handler_id
+          }
+          if (res.data.hasOwnProperty('settle_status')) {
+            this.settle_status = String(res.data.settle_status)
           }
         }
       })
@@ -273,6 +314,7 @@ export default {
         }
       })
     },
+    // 提交进件
     submitIncomming () {
       let req = {
         order_id: this.order_id,
@@ -322,12 +364,48 @@ export default {
       this.getCommissionByProduct()
     },
     getHandlerIdAction (item) {
-      this.handler_id = item
+      this.handler_id = item.id
       this.showGeneralPopup = false
     },
+    // 申请结算
     applySettlementAction () {
-
+      this.$router.push({
+        path: '/ordersettlement',
+        query: {
+          order_id: this.order_id
+        }
+      })
     },
+    // 催办结算
+    urgingSettlementAction () {
+      let req = {
+        order_id: this.order_id
+      }
+      getLoanUrge(req).then(res => {
+        if (res.code === 0) {
+          this.tSuccess('催办成功')
+        }
+      })
+    },
+    // 退回结算
+    backSettlementAction () {
+      this.$router.push({
+        path: '/ordersettlementback',
+        query: {
+          order_id: this.order_id
+        }
+      })
+    },
+    // 通过结算
+    passSettlementAction () {
+      this.$router.push({
+        path: '/ordersettlementpass',
+        query: {
+          order_id: this.order_id
+        }
+      })
+    },
+    // 订单批复
     replyAction (val) {
       this.$router.push({
         path: '/approvalreply',
@@ -338,6 +416,7 @@ export default {
         }
       })
     },
+    // 订单签约
     signingAction (val) {
       this.$router.push({
         path: '/approvalsigning',
@@ -348,6 +427,7 @@ export default {
         }
       })
     },
+    // 订单放款
     makeLoanAction (val) {
       this.$router.push({
         path: '/approvalloan',
@@ -358,9 +438,19 @@ export default {
         }
       })
     },
+    // 订单支出
+    expendAction () {
+      this.dConfirm('确认支出吗？').then(res => {
+        if (res) {
+
+        }
+      })
+    },
+    // 返回
     goBackAction () {
       this.$router.go(-1)
     },
+    // 根据产品获取佣金配置
     getCommissionByProduct () {
       let req = {
         product_id: this.product.id
@@ -403,6 +493,10 @@ export default {
     .button3
       color #EE5150
       border 1px solid #EE5150
+      width 70%
+
+    .button4
+      background #EE5150
       width 70%
 
   .panel

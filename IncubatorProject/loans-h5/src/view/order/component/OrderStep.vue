@@ -81,28 +81,28 @@ export default {
           this.list = ['待提交', '已提交', '已批复', '已签约', '已放款']
           break
         case 7:
-          this.active = 4
-          this.list = ['待提交', '已提交', '已批复', '已签约', '已放款']
+          this.active = 3
+          this.list = ['待提交', '已提交', '已批复', '已签约', '已放款', '待结算']
           break
         case 8:
           this.active = 4
-          this.list = ['待提交', '已提交', '已批复', '已签约', '已放款']
+          this.list = ['待提交', '已提交', '已批复', '已签约', '已放款', '待结算']
           break
         case 9:
-          this.active = 4
-          this.list = ['待提交', '已提交', '已批复', '已签约', '待结算']
+          this.active = 5
+          this.list = ['待提交', '已提交', '已批复', '已签约', '已放款', '待结算']
           break
         case 10:
-          this.active = 4
-          this.list = ['待提交', '已提交', '已批复', '已签约', '已结算']
+          this.active = 5
+          this.list = ['待提交', '已提交', '已批复', '已签约', '已放款', '已结算']
           break
         case 11:
-          this.active = 4
-          this.list = ['待提交', '已提交', '已批复', '已签约', '待支出']
+          this.active = 6
+          this.list = ['待提交', '已提交', '已批复', '已签约', '已放款', '已结算', '待支出']
           break
         case 12:
-          this.active = 4
-          this.list = ['待提交', '已提交', '已批复', '已签约', '已支出']
+          this.active = 6
+          this.list = ['待提交', '已提交', '已批复', '已签约', '已放款', '已结算', '已支出']
           break
         case 13:
           this.active = 2
@@ -132,6 +132,7 @@ export default {
   flex-wrap nowrap
   align-items center
   overflow hidden
+  overflow-x auto
   margin 20px 0
 
   .item

@@ -86,7 +86,13 @@
 <script>
 import $ from 'jquery'
 import { postLoanApply, sendVerifyCode } from '@/apis/api.js'
+import initLoginCheckInfo from '@/common/js/login.js'
 export default {
+  computed: {
+    isProduction () {
+      return process.env.NODE_ENV === 'production'
+    }
+  },
   data () {
     return {
       total: 300000000,
@@ -121,10 +127,11 @@ export default {
       invite_code: ''
     }
   },
+  beforeCreate () {
+    window.shareUrl = location.href.split('#')[0]
+  },
   created () {
-    let screenWidth = window.screen.availWidth
-    let sHeight = (screenWidth * 156.0) / 375.0
-    this.swipeHeight = sHeight + 'px'
+    this.init()
   },
   destroyed () {
     clearInterval(this.scrollTimer)
@@ -134,6 +141,32 @@ export default {
     this.scrollAction()
   },
   methods: {
+    init () {
+      if (this.isProduction) {
+        let title = '泰诺汽车平台-预约贷款'
+        let des = '一站式汽车金融服务\r\n做车贷，找泰诺！。'
+        if (!window.isReady) {
+          initLoginCheckInfo(this.$route).then(info => {
+            if (info && info.code === -1000104) {
+              this.bus.$emit('showQrOverlay')
+              return
+            }
+            // 分享设置
+            let shareLink = 'http://api.tainuocar.com/home/' + this.$route.name + '?invite=' + this.$store.getters.userInfo['invite_code']
+            this.initWxShare(window.shareUrl, title, des, shareLink)
+            window.isReady = true
+          })
+        } else {
+        // 分享设置
+          let shareLink = 'http://api.tainuocar.com/home/' + this.$route.name + '?invite=' + this.$store.getters.userInfo['invite_code']
+          this.initWxShare(window.shareUrl, title, des, shareLink)
+        }
+      }
+
+      let screenWidth = window.screen.availWidth
+      let sHeight = (screenWidth * 156.0) / 375.0
+      this.swipeHeight = sHeight + 'px'
+    },
     scrollAction () {
       clearInterval(this.scrollTimer)
       this.scrollTimer = setInterval(() => {

@@ -37,7 +37,8 @@ export default {
       })
     },
     confirmAction () {
-      this.$emit('select', this.selectId)
+      let target = this.listData.find(ele => ele.id === this.selectId)
+      this.$emit('select', target)
     },
     checkboxChange (val, item) {
       if (val) {
