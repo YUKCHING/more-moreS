@@ -49,7 +49,7 @@ export default {
       this.dConfirm('确定通过结算吗？').then(val => {
         if (val) {
           let req = {
-            order_id: this.order_id
+            order_id: this.orderId
           }
           postPassSettle(req).then(res => {
             if (res.code === 0) {

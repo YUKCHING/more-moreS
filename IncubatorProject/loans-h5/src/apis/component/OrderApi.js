@@ -113,3 +113,15 @@ export function getLoanUrge (data) {
   let url = '/loan/urge'
   return sendGetRequest(url, data)
 }
+
+// 添加子订单
+export function postLoadSubOrder (data) {
+  let url = '/loan/add-sub-order'
+  return sendPostRequest(url, data)
+}
+
+// 添加子订单
+export function getLoanExpenditure (data) {
+  let url = '/loan/expenditure'
+  return sendGetRequest(url, data)
+}

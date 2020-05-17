@@ -23,7 +23,7 @@
       <div class="title">
         <span>退回原因</span>
       </div>
-      <van-field :value="'123123'" label="审批意见" type="textarea" readonly />
+      <van-field :value="settle.remark" label="审批意见" type="textarea" readonly />
     </div>
     <div class="button-block">
       <van-button class="button1" @click="closeAction">关 闭</van-button>
@@ -46,6 +46,12 @@ export default {
     orderId: {
       type: String,
       default: ''
+    },
+    settle: {
+      type: Object,
+      default: () => {
+        return {}
+      }
     }
   },
   data () {
@@ -83,13 +89,33 @@ export default {
       this.$router.go(-1)
     },
     submitAction () {
+      let member = this.commissions.find(ele => ele.grade === 1)
+      let fans = this.commissions.filter(ele => ele.grade === 0)
+      if (member.mode === 0) {
+        this.toast('请选择会员提现模式')
+        return
+      }
+      var fansChoice = true
+      fans.forEach(ele => {
+        if (ele.mode === 0) {
+          fansChoice = false
+        }
+      })
+      if (!fansChoice) {
+        this.toast('请选择粉丝提现模式')
+        return
+      }
       let req = {
         order_id: this.orderId,
-        member_mode: '',
-        fans: [],
-        approval_id: ''
+        member_mode: member.grade,
+        fans: fans.map(ele => {
+          return {
+            fan_id: ele.user_id,
+            fans_mode: ele.mode
+          }
+        }),
+        approval_id: this.settle.approver_id
       }
-      console.log(req)
       postApplySettle(req).then(res => {
         if (res.code === 0) {
           this.tSuccess('提交成功').then(() => {

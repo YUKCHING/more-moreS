@@ -91,7 +91,7 @@ export default {
       currentUserId: '',
       approval: {
         name: '',
-        id: ''
+        puid: ''
       }
     }
   },
@@ -146,7 +146,7 @@ export default {
         this.toast('请选择粉丝提现模式')
         return
       }
-      if (!this.approval.id) {
+      if (!this.approval.puid) {
         this.toast('请选择审批人')
         return
       }
@@ -159,7 +159,7 @@ export default {
             fans_mode: ele.mode
           }
         }),
-        approval_id: this.approval.id
+        approval_id: this.approval.puid
       }
       console.log(req)
       postApplySettle(req).then(res => {
@@ -205,6 +205,9 @@ export default {
 </script>
 <style lang='stylus' rel='stylesheet/stylus' scoped>
 .OrderSettlement
+  background #EBF0F4
+  height 100%
+  overflow auto
 
   .popup-class
     height 100%

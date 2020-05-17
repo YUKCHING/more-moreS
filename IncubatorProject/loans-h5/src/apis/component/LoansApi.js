@@ -33,3 +33,9 @@ export function getGeneralEmployees (data) {
   let url = '/address-book/employee/get-general-employees'
   return sendGetRequest(url, data)
 }
+
+// 根据部门名称获取员工
+export function getEmployeesByDept (data) {
+  let url = '/address-book/employee/get-employees-by-dept'
+  return sendGetRequest(url, data)
+}
