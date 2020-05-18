@@ -1,7 +1,7 @@
 <template>
   <div class='SetCommission'>
     <div class="panel">
-      <van-field v-model="f_product" label="选择产品" disabled>
+      <van-field :value="f_product" label="选择产品" disabled>
       </van-field>
     </div>
     <div class="panel">
@@ -24,13 +24,13 @@
       <p class="tip-block" v-if="!showButtonBlock">由总代理预设不可更改</p>
     </div>
     <div class="button-block">
-      <van-button class="button1" @click="checkData" v-if="showButtonBlock">设 置</van-button>
-      <van-button class="button2" @click="closeAction">关 闭</van-button>
+      <van-button class="button1" @click="closeAction" v-if="showButtonBlock">关 闭</van-button>
+      <van-button class="button2" @click="checkData">设 置</van-button>
     </div>
   </div>
 </template>
 <script>
-import { updateCommission, getCommissionInfo, getProductList } from '@/apis/api.js'
+import { updateCommission, getCommissionInfo } from '@/apis/api.js'
 export default {
   data () {
     return {
@@ -42,7 +42,6 @@ export default {
       f_first_agent: '',
       f_senior_member: '',
       f_member: '',
-      productList: [],
       opType: 'add',
       grade: ''
     }
@@ -73,30 +72,14 @@ export default {
     remindClickAction () {
       this.toastLong('佣金设置规则：\n规则1：设置所有级别的佣金比例。\n规则2：只设置一级代理的佣金，其他默认为0，由一级代理设置高级会员，高级会员设置会员。\n计算方式：本级别减去下级的差值等于自己获得的佣金，例总代理佣金2%，设置一级代理1.8%，中间的差值0.2%为总代理得到的佣金。')
     },
-    getProductList () {
-      getProductList({}).then(res => {
-        if (res.code === 0) {
-          if (res.data) {
-            this.productList = res.data.list.map(ele => {
-              return {
-                ...ele,
-                text: ele.product_name
-              }
-            })
-
-            let item = this.productList.find(ele => ele.id === this.f_info.product_id)
-            this.f_product = item.product_name
-          }
-        }
-      })
-    },
     getProductInfo (id) {
       let req = {
         id: id
       }
+      this.tLoading()
       getCommissionInfo(req).then(res => {
+        this.tClear()
         if (res.code === 0) {
-          console.log(res)
           if (res.data) {
             this.f_info = {
               ...res.data
@@ -106,8 +89,7 @@ export default {
             this.f_first_agent = res.data.first_agent
             this.f_senior_member = Number(res.data.senior_member) === 0 ? '' : res.data.senior_member
             this.f_member = Number(res.data.member) === 0 ? '' : res.data.member
-
-            this.getProductList()
+            this.f_product = res.data.product_name
           }
         }
       })
@@ -225,18 +207,16 @@ export default {
     display flex
     justify-content space-around
     align-items center
-    padding 43px 0
+    padding 40px 0
 
     .van-button
-      width 108px
-      height 30px
-      line-height 30px
+      width 40%
 
     .button1
-      border 1px solid #E11B1B
-      color #E11B1B
+      color #EE5150
+      border 1px solid #EE5150
 
     .button2
-      background #E11B1B
+      background #EE5150
       color #ffffff
 </style>

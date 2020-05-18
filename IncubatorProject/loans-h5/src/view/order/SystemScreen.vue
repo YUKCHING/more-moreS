@@ -279,10 +279,8 @@ export default {
     getHtmlImage () {
       var scrollY = this.$refs['content'].scrollTop
       var scrollX = this.$refs['content'].scrollLeft
-      console.log(scrollY)
-      console.log(scrollX)
-      html2canvas(document.querySelector('#content'), {
-        async: true,
+      // html2canvas(document.querySelector('#content'), {
+      html2canvas(document.getElementById('content'), {
         scrollY: -scrollY,
         scrollX: -scrollX
       }).then(canvas => {
@@ -296,10 +294,13 @@ export default {
 </script>
 <style lang='stylus' rel='stylesheet/stylus' scoped>
 .SystemScreen /deep/
+  height 100%
   background #F2F3F5
+  overflow auto
 
   .pop-block
     position relative
+    user-select none
 
     .top
       text-align center
@@ -321,6 +322,7 @@ export default {
         bottom 15%
         left 5%
         font-weight 550
+        user-select none
 
       img
         width 100%

@@ -1,42 +1,47 @@
 <template>
   <div class='commission'>
     <van-button icon="add-o" class="add-button" size="small" @click="addRuleAction" v-if="grade === 4">添加产品佣金规则</van-button>
-    <div v-if="grade === 4">
-      <commission-card
-        v-for="(item, index) in listData"
-        :key="index"
-        :info="item"
-        :isGeneral="true"
-        @del="deleteCommission"
-        @edit="editCommission"
-      ></commission-card>
+    <div v-if="listData.length> 0">
+      <div v-if="grade === 4">
+        <commission-card
+          v-for="(item, index) in listData"
+          :key="index"
+          :info="item"
+          :isGeneral="true"
+          @del="deleteCommission"
+          @edit="editCommission"
+        ></commission-card>
+      </div>
+      <div v-else-if="grade === 3">
+        <commission-card2
+          v-for="(item, index) in listData"
+          :key="index"
+          :info="item"
+          @del="deleteCommission"
+          @edit="editCommission"
+        ></commission-card2>
+      </div>
+      <div v-else-if="grade === 2">
+        <commission-card3
+          v-for="(item, index) in listData"
+          :key="index"
+          :info="item"
+          @del="deleteCommission"
+          @edit="editCommission"
+        ></commission-card3>
+      </div>
+      <div v-else-if="grade === 1">
+        <commission-card4
+          v-for="(item, index) in listData"
+          :key="index"
+          :info="item"
+          @del="deleteCommission"
+          @edit="editCommission"
+        ></commission-card4>
+      </div>
     </div>
-    <div v-else-if="grade === 3">
-      <commission-card2
-        v-for="(item, index) in listData"
-        :key="index"
-        :info="item"
-        @del="deleteCommission"
-        @edit="editCommission"
-      ></commission-card2>
-    </div>
-    <div v-else-if="grade === 2">
-      <commission-card3
-        v-for="(item, index) in listData"
-        :key="index"
-        :info="item"
-        @del="deleteCommission"
-        @edit="editCommission"
-      ></commission-card3>
-    </div>
-    <div v-else-if="grade === 1">
-      <commission-card4
-        v-for="(item, index) in listData"
-        :key="index"
-        :info="item"
-        @del="deleteCommission"
-        @edit="editCommission"
-      ></commission-card4>
+    <div v-else style="height: calc(100% - 43px)">
+      <default-data></default-data>
     </div>
   </div>
 </template>
@@ -47,9 +52,10 @@ import CommissionCard3 from './component/CommissionCard3'
 import CommissionCard4 from './component/CommissionCard4'
 import initLoginCheckInfo from '@/common/js/login.js'
 import { deleteCommission, getCommissionList } from '@/apis/api'
+import DefaultData from '@/components/DefaultData'
 export default {
   components: {
-    CommissionCard, CommissionCard2, CommissionCard3, CommissionCard4
+    CommissionCard, CommissionCard2, CommissionCard3, CommissionCard4, DefaultData
   },
   computed: {
     isProduction () {

@@ -26,7 +26,7 @@ export default {
   methods: {
     getList () {
       let req = {
-        dept_name: '内控部门'
+        dept_name: '泰诺福田内控部'
       }
       getEmployeesByDept(req).then(res => {
         if (res.code === 0) {

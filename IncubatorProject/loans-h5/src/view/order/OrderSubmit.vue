@@ -45,11 +45,11 @@
     <div class="panel">
       <div class="title">
         <span>系统初筛</span>
-        <div v-if="!isSetProduct" class="right" @click="screenAction(false)">
+        <div v-if="!isSetProduct" class="right" @click="screenAction()">
           审核系统初筛
           <img src="@/assets/icon/icon-arrow-right2.png">
         </div>
-        <div v-else class="right" style="color: #78797A" @click="screenAction(true)">
+        <div v-else class="right" style="color: #78797A" @click="screenAction()">
           查看
           <img src="@/assets/icon/icon-arrow-right3.png">
         </div>
@@ -235,22 +235,27 @@ export default {
       this.order_id = this.$route.query.order_id
       this.getInfo()
       // 测试
-      // this.isInternalControl = false
+      this.isInternalControl = true
       // this.isFinance = true
-      // this.grade = 2
+      this.grade = 2
     },
     getInfo () {
       let req = {
         order_id: this.order_id
       }
       getLoanOrderInfo(req).then(res => {
-        console.log(res)
         if (res.code === 0) {
           let date1 = this.moment(res.data.expire_in * 1000)
           let date2 = this.moment(new Date())
           let date3 = date1.diff(date2, 'minute')// 计算相差的分钟数
           let h = Math.floor(date3 / 60)// 相差的小时数
-          let mm = date3 % 60// 计算相差小时后余下的分钟
+          let mm = Math.abs(date3) % 60// 计算相差小时后余下的分钟
+          if (String(h).length < 2) {
+            h = '0' + h
+          }
+          if (String(mm).length < 2) {
+            mm = '0' + mm
+          }
           this.info = {
             ...res.data,
             expire_time: h + ':' + mm
@@ -285,7 +290,7 @@ export default {
         }
       })
     },
-    screenAction (val) {
+    screenAction () {
       this.$router.push({
         path: '/systemscreen2',
         query: {

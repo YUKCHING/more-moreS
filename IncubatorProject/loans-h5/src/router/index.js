@@ -369,6 +369,7 @@ const router = new Router({
 })
 
 router.beforeEach((to, from, next) => {
+  console.log('123')
   if (to.meta.title) {
     document.title = to.meta.title
   }
@@ -381,6 +382,9 @@ router.beforeEach((to, from, next) => {
   } else {
     next()
   }
+})
+router.afterEach((to, from, next) => {
+  window.scrollTo(0, 0)
 })
 
 export default router

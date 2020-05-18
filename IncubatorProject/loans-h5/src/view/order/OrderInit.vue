@@ -5,10 +5,10 @@
       <div class="content">
         <div class="info-label">
           <span class="label">订单状态</span>
-          <span class="status">
+          <span class="status" v-show="String(info.status) === '0'">
             {{getOrderStatusName(info.status)}}
           </span>
-          <span class="value time">
+          <span class="value time" v-show="String(info.status) === '0'">
             计时{{info.expire_time}}
           </span>
         </div>
@@ -89,7 +89,13 @@ export default {
           let date2 = this.moment(new Date())
           let date3 = date1.diff(date2, 'minute')// 计算相差的分钟数
           let h = Math.floor(date3 / 60)// 相差的小时数
-          let mm = date3 % 60// 计算相差小时后余下的分钟
+          if (String(h).length < 2) {
+            h = '0' + h
+          }
+          let mm = Math.abs(date3) % 60// 计算相差小时后余下的分钟
+          if (String(mm).length < 2) {
+            mm = '0' + mm
+          }
           this.info = {
             ...res.data,
             expire_time: h + ':' + mm

@@ -102,7 +102,7 @@ export default {
     init () {
       this.isInternalControl = Boolean(this.$store.getters.userInfo.is_internal_control)
       this.grade = Number(this.$store.getters.userInfo.grade)
-      // this.isInternalControl = false
+      this.isInternalControl = true
       // this.grade = 2
     },
     selectProductAction () {

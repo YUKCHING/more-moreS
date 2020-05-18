@@ -168,12 +168,11 @@ export default {
       this.tLoading()
       setTimeout(() => {
         html2canvas(document.querySelector('#share-block'), {
-          async: true,
           useCORS: true
         }).then(canvas => {
-          this.tClear()
           this.shareUrl = canvas.toDataURL('image/png')
           this.showPreview = true
+          this.tClear()
         })
       }, 1000)
     },

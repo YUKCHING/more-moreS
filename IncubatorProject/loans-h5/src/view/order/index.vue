@@ -2,7 +2,7 @@
   <div class='index'>
     <van-tabs
       v-model="active"
-      :swipe-threshold="5"
+      :swipe-threshold="6"
       :animated="true"
       :swipeable="true"
       @change="clickTabsAction">
@@ -19,6 +19,9 @@
         <order-list :list="listData" class="pane" @select="selectOrder"></order-list>
       </van-tab>
       <van-tab title="待放款">
+        <order-list :list="listData" class="pane" @select="selectOrder"></order-list>
+      </van-tab>
+      <van-tab title="待支出">
         <order-list :list="listData" class="pane" @select="selectOrder"></order-list>
       </van-tab>
     </van-tabs>
@@ -62,8 +65,20 @@ export default {
       }
     },
     getList () {
+      let status = ''
+      if (this.active === 1) {
+        status = 1
+      } else if (this.active === 2) {
+        status = 3
+      } else if (this.active === 3) {
+        status = 5
+      } else if (this.active === 4) {
+        status = 7
+      } else if (this.active === 5) {
+        status = 11
+      }
       let req = {
-        status: this.active === 0 ? '' : this.active
+        status: status
       }
       this.listData = []
       getLoanOrderList(req).then(res => {

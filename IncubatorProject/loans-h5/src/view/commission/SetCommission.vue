@@ -38,8 +38,8 @@
       </div>
     </div>
     <div class="button-block">
-      <van-button class="button1" @click="checkData">设 置</van-button>
-      <van-button class="button2" @click="closeAction">关 闭</van-button>
+      <van-button class="button1" @click="closeAction">关 闭</van-button>
+      <van-button class="button2" @click="checkData">设 置</van-button>
     </div>
     <van-popup v-model="showPicker" position="bottom">
       <van-picker
@@ -207,18 +207,16 @@ export default {
     display flex
     justify-content space-around
     align-items center
-    padding 43px 0
+    padding 40px 0
 
     .van-button
-      width 108px
-      height 30px
-      line-height 30px
+      width 40%
 
     .button1
-      border 1px solid #E11B1B
-      color #E11B1B
+      color #EE5150
+      border 1px solid #EE5150
 
     .button2
-      background #E11B1B
+      background #EE5150
       color #ffffff
 </style>

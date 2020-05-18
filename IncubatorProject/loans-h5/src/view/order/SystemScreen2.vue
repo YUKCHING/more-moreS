@@ -105,23 +105,8 @@
     </div>
     <div class="buttonPanel" v-if="!isSetProduct">
       <van-button class="button1" @click="noticeModifyAction">通知客人修改</van-button>
-      <van-button class="button2" type="danger" :disabled="!isSetProduct" @click="submitAction">确定OK</van-button>
+      <van-button class="button2" type="danger" :disabled="!product.product_name" @click="submitAction">确定OK</van-button>
     </div>
-    <van-popup v-model="showQrcodePicker" position="bottom">
-      <div class="pop-block" id="content" ref="content">
-        <div class="top">
-          <div class="button">
-            请扫码进行系统初筛
-          </div>
-        </div>
-        <div class="qrcode-block">
-          <img src="@/assets/order/share-bottom.png">
-          <p class="exp">- 长按可保存图片 -</p>
-          <img class="qrcode-img" :src="qrcode">
-        </div>
-        <img class="show-img" :src="dataURL">
-      </div>
-    </van-popup>
     <van-image-preview v-model="showPreview" :images="showImages" :startPosition="previewIndex" @change="onChange">
       <template v-slot:index>第{{ previewIndex + 1 }}页</template>
     </van-image-preview>
@@ -131,9 +116,7 @@
   </div>
 </template>
 <script>
-import { getLoanOrderInfo, createSystemScreenQrcode, postLoanPassScreen, noticeModifyScreen } from '@/apis/api.js'
-import html2canvas from 'html2canvas'
-import jrQrcode from 'jr-qrcode'
+import { getLoanOrderInfo, postLoanPassScreen, noticeModifyScreen } from '@/apis/api.js'
 import LoansList from '@/view/loans/LoansList'
 export default {
   components: {
@@ -152,9 +135,6 @@ export default {
         mileage: '10.0',
         standard: '国5'
       },
-      dataURL: '',
-      showQrcodePicker: false,
-      qrcode: '',
       timerSec: 0,
       timer: '',
       info: {},
@@ -164,14 +144,10 @@ export default {
       audit: {},
       screenInfo: {},
       showPreview: false,
-      showImages: '',
+      showImages: [],
       previewIndex: 0,
-      showProductPopup: false
-    }
-  },
-  computed: {
-    isSetProduct () {
-      return this.product.product_name
+      showProductPopup: false,
+      isSetProduct: false
     }
   },
   created () {
@@ -197,6 +173,9 @@ export default {
             expire_time: h + ':' + mm
           }
           this.product = res.data.product
+          if (this.product.product_name) {
+            this.isSetProduct = true
+          }
           this.audit = res.data.audit
           this.screenInfo = res.data.screen_info
           this.showImages = [
@@ -219,48 +198,6 @@ export default {
             this.$router.go(-1)
           })
         }
-      })
-    },
-    createQrcode () {
-      let req = {
-        order_id: this.$route.query.order_id
-      }
-      this.tLoading()
-      createSystemScreenQrcode(req).then(res => {
-        if (res.code === 0) {
-          let url = res.data.url
-          this.getQrcodeImage(url)
-        } else {
-          this.tClear()
-        }
-      })
-    },
-    getQrcodeImage (url) {
-      let option = {
-        padding: 0,
-        width: 80, // 二维码图片宽度（默认为256px）
-        height: 80, // 二维码图片高度（默认为256px
-        reverse: false, // 反色二维码，二维码颜色为上层容器的背景颜色
-        background: '#ffffff', // 二维码背景颜色（默认白色）
-        foreground: '#000000' // 二维码颜色（默认黑色
-      }
-      this.qrcode = jrQrcode.getQrBase64(url, option)
-      this.showQrcodePicker = true
-      setTimeout(() => {
-        this.getHtmlImage()
-      }, 2000)
-    },
-    getHtmlImage () {
-      var scrollY = this.$refs['content'].scrollTop
-      var scrollX = this.$refs['content'].scrollLeft
-      html2canvas(document.querySelector('#content'), {
-        async: true,
-        scrollY: -scrollY,
-        scrollX: -scrollX
-      }).then(canvas => {
-        let dataURL = canvas.toDataURL('image/png')
-        this.dataURL = dataURL
-        this.tClear()
       })
     },
     showImagePreview (index) {
