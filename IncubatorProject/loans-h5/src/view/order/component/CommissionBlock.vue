@@ -21,12 +21,19 @@
   </div>
 </template>
 <script>
-import { getCommissionAssign } from '@/apis/api.js'
+import { getCommissionByProduct } from '@/apis/api.js'
 export default {
   props: {
-    orderId: {
+    productId: {
       type: String,
       default: ''
+    }
+  },
+  watch: {
+    'productId' () {
+      if (this.productId) {
+        this.getProductCommission()
+      }
     }
   },
   data () {
@@ -39,36 +46,33 @@ export default {
     }
   },
   created () {
-    this.getCommission()
+    if (this.productId) {
+      this.getProductCommission()
+    }
   },
   methods: {
-    getCommission () {
+    getProductCommission () {
       let req = {
-        order_id: this.orderId
+        product_id: this.productId
       }
-      getCommissionAssign(req).then(res => {
+      getCommissionByProduct(req).then(res => {
         if (res.code === 0) {
-          if (res.data.commissions.length > 0) {
-            let commissions = res.data.commissions
-            let general = commissions.find(ele => ele.grade === 4)
-            if (general) {
-              this.ac_general_agent = Number(general.rate).toFixed(1)
+          if (res.data.length !== 0) {
+            let baseData = res.data
+            if (baseData.general_agent) {
+              this.ac_general_agent = Number(baseData.general_agent) - Number(baseData.first_agent)
             }
-            let first = commissions.find(ele => ele.grade === 3)
-            if (first) {
-              this.ac_first_agent = Number(first.rate).toFixed(1)
+            if (baseData.first_agent) {
+              this.ac_first_agent = Number(baseData.first_agent) - Number(baseData.senior_member)
             }
-            let senior = commissions.find(ele => ele.grade === 2)
-            if (senior) {
-              this.ac_senior_member = Number(senior.rate).toFixed(1)
+            if (baseData.senior_member) {
+              this.ac_senior_member = Number(baseData.senior_member) - Number(baseData.member)
             }
-            let member = commissions.find(ele => ele.grade === 1)
-            if (member) {
-              this.ac_member = Number(member.rate).toFixed(1)
+            if (baseData.member) {
+              this.ac_member = Number(baseData.member) - Number(baseData.fans)
             }
-            let fans = commissions.find(ele => ele.grade === 0)
-            if (fans) {
-              this.ac_fans = Number(fans.rate).toFixed(1)
+            if (baseData.fans) {
+              this.ac_fans = Number(baseData.fans)
             }
           }
         }

@@ -78,6 +78,9 @@ export default {
 <style lang='stylus' rel='stylesheet/stylus' scoped>
 .OrderRecordDetail
   background #F2F3F5
+  height 100%
+  box-sizing border-box
+  overflow auto
   padding 10px 0
 
   .content

@@ -16,7 +16,7 @@
           <span class="status" v-show="info.status">
             {{getOrderStatusName(info.status)}}
           </span>
-          <span class="value time" v-show="info.status">
+          <span class="value time" v-show="info.status && info.status !== 1">
             计时{{info.expire_time}}
           </span>
         </div>
@@ -80,7 +80,7 @@
       <div v-else-if="grade === 2">
         <!-- 1订单待提交 3订单待批复 13订单退审核 14订单已被拒绝 -->
         <div v-if="info.status === 1 || info.status === 3 || info.status === 13 || info.status === 14">
-          <commission-block :orderId="String(order_id)"></commission-block>
+          <commission-block :productId="String(product.id)"></commission-block>
         </div>
         <!-- 5订单待签约 7订单待放款 9订单待结算-未申请/申请中 11待支持 12已支出 -->
         <div v-else-if="info.status === 5 || info.status === 7 || (info.status === 9 && settle.status !== '-1') || info.status === 11 || info.status === 12">
@@ -235,9 +235,11 @@ export default {
       this.order_id = this.$route.query.order_id
       this.getInfo()
       // 测试
-      this.isInternalControl = true
-      // this.isFinance = true
-      this.grade = 2
+      if (process.env.NODE_ENV !== 'production') {
+        // this.isInternalControl = true
+        // this.isFinance = true
+        // this.grade = 2
+      }
     },
     getInfo () {
       let req = {
@@ -497,6 +499,7 @@ export default {
 .OrderDetail
   height 100%
   background #F2F3F5
+  overflow auto
 
   .popup-class
     height 100%

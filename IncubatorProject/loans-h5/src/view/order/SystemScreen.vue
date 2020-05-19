@@ -118,7 +118,7 @@ export default {
       id_card_back_img_url: '',
       vehicle_license_front_img_url: '',
       vehicle_license_duplicate_img_url: '',
-      ocr_id: '',
+      idcard_ocr_id: '',
       showQrcodePicker: false,
       qrcode: '',
       dataURL: '',
@@ -142,7 +142,7 @@ export default {
         this.toast('请填写基本信息')
         return
       }
-      if (this.ocr_id === '') {
+      if (this.idcard_ocr_id === '') {
         this.toast('请上传身份证')
         return
       }
@@ -160,7 +160,7 @@ export default {
         id_card_back_img_url: this.id_card_back_img_url,
         vehicle_license_front_img_url: this.vehicle_license_front_img_url,
         vehicle_license_duplicate_img_url: this.vehicle_license_duplicate_img_url,
-        ocr_id: this.ocr_id
+        ocr_id: this.idcard_ocr_id
       }
       this.tLoading()
       postSystemScreen(req).then(res => {
@@ -205,7 +205,7 @@ export default {
       formdata.append('img', file.file)
       uploadIdCard(formdata).then(res => {
         if (res.code === 0) {
-          this.ocr_id = res.data.ocr_id
+          this.idcard_ocr_id = res.data.ocr_id
           this.id_card_no = res.data.id_card_number
           this.username = res.data.name
         }

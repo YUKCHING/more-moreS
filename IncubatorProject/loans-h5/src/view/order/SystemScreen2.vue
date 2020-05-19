@@ -33,15 +33,15 @@
         <span>车辆信息</span>
       </div>
       <div class="car-panel">
-        <p class="p1">2018款 奔驰C级(进口) C 180 旅行轿车</p>
+        <p class="p1">{{vehicleInfo.model || '-'}}</p>
         <div class="base-info">
-          <div class="card">{{form.city}}</div>
+          <div class="card">{{vehicleInfo.city || '-'}}</div>
           <div class="line"></div>
-          <div class="card">{{form.licensingDate}}</div>
+          <div class="card">{{vehicleInfo.licensingDate || '-'}}</div>
           <div class="line"></div>
-          <div class="card">{{form.mileage}}万公里</div>
+          <div class="card">{{vehicleInfo.mileage ? (vehicleInfo.mileage + '万公里') : '-'}}</div>
           <div class="line"></div>
-          <div class="card">{{form.standard}}</div>
+          <div class="card">{{vehicleInfo.standard || '-'}}</div>
         </div>
         <div class="base-info" style="margin-bottom: 22px;">
           <div class="card">所在城市</div>
@@ -54,15 +54,15 @@
         </div>
         <div class="div-info">
           <span>车牌号</span>
-          <span>粤B 34567</span>
+          <span>{{vehicleInfo.plate_no || '-'}}</span>
         </div>
         <div class="div-info">
           <span>注册日期</span>
-          <span>2017-01-10</span>
+          <span>{{vehicleInfo.register_date || '-'}}</span>
         </div>
         <div class="div-info">
           <span>发证日期</span>
-          <span>2017-01-10</span>
+          <span>{{vehicleInfo.issue_date || '-'}}</span>
         </div>
       </div>
     </div>
@@ -125,16 +125,6 @@ export default {
   data () {
     return {
       otherCost: '',
-      form: {
-        name: '张三',
-        idcard: '440307199405180710',
-        phone: '13713697967',
-        carNo: '粤B 34567',
-        city: '深圳',
-        licensingDate: '2017-01-02',
-        mileage: '10.0',
-        standard: '国5'
-      },
       timerSec: 0,
       timer: '',
       info: {},
@@ -143,6 +133,7 @@ export default {
       },
       audit: {},
       screenInfo: {},
+      vehicleInfo: {},
       showPreview: false,
       showImages: [],
       previewIndex: 0,
@@ -178,6 +169,9 @@ export default {
           }
           this.audit = res.data.audit
           this.screenInfo = res.data.screen_info
+          if (res.data.vehicle_info) {
+            this.vehicleInfo = res.data.vehicle_info
+          }
           this.showImages = [
             this.screenInfo.id_card_front_img_url,
             this.screenInfo.id_card_back_img_url,
@@ -190,7 +184,7 @@ export default {
     submitAction () {
       let req = {
         screen_id: this.screenInfo.screen_id,
-        product_id: this.audit.id
+        product_id: this.product.id
       }
       postLoanPassScreen(req).then(res => {
         if (res.code === 0) {
@@ -213,9 +207,7 @@ export default {
     loansSelectAction (item) {
       console.log(item)
       this.showProductPopup = false
-      this.audit.id = item.id
-      this.audit.amount = item.amount
-      this.audit.monthly_rate = item.monthly_rate
+      this.product.id = item.id
       this.product.product_name = item.product_name
     },
     noticeModifyAction () {
@@ -236,6 +228,8 @@ export default {
   height 100%
   background #F2F3F5
   padding-top 12px
+  box-sizing border-box
+  overflow auto
 
   .loansBlock
     border .6px solid rgba(0, 0, 0, .25)
@@ -454,7 +448,7 @@ export default {
     display flex
     justify-content space-around
     align-items center
-    margin 30px 0 20px
+    padding 20px 0 20px
 
     .van-button
       width 40%

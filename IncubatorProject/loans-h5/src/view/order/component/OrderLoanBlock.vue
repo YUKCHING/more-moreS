@@ -102,8 +102,10 @@ export default {
     init () {
       this.isInternalControl = Boolean(this.$store.getters.userInfo.is_internal_control)
       this.grade = Number(this.$store.getters.userInfo.grade)
-      this.isInternalControl = true
-      // this.grade = 2
+      if (process.env.NODE_ENV !== 'production') {
+        // this.isInternalControl = true
+        // this.grade = 2
+      }
     },
     selectProductAction () {
       this.showProductPopup = true
