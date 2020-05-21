@@ -16,7 +16,7 @@
           <span class="status" v-show="info.status">
             {{getOrderStatusName(info.status)}}
           </span>
-          <span class="value time" v-show="info.status && info.status !== 1">
+          <span class="value time" v-show="String(info.status) === '0'">
             计时{{info.expire_time}}
           </span>
         </div>
@@ -378,7 +378,7 @@ export default {
       this.getCommissionByProduct()
     },
     getHandlerIdAction (item) {
-      this.handler_id = item.id
+      this.handler_id = item.puid
       this.showGeneralPopup = false
     },
     // 申请结算

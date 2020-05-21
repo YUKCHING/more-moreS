@@ -104,8 +104,10 @@ export default {
     initSetting () {
       // 0粉丝 1会员 2高级会员 3一级代理 4总代理
       this.grade = Number(this.$store.getters.userInfo.grade)
-      // this.grade = 1
       this.getList()
+      if (process.env.NODE_ENV !== 'production') {
+        // this.grade = 3
+      }
     },
     getList () {
       getCommissionList({}).then(res => {

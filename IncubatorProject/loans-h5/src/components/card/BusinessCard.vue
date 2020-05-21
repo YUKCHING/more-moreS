@@ -28,7 +28,7 @@
       <span class="status">
         {{getOrderStatusName(info.status)}}
       </span>
-      <span class="time" v-if="info.status !== 1">
+      <span class="time" v-if="String(info.status) === '0'">
         剩{{info.expire_time}}自动取消
       </span>
     </div>

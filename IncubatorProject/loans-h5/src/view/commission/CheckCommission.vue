@@ -23,9 +23,20 @@
       </van-field>
       <p class="tip-block" v-if="!showButtonBlock">由总代理预设不可更改</p>
     </div>
+    <div class="panel" v-if="showButtonBlock && (grade === 4 || grade === 3)">
+      <div class="title">
+        <span>是否允许下级更改佣金比例</span>
+      </div>
+      <div class="radio-block">
+        <van-radio-group v-model="f_info.allow_subordinate_modify" direction="horizontal">
+          <van-radio :name="1">是</van-radio>
+          <van-radio :name="0">否</van-radio>
+        </van-radio-group>
+      </div>
+    </div>
     <div class="button-block">
-      <van-button class="button1" @click="closeAction" v-if="showButtonBlock">关 闭</van-button>
-      <van-button class="button2" @click="checkData">设 置</van-button>
+      <van-button class="button1" @click="closeAction">关 闭</van-button>
+      <van-button class="button2" @click="checkData" v-if="(showButtonBlock && grade !== 1) || grade === 4">设 置</van-button>
     </div>
   </div>
 </template>
@@ -51,7 +62,7 @@ export default {
       return this.opType === 'edit'
     },
     showButtonBlock () {
-      return (this.grade === 4 || this.f_info.allow_subordinate_modify === 1) && this.grade !== 1
+      return this.f_info.allow_subordinate_modify === 1
     }
   },
   created () {
