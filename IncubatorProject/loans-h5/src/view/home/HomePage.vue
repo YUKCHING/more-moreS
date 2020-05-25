@@ -14,6 +14,7 @@
           @click="configItemSelect(item)"
           v-show="item.is_show === 1"
         >
+          <div class="badge" v-show="item.badgeNum > 0">{{item.badgeNum}}</div>
           <img :src="item.icon" alt="">
           <span>{{item.name}}</span>
         </div>
@@ -50,6 +51,7 @@ export default {
         if (res.code === 0) {
           if (res.data.functions.length > 0) {
             let grade = this.$store.getters.userInfo.grade
+            var breakruleBadgeNum = this.$store.getters.userInfo.breakrule_badge_num
 
             let baseData = res.data.functions.filter(ele => {
               return ele.visible_grade.indexOf(String(grade)) !== -1
@@ -71,7 +73,8 @@ export default {
                 return {
                   ...ele,
                   icon: ele.icon || require('@/assets/icon/icon-config-backup.png'),
-                  is_show: showArr.indexOf(ele.code) !== -1 ? 1 : 0
+                  is_show: showArr.indexOf(ele.code) !== -1 ? 1 : 0,
+                  badgeNum: ele.code === 'break_rule' ? breakruleBadgeNum : 0
                 }
               })
               this.configs = temArr
@@ -83,7 +86,8 @@ export default {
                 return {
                   ...ele,
                   icon: ele.icon || require('@/assets/icon/icon-config-backup.png'),
-                  is_show: index < 5 ? 1 : 0
+                  is_show: index < 5 ? 1 : 0,
+                  badgeNum: ele.code === 'break_rule' ? breakruleBadgeNum : 0
                 }
               })
               this.configs = temArr
@@ -191,6 +195,7 @@ export default {
         margin-bottom 1rem
         background #F8FAFD
         border-radius .42rem
+        position relative
 
         img
           width 2rem
@@ -199,6 +204,17 @@ export default {
         span
           color #262626
           font-size 1.17rem
+
+        .badge
+          position absolute
+          width 20px
+          height 20px
+          background #FC3C29
+          border-radius 50%
+          text-align center
+          color #ffffff
+          right -10px
+          top -10px
 
       .item
         &:last-child

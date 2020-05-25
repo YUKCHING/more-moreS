@@ -6,7 +6,7 @@
     </div>
     <div class="loansInfo">
       <div class="item">
-        <p>{{audit.amount ? audit.amount + '元' : '-'}}</p>
+        <p>{{audit.amount ? audit.amount + '万元' : '-'}}</p>
         <p>审批额度</p>
       </div>
       <div class="item">

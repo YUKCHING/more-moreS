@@ -59,6 +59,15 @@
         :showImages="showImages"
       ></screen-info-preview>
     </div>
+    <!--
+      身份
+      -->
+    <div class="panel">
+      <div class="title">
+        <span>身份</span>
+      </div>
+      <identity-block :value="curIdentity" :list="identityList" @change="changeIdentityAction" />
+    </div>
     <!-- 佣金分配
      -->
     <div class="panel" v-if="Object.keys(commission).length > 0">
@@ -92,21 +101,20 @@
         </div>
       </div>
     </div>
+    <!--
+      控制条
+    -->
     <!-- 财务
     -->
-    <div v-if="isFinance">
+    <div v-if="isFinance && (info.status === 11 || info.status === 12)">
       <!-- 11订单待支出 -->
       <div class="buttonPanel" v-if="info.status === 11">
         <van-button class="button4" type="danger" @click="expendAction">支 出</van-button>
       </div>
-      <!-- 其它 -->
-      <div class="buttonPanel" v-else>
-        <van-button class="button3" @click="goBackAction">返 回</van-button>
-      </div>
     </div>
     <!-- 内控
     -->
-    <div v-else-if="isInternalControl">
+    <div v-else-if="isInternalControl && (info.status === 3 || info.status === 5 || info.status === 7 || info.status === 13 || info.status === 14)">
       <!-- 3订单待批复 14订单已被拒绝 -->
       <div class="buttonPanel" v-if="info.status === 3 || info.status === 14">
         <van-button class="button1" @click="replyAction(2)">退审批</van-button>
@@ -125,10 +133,6 @@
       <div class="buttonPanel" v-else-if="info.status === 7">
         <van-button class="button1" @click="makeLoanAction(2)">退审批</van-button>
         <van-button class="button2" type="danger" @click="makeLoanAction(1)">放 款</van-button>
-      </div>
-      <!-- 8订单已放款 -->
-      <div class="buttonPanel" v-else>
-        <van-button class="button3" @click="goBackAction">返 回</van-button>
       </div>
     </div>
     <!-- 4 总代理 3 一级代理
@@ -193,10 +197,11 @@ import CommissionBlock2 from './component/CommissionBlock2'
 import CommissionDetail from './component/CommissionDetail'
 import CommissionDetailBack from './component/CommissionDetailBack'
 import ScreenInfoPreview from './component/ScreenInfoPreview'
+import IdentityBlock from './component/IdentityBlock'
 
 export default {
   components: {
-    InternalList, OrderStep, OrderLoanBlock, CommissionBlock, CommissionBlock2, CommissionDetail, CommissionDetailBack, ScreenInfoPreview
+    InternalList, OrderStep, OrderLoanBlock, CommissionBlock, CommissionBlock2, CommissionDetail, CommissionDetailBack, ScreenInfoPreview, IdentityBlock
   },
   data () {
     return {
@@ -213,7 +218,11 @@ export default {
       showGeneralPopup: false,
       hasChangeProduct: false,
       handler_id: '',
-      settle: {}
+      settle: {
+        status: ''
+      },
+      identityList: [],
+      curIdentity: -1
     }
   },
   computed: {
@@ -229,6 +238,9 @@ export default {
   },
   methods: {
     init () {
+      this.identityList = this.analyseIdentity()
+      this.curIdentity = this.identityList[0].value
+
       this.isFinance = Boolean(this.$store.getters.userInfo.is_finance_staff)
       this.isInternalControl = Boolean(this.$store.getters.userInfo.is_internal_control)
       this.grade = Number(this.$store.getters.userInfo.grade)
@@ -240,6 +252,32 @@ export default {
         // this.isFinance = true
         // this.grade = 2
       }
+    },
+    analyseIdentity () {
+      /**
+       * 0-粉丝 1-会员 2-高级会员 3-一级代理 4-总代理 8-内控 9-财务
+       */
+      let arr = []
+      arr.unshift({
+        text: this.getGradeStatusName(this.$store.getters.userInfo.grade),
+        value: Number(this.$store.getters.userInfo.grade)
+      })
+      if (this.$store.getters.userInfo.is_internal_control) {
+        arr.unshift({
+          text: '内控',
+          value: 8
+        })
+      }
+      if (this.$store.getters.userInfo.is_finance_staff) {
+        arr.unshift({
+          text: '财务',
+          value: 9
+        })
+      }
+      return arr
+    },
+    changeIdentityAction (item) {
+      this.curIdentity = item.value
     },
     getInfo () {
       let req = {

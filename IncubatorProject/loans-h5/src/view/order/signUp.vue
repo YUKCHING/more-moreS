@@ -29,7 +29,7 @@
           }">{{codeTime > 0 ? '(' + codeTime + ')s' : '获取验证码'}}</van-button>
         </template>
       </van-field>
-      <van-field v-model="amount" clearable placeholder="预约金额(万元)">
+      <van-field v-model="amount" clearable placeholder="期望金额(万元)">
         <template #button>
           <span style="color: #C0C0C0; font-size: 1rem">最高70万元</span>
         </template>
@@ -261,7 +261,7 @@ export default {
 
       .info
         display inline-block
-        width 15%
+        width 18%
         text-align center
         font-size 1rem
         transform scale(.9)

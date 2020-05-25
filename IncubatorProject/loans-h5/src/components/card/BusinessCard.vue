@@ -2,7 +2,7 @@
   <div class='BusinessCard' @click="selectAction">
     <div class="item">
       <span class="label">产品</span>
-      <span class="value">{{info.product_name}}</span>
+      <span class="value">{{info.product_name || '-'}}</span>
     </div>
     <div class="item">
       <span class="label">客户名称</span>
@@ -26,7 +26,7 @@
     </div>
     <div class="info-bar">
       <span class="status">
-        {{getOrderStatusName(info.status)}}
+        {{statusName}}
       </span>
       <span class="time" v-if="String(info.status) === '0'">
         剩{{info.expire_time}}自动取消
@@ -49,62 +49,10 @@ export default {
   computed: {
     // 0初始化 1待提交 2已提交 3待批复 4已批复 5待签约 6已签约 7待放款 8已放款 9待结算 10已结算 11待支出 12已支出 13退审核 14已拒绝
     statusName (status) {
-      let str = ''
-      switch (this.info.status) {
-        case 0:
-          str = '订单初始化'
-          break
-        case 1:
-          str = '订单待提交'
-          break
-        case 2:
-          str = '订单已提交'
-          break
-        case 3:
-          str = '订单待批复'
-          break
-        case 4:
-          str = '订单已批复'
-          break
-        case 5:
-          str = '订单待签约'
-          break
-        case 6:
-          str = '订单已签约'
-          break
-        case 7:
-          str = '订单待放款'
-          break
-        case 8:
-          str = '订单已放款'
-          break
-        case 9:
-          str = '订单待结算'
-          break
-        case 10:
-          str = '订单已结算'
-          break
-        case 11:
-          str = '订单待支出'
-          break
-        case 12:
-          str = '订单已支出'
-          break
-        case 13:
-          str = '订单退审核'
-          break
-        case 14:
-          str = '订单已被拒绝'
-          break
-        case 15:
-          str = '超时未处理，订单已取消！'
-          break
-      }
-      return str
+      return this.getOrderStatusName(this.info.status)
     }
   },
   created () {
-    console.log(this.info)
   },
   methods: {
     selectAction () {

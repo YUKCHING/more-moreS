@@ -166,7 +166,7 @@ export default {
           window.isReady = true
         })
       } else {
-        // this.getOpenId('001fFNy51YnnYQ1u4zy51PGJy51fFNy0') // 调试 直接获取openId
+        // this.getOpenId('021LGcfY05DomY1wObfY0qDdfY0LGcfb') // 调试 直接获取openId
         this.getInfo()
       }
     },
@@ -254,7 +254,7 @@ export default {
     height 100%
 
     .panel
-      background #fafafa
+      background #F3F3F3
       height calc(100vh - 50px)
       overflow auto
       -webkit-overflow-scrolling touch

@@ -85,25 +85,7 @@ export default {
   },
   computed: {
     gradeName () {
-      let name = '粉丝'
-      switch (this.info.grade) {
-        case 1:
-          name = '会员'
-          break
-        case 2:
-          name = '高级会员'
-          break
-        case 3:
-          name = '一级代理'
-          break
-        case 4:
-          name = '总代理'
-          break
-
-        default:
-          break
-      }
-      return name
+      return this.getGradeStatusName(this.info.grade)
     }
   },
   data () {

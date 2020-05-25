@@ -10,6 +10,7 @@ Vue.prototype.getWeixinCodeUrlToTest = getWeixinCodeUrlToTest
 Vue.prototype.packagePhoneNumber = packagePhoneNumber
 Vue.prototype.splitMonet = splitMonet
 Vue.prototype.getOrderStatusName = getOrderStatusName
+Vue.prototype.getGradeStatusName = getGradeStatusName
 
 // 微信获取code链接跳转到Index
 export function getWeixinCodeUrlToIndex (link, code) {
@@ -162,6 +163,28 @@ function splitMonet (num) {
     }
   })
   return str.split('').reverse().join('')
+}
+
+function getGradeStatusName (val) {
+  let name = '粉丝'
+  switch (Number(val)) {
+    case 1:
+      name = '会员'
+      break
+    case 2:
+      name = '高级会员'
+      break
+    case 3:
+      name = '一级代理'
+      break
+    case 4:
+      name = '总代理'
+      break
+
+    default:
+      break
+  }
+  return name
 }
 
 function getOrderStatusName (val) {

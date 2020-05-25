@@ -54,6 +54,11 @@
             clearable
           />
         </div>
+        <p class="label">是否需要我们向您推送违章消息？</p>
+        <van-radio-group v-model="need_push" direction="horizontal">
+          <van-radio name="1" checked-color="#FE422D" style="margin-right: 50px">是</van-radio>
+          <van-radio name="-1" checked-color="#FE422D">否</van-radio>
+        </van-radio-group>
         <div style="margin: 4rem;">
           <van-button round block type="info" native-type="submit" style="background: linear-gradient(to right, #FF7952 0%, #FE3525 100%); border: none">
             查询
@@ -88,6 +93,7 @@ export default {
       plate_show: '',
       plate_first: '粤',
       ocr_id: '',
+      need_push: '1',
       columns: ['粤', '京', '沪', '津', '渝', '鲁', '冀', '晋', '蒙', '辽', '吉', '黑', '苏', '浙', '皖', '闽', '赣', '豫', '湘', '鄂', '桂', '琼', '川', '贵', '云', '藏', '陕', '甘', '青', '宁', '新', '港', '澳', '台'],
       showPicker: false
     }
@@ -126,6 +132,7 @@ export default {
         this.plate_first = item.plate_first
         this.plate_show = item.plate_show
         this.ocr_id = item.ocr_id
+        this.need_push = item.need_push || '1'
       }
     },
     onSubmit (values) {
@@ -162,7 +169,8 @@ export default {
           engine_no: this.engine_no,
           plate_first: this.plate_first,
           plate_show: this.plate_show,
-          ocr_id: this.ocr_id
+          ocr_id: this.ocr_id,
+          need_push: this.need_push
         })
       })
       this.$router.push({
@@ -171,7 +179,8 @@ export default {
           vin: this.vin,
           engine_no: this.engine_no,
           license_no: this.plate_first + this.plate_show,
-          ocr_id: this.ocr_id
+          ocr_id: this.ocr_id,
+          need_push: this.need_push
         }
       })
     }

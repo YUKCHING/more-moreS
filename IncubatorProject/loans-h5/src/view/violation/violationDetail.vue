@@ -27,32 +27,19 @@
       </table>
     </div>
     <p class="label">违章记录（{{allTime}}）</p>
-    <div class="step-block">
-      <van-steps
-        direction="vertical"
-        :active="-1">
-        <van-step
-          v-for="item in report"
-          :key="item.id">
-          <div
-            class="step-icon"
-            slot="inactive-icon">
-            <div class="step-icon-center"></div>
-          </div>
-          <p class="step-label">{{item.Location}}</p>
-          <p class="step-label">{{item.Time}}</p>
-          <p class="step-label">惩罚：扣分{{item.degree}},罚款{{item.count}}元</p>
-          <p class="step-label">原因：{{item.Reason}}</p>
-          <p class="step-label">备注：null</p>
-        </van-step>
-      </van-steps>
+    <div>
+      <violation-step :list="report" v-if="report.length > 0" />
     </div>
     <p class="explain">本报告所包含的内容，仅基于截至查询日期收到的相关违章记录，其他记录可能存在未被采集和收录，本报告仅供参考。</p>
   </div>
 </template>
 <script>
 import { getBreakRule, createBreakRule } from '@/apis/api.js'
+import ViolationStep from './component/ViolationStep'
 export default {
+  components: {
+    ViolationStep
+  },
   data () {
     return {
       vin: '',
@@ -60,7 +47,8 @@ export default {
       license_no: '',
       ocr_id: '',
       query_time: '',
-      report: {},
+      need_push: '',
+      report: [],
       cardInfo: {},
       allTime: 0,
       allDegree: 0,
@@ -73,6 +61,7 @@ export default {
     this.engine_no = this.$route.query.engine_no
     this.license_no = this.$route.query.license_no
     this.ocr_id = this.$route.query.ocr_id
+    this.need_push = this.$route.query.need_push
     this.init()
   },
   destroyed () {
@@ -90,7 +79,8 @@ export default {
         vin: this.vin,
         engine_number: this.engine_no,
         license_no: this.license_no,
-        ocr_id: this.ocr_id
+        need_push: this.need_push
+        // ocr_id: this.ocr_id
       }
       this.tLoading('查询中...')
       createBreakRule(req).then(res => {
@@ -106,8 +96,8 @@ export default {
     getReport (queryId) {
       let req = {
         token: this.$store.getters.token,
-        query_id: queryId,
-        ocr_id: this.ocr_id
+        query_id: queryId
+        // ocr_id: this.ocr_id
       }
       getBreakRule(req).then(res => {
         clearInterval(this.reportTimer)
@@ -139,30 +129,6 @@ export default {
     margin-top 1rem
     color #5C5C5C
     font-size 1.08rem
-
-  .step-block
-    margin-top 1rem
-
-    .step-icon
-      width 1.5rem
-      height 1.5rem
-      border-radius 50%
-      background rgba(165, 155, 154, .28)
-      display inline-flex
-      justify-content center
-      align-items center
-
-      .step-icon-center
-        display inline-block
-        width .67rem
-        height .67rem
-        border-radius 50%
-        background rgba(167, 159, 158, 1)
-
-    .step-label
-      color #030303
-      font-size 1.17rem
-
 </style>
 <style lang='scss' scoped>
 $thWidth: calc(100vw - 36px);
