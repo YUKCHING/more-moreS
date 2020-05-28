@@ -34,7 +34,7 @@
       </div>
       <div class="car-panel">
         <p class="p1">{{vehicleInfo.model || '-'}}</p>
-        <div class="base-info">
+        <!-- <div class="base-info">
           <div class="card">{{vehicleInfo.city || '-'}}</div>
           <div class="line"></div>
           <div class="card">{{vehicleInfo.licensingDate || '-'}}</div>
@@ -51,6 +51,14 @@
           <div class="card">行程里数</div>
           <div class="line"></div>
           <div class="card">排放标准</div>
+        </div> -->
+        <div class="div-info">
+          <span>所在城市</span>
+          <span>{{vehicleInfo.city || '-'}}</span>
+        </div>
+        <div class="div-info">
+          <span>新车价</span>
+          <span>-</span>
         </div>
         <div class="div-info">
           <span>车牌号</span>
@@ -352,8 +360,9 @@ export default {
       color rgba(0, 0, 0, .85)
 
       .p1
-        font-size 14px
+        font-size 15px
         background #ffffff
+        font-weight 600
 
       .base-info
         display flex
@@ -376,7 +385,7 @@ export default {
         display flex
         align-content center
         color rgba(0, 0, 0, .85)
-        font-size 15px
+        font-size 14px
         margin 15px 0
 
         &:last-child

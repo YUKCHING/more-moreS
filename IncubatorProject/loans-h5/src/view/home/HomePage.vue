@@ -121,6 +121,10 @@ export default {
         this.$router.push({
           path: '/valuation'
         })
+      } else if (item.code === 'my_orders') {
+        this.$router.push({
+          path: '/myloans'
+        })
       } else {
         if (item.url) {
           window.location.href = item.url + '?token=' + this.$store.getters.token

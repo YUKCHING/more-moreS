@@ -92,7 +92,8 @@ export default {
               let mm = date3 % 60// 计算相差小时后余下的分钟
               return {
                 ...ele,
-                expire_time: h + '小时' + mm + '分'
+                expire_time: h + '小时' + mm + '分',
+                overtime: date3 < 0
               }
             })
           }

@@ -37,6 +37,7 @@
           :product="product"
           :audit="audit"
           :info="info"
+          :identity="curIdentity"
           @select="loansSelectAction"
           >
         </order-loan-block>
@@ -72,21 +73,21 @@
      -->
     <div class="panel" v-if="Object.keys(commission).length > 0">
       <!-- 财务 -->
-      <div v-if="isFinance">
+      <div v-if="curIdentity === 9">
         <!-- 11订单待支出 12订单已支出 -->
         <div v-if="info.status === 11 || info.status === 12">
           <commission-detail :orderId="String(order_id)"></commission-detail>
         </div>
       </div>
       <!-- 4 总代理 3 一级代理  -->
-      <div v-else-if="grade === 4 || grade === 3">
+      <div v-else-if="curIdentity === 4 || curIdentity === 3">
         <!-- 9订单待结算-申请中 -->
         <div v-if="info.status === 9 && settle.status === '0'">
           <commission-detail :orderId="String(order_id)"></commission-detail>
         </div>
       </div>
       <!-- 2 高级会员——业务 -->
-      <div v-else-if="grade === 2">
+      <div v-else-if="curIdentity === 2">
         <!-- 1订单待提交 3订单待批复 13订单退审核 14订单已被拒绝 -->
         <div v-if="info.status === 1 || info.status === 3 || info.status === 13 || info.status === 14">
           <commission-block :productId="String(product.id)"></commission-block>
@@ -106,15 +107,18 @@
     -->
     <!-- 财务
     -->
-    <div v-if="isFinance && (info.status === 11 || info.status === 12)">
+    <div v-if="curIdentity === 9">
       <!-- 11订单待支出 -->
       <div class="buttonPanel" v-if="info.status === 11">
         <van-button class="button4" type="danger" @click="expendAction">支 出</van-button>
       </div>
+      <div class="buttonPanel" v-else>
+        <van-button class="button3" @click="goBackAction">返 回</van-button>
+      </div>
     </div>
     <!-- 内控
     -->
-    <div v-else-if="isInternalControl && (info.status === 3 || info.status === 5 || info.status === 7 || info.status === 13 || info.status === 14)">
+    <div v-else-if="curIdentity === 8">
       <!-- 3订单待批复 14订单已被拒绝 -->
       <div class="buttonPanel" v-if="info.status === 3 || info.status === 14">
         <van-button class="button1" @click="replyAction(2)">退审批</van-button>
@@ -134,10 +138,13 @@
         <van-button class="button1" @click="makeLoanAction(2)">退审批</van-button>
         <van-button class="button2" type="danger" @click="makeLoanAction(1)">放 款</van-button>
       </div>
+      <div class="buttonPanel" v-else>
+        <van-button class="button3" @click="goBackAction">返 回</van-button>
+      </div>
     </div>
     <!-- 4 总代理 3 一级代理
     -->
-    <div v-else-if="grade === 4 || grade === 3">
+    <div v-else-if="curIdentity === 4 || curIdentity === 3">
       <!-- 0订单初始化 -->
       <div class="buttonPanel" v-if="info.status === 0">
         <van-button class="button4" type="danger" @click="cancelOrderActin">取消订单</van-button>
@@ -153,7 +160,7 @@
     </div>
     <!-- 2 高级会员——业务
     -->
-    <div v-else-if="grade === 2">
+    <div v-else-if="curIdentity === 2">
       <!-- 1订单待提交 14订单已被拒绝 -->
       <div class="buttonPanel" v-if="info.status === 1 || info.status === 14">
         <van-button class="button1" :disabled="!isSetProduct" @click="assignControl">指派内控</van-button>
@@ -205,8 +212,6 @@ export default {
   },
   data () {
     return {
-      isFinance: false,
-      isInternalControl: false,
       grade: '',
       order_id: '',
       info: {},
@@ -241,16 +246,11 @@ export default {
       this.identityList = this.analyseIdentity()
       this.curIdentity = this.identityList[0].value
 
-      this.isFinance = Boolean(this.$store.getters.userInfo.is_finance_staff)
-      this.isInternalControl = Boolean(this.$store.getters.userInfo.is_internal_control)
       this.grade = Number(this.$store.getters.userInfo.grade)
       this.order_id = this.$route.query.order_id
       this.getInfo()
       // 测试
       if (process.env.NODE_ENV !== 'production') {
-        // this.isInternalControl = true
-        // this.isFinance = true
-        // this.grade = 2
       }
     },
     analyseIdentity () {
@@ -276,6 +276,74 @@ export default {
       }
       return arr
     },
+    sortIdentity () {
+      let lastIndex = this.identityList.length - 1
+      let isInternal = this.$store.getters.userInfo.is_internal_control
+      let isFinance = this.$store.getters.userInfo.is_finance_staff
+      switch (this.info.status) {
+        case 0: // 初始化
+          this.curIdentity = this.identityList[lastIndex].value
+          break
+        case 1: // 待提交
+          this.curIdentity = this.identityList[lastIndex].value
+          break
+        case 2: // 已提交
+          this.curIdentity = this.identityList[lastIndex].value
+          break
+        case 3: // 待批复
+          if (isInternal) {
+            this.curIdentity = 8
+          }
+          break
+        case 4: // 已批复
+          this.curIdentity = this.identityList[lastIndex].value
+          break
+        case 5: // 待签约
+          if (isInternal) {
+            this.curIdentity = 8
+          }
+          break
+        case 6: // 已签约
+          this.curIdentity = this.identityList[lastIndex].value
+          break
+        case 7: // 待放款
+          if (isInternal) {
+            this.curIdentity = 8
+          }
+          break
+        case 8: // 已放款
+          this.curIdentity = this.identityList[lastIndex].value
+          break
+        case 9: // 待结算
+          this.curIdentity = this.identityList[lastIndex].value
+          break
+        case 10: // 已结算
+          this.curIdentity = this.identityList[lastIndex].value
+          break
+        case 11: // 待支出
+          if (isFinance) {
+            this.curIdentity = 8
+          }
+          break
+        case 12: // 已支出
+          this.curIdentity = this.identityList[lastIndex].value
+          break
+        case 13: // 退审核
+          if (isInternal) {
+            this.curIdentity = 8
+          }
+          break
+        case 14: // 已被拒绝
+          this.curIdentity = this.identityList[lastIndex].value
+          break
+        case 15: // 超时未处理
+          this.curIdentity = this.identityList[lastIndex].value
+          break
+
+        default:
+          break
+      }
+    },
     changeIdentityAction (item) {
       this.curIdentity = item.value
     },
@@ -300,6 +368,7 @@ export default {
             ...res.data,
             expire_time: h + ':' + mm
           }
+          this.sortIdentity()
           this.product = res.data.product
           this.commission = res.data.product.commission
           this.audit = res.data.audit

@@ -150,6 +150,14 @@ const router = new Router({
       }
     },
     {
+      path: '/myloans',
+      name: 'myloans',
+      component: resolve => require(['@/view/loans/MyLoans'], resolve),
+      meta: {
+        title: '我的贷款'
+      }
+    },
+    {
       path: '/etcmember',
       name: 'etcmember',
       component: resolve => require(['@/view/etc/EtcMember'], resolve),

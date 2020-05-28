@@ -14,7 +14,7 @@
     </div>
     <div class="item">
       <span class="label">联系方式</span>
-      <span class="value">{{info.mobile}}</span>
+      <span class="value">{{(info.overtime && String(info.status) === '0') ? packagePhoneNumber(info.mobile) : info.mobile}}</span>
     </div>
     <div class="item">
       <span class="label">客户经理</span>
@@ -26,12 +26,13 @@
     </div>
     <div class="info-bar">
       <span class="status">
-        {{statusName}}
+        {{String(info.status) === '0' && info.overtime ? '超时未处理，订单已取消！' : statusName}}
       </span>
-      <span class="time" v-if="String(info.status) === '0'">
+      <span class="time" v-if="String(info.status) === '0' && !info.overtime">
         剩{{info.expire_time}}自动取消
       </span>
     </div>
+    <div class="mask" v-if="String(info.status) === '0' && info.overtime" @click.stop="maskClick"></div>
   </div>
 </template>
 <script>
@@ -57,6 +58,8 @@ export default {
   methods: {
     selectAction () {
       this.$emit('select', this.info)
+    },
+    maskClick () {
     }
   }
 }
@@ -69,6 +72,17 @@ export default {
   border-radius .33rem
   padding 1rem
   margin-top 1rem
+  position relative
+  overflow hidden
+
+  .mask
+    position absolute
+    top 0
+    bottom 0
+    left 0
+    right 0
+    background rgba(0, 0, 0, .1)
+    user-select none
 
   .info-bar
     display flex

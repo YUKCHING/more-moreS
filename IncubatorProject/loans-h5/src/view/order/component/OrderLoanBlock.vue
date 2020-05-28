@@ -50,6 +50,10 @@ export default {
       default: () => {
         return {}
       }
+    },
+    identity: {
+      type: Number,
+      default: -1
     }
   },
   computed: {
@@ -59,8 +63,8 @@ export default {
     changeButtonStatus () {
       var isBan = true
       var status = this.info.status
-      // 高级会员-业务员
-      if (this.grade === 2) {
+
+      if (this.identity === 2) { // 高级会员-业务员
         if (status === 1 && this.product.product_name) {
           isBan = false
         } else if (status === 14) {
@@ -68,15 +72,9 @@ export default {
         } else {
           isBan = true
         }
-      }
-
-      // 总代理/一级代理
-      if (this.grade === 4 || this.grade === 3) {
+      } else if (this.identity === 4 || this.identity === 3) { // 总代理/一级代理
         isBan = true
-      }
-
-      // 内控
-      if (this.isInternalControl) {
+      } else if (this.identity === 8) { // 内控
         if (status === 3 || status === 13 || status === 14) {
           isBan = false
         } else {
@@ -91,7 +89,6 @@ export default {
     return {
       showProductPopup: false,
       otherCost: '',
-      isInternalControl: false,
       grade: ''
     }
   },
@@ -100,11 +97,8 @@ export default {
   },
   methods: {
     init () {
-      this.isInternalControl = Boolean(this.$store.getters.userInfo.is_internal_control)
       this.grade = Number(this.$store.getters.userInfo.grade)
       if (process.env.NODE_ENV !== 'production') {
-        // this.isInternalControl = true
-        // this.grade = 2
       }
     },
     selectProductAction () {
