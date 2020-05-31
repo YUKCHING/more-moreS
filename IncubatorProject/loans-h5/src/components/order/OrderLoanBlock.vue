@@ -2,7 +2,7 @@
   <div class='OrderLoanBlock'>
     <div class="loansTitle">
       <span>{{product.product_name || '-'}}</span>
-      <van-button class="button" :disabled="changeButtonStatus" @click="selectProductAction">{{!isSetProduct ? '选择产品' : '更换产品'}}</van-button>
+      <van-button class="button" :disabled="changeButtonStatus" @click="selectProductAction" v-if="!hiddenButton">{{!isSetProduct ? '选择产品' : '更换产品'}}</van-button>
     </div>
     <div class="loansInfo">
       <div class="item">
@@ -54,6 +54,10 @@ export default {
     identity: {
       type: Number,
       default: -1
+    },
+    hiddenButton: {
+      type: Boolean,
+      default: false
     }
   },
   computed: {

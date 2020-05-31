@@ -105,7 +105,7 @@
   </div>
 </template>
 <script>
-import OrderStep from './component/OrderStep'
+import OrderStep from '@/components/order/OrderStep'
 export default {
   components: {
     OrderStep

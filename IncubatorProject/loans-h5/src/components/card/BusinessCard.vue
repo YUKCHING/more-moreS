@@ -5,6 +5,10 @@
       <span class="value">{{info.product_name || '-'}}</span>
     </div>
     <div class="item">
+      <span class="label">订单ID</span>
+      <span class="value">{{info.order_id}}</span>
+    </div>
+    <div class="item">
       <span class="label">客户名称</span>
       <span class="value">{{info.user_name}}</span>
     </div>
@@ -32,7 +36,7 @@
         剩{{info.expire_time}}自动取消
       </span>
     </div>
-    <div class="mask" v-if="String(info.status) === '0' && info.overtime" @click.stop="maskClick"></div>
+    <div class="mask" v-if="String(info.status) === '0' && info.overtime && !hiddenMask" @click.stop="maskClick"></div>
   </div>
 </template>
 <script>
@@ -45,6 +49,10 @@ export default {
           status: 0
         }
       }
+    },
+    hiddenMask: {
+      type: Boolean,
+      default: false
     }
   },
   computed: {

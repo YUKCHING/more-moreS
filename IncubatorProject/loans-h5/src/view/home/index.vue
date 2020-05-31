@@ -166,7 +166,7 @@ export default {
           window.isReady = true
         })
       } else {
-        // this.getOpenId('02193OBk2Lcr7C0knHyk2flZBk293OBo') // 调试 直接获取openId
+        // this.getOpenId('021VSXCW1m166Y0jQuDW1TVWCW1VSXC4') // 调试 直接获取openId
         this.getInfo()
       }
     },

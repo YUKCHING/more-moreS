@@ -158,6 +158,30 @@ const router = new Router({
       }
     },
     {
+      path: '/myloansdetail1',
+      name: 'myloansdetail1',
+      component: resolve => require(['@/view/loans/MyLoansDetail1'], resolve),
+      meta: {
+        title: '贷款'
+      }
+    },
+    {
+      path: '/myloansdetail2',
+      name: 'myloansdetail2',
+      component: resolve => require(['@/view/loans/MyLoansDetail2'], resolve),
+      meta: {
+        title: '贷款'
+      }
+    },
+    {
+      path: '/myloanssystemscreen',
+      name: 'myloanssystemscreen',
+      component: resolve => require(['@/view/loans/MyLoansSystemScreen'], resolve),
+      meta: {
+        title: '贷款'
+      }
+    },
+    {
       path: '/etcmember',
       name: 'etcmember',
       component: resolve => require(['@/view/etc/EtcMember'], resolve),

@@ -3,9 +3,6 @@
     <div class="panel">
       <div class="title">
         <span>订单信息</span>
-        <div class="right2" @click="addChildOrderAction" v-show="childOrderShowStatus">
-          + 添加子订单
-        </div>
       </div>
       <div class="content">
         <div v-if="info.status > 0">
@@ -39,6 +36,7 @@
           :info="info"
           :identity="curIdentity"
           @select="loansSelectAction"
+          :hiddenButton="true"
           >
         </order-loan-block>
       </div>
@@ -46,11 +44,7 @@
     <div class="panel">
       <div class="title">
         <span>系统初筛</span>
-        <div v-if="!isSetProduct" class="right" @click="screenAction()">
-          审核系统初筛
-          <img src="@/assets/icon/icon-arrow-right2.png">
-        </div>
-        <div v-else class="right" style="color: #78797A" @click="screenAction()">
+        <div class="right" style="color: #78797A" @click="screenAction()">
           查看
           <img src="@/assets/icon/icon-arrow-right3.png">
         </div>
@@ -60,155 +54,20 @@
         :showImages="showImages"
       ></screen-info-preview>
     </div>
-    <!--
-      身份
-      -->
-    <div class="panel">
-      <div class="title">
-        <span>身份</span>
-      </div>
-      <identity-block :value="curIdentity" :list="identityList" @change="changeIdentityAction" />
+    <div class="buttonPanel">
+      <van-button class="button3" @click="goBackAction">返 回</van-button>
     </div>
-    <!-- 佣金分配
-     -->
-    <div class="panel" v-if="Object.keys(commission).length > 0">
-      <!-- 财务 -->
-      <div v-if="curIdentity === 9">
-        <!-- 11订单待支出 12订单已支出 -->
-        <div v-if="info.status === 11 || info.status === 12">
-          <commission-detail :orderId="String(order_id)"></commission-detail>
-        </div>
-      </div>
-      <!-- 4 总代理 3 一级代理  -->
-      <div v-else-if="curIdentity === 4 || curIdentity === 3">
-        <!-- 9订单待结算-申请中 -->
-        <div v-if="info.status === 9 && settle.status === '0'">
-          <commission-detail :orderId="String(order_id)"></commission-detail>
-        </div>
-      </div>
-      <!-- 2 高级会员——业务 -->
-      <div v-else-if="curIdentity === 2">
-        <!-- 1订单待提交 3订单待批复 13订单退审核 14订单已被拒绝 -->
-        <div v-if="info.status === 1 || info.status === 3 || info.status === 13 || info.status === 14">
-          <commission-block :productId="String(product.id)"></commission-block>
-        </div>
-        <!-- 5订单待签约 7订单待放款 9订单待结算-未申请/申请中 11待支持 12已支出 -->
-        <div v-else-if="info.status === 5 || info.status === 7 || (info.status === 9 && settle.status !== '-1') || info.status === 11 || info.status === 12">
-          <commission-block2 :orderId="String(order_id)"></commission-block2>
-        </div>
-        <!-- 9订单待结算-退回 -->
-        <div v-else-if="info.status === 9 && settle.status === '-1'">
-          <commission-detail-back :orderId="String(order_id)" :settle="settle"></commission-detail-back>
-        </div>
-      </div>
-    </div>
-    <!--
-      控制条
-    -->
-    <!-- 财务
-    -->
-    <div v-if="curIdentity === 9">
-      <!-- 11订单待支出 -->
-      <div class="buttonPanel" v-if="info.status === 11">
-        <van-button class="button4" type="danger" @click="expendAction">支 出</van-button>
-      </div>
-      <div class="buttonPanel" v-else>
-        <van-button class="button3" @click="goBackAction">返 回</van-button>
-      </div>
-    </div>
-    <!-- 内控
-    -->
-    <div v-else-if="curIdentity === 8">
-      <!-- 3订单待批复 14订单已被拒绝 -->
-      <div class="buttonPanel" v-if="info.status === 3 || info.status === 14">
-        <van-button class="button1" @click="replyAction(2)">退审批</van-button>
-        <van-button class="button2" type="danger" @click="replyAction(1)">批 复</van-button>
-      </div>
-      <!-- 13订单退审核 -->
-      <div class="buttonPanel" v-else-if="info.status === 13">
-        <van-button class="button4" type="danger" @click="submitReApproval">提 交</van-button>
-      </div>
-      <!-- 5订单待签约 -->
-      <div class="buttonPanel" v-else-if="info.status === 5">
-        <van-button class="button1" @click="signingAction(2)">退审批</van-button>
-        <van-button class="button2" type="danger" @click="signingAction(1)">签 约</van-button>
-      </div>
-      <!-- 7订单待放款 -->
-      <div class="buttonPanel" v-else-if="info.status === 7">
-        <van-button class="button1" @click="makeLoanAction(2)">退审批</van-button>
-        <van-button class="button2" type="danger" @click="makeLoanAction(1)">放 款</van-button>
-      </div>
-      <div class="buttonPanel" v-else>
-        <van-button class="button3" @click="goBackAction">返 回</van-button>
-      </div>
-    </div>
-    <!-- 4 总代理 3 一级代理
-    -->
-    <div v-else-if="curIdentity === 4 || curIdentity === 3">
-      <!-- 0订单初始化 -->
-      <div class="buttonPanel" v-if="info.status === 0">
-        <van-button class="button4" type="danger" @click="cancelOrderActin">取消订单</van-button>
-      </div>
-      <!-- 9订单待结算-已申请 -->
-      <div class="buttonPanel" v-else-if="info.status === 9 && settle.status === '0'">
-        <van-button class="button1" @click="backSettlementAction">退 回</van-button>
-        <van-button class="button2" type="danger" @click="passSettlementAction">通 过</van-button>
-      </div>
-      <div class="buttonPanel" v-else>
-        <van-button class="button3" @click="goBackAction">返 回</van-button>
-      </div>
-    </div>
-    <!-- 2 高级会员——业务
-    -->
-    <div v-else-if="curIdentity === 2 && isManager">
-      <!-- 1订单待提交 14订单已被拒绝 -->
-      <div class="buttonPanel" v-if="info.status === 1 || info.status === 14">
-        <van-button class="button1" :disabled="!isSetProduct" @click="assignControl">指派内控</van-button>
-        <van-button class="button2" :disabled="!isSetProduct || !handler_id" type="danger" @click="submitIncomming">提交进件</van-button>
-      </div>
-      <!-- 9订单待结算 -->
-      <div class="buttonPanel" v-else-if="info.status === 9 && settle.status === ''">
-        <van-button class="button4" type="danger" @click="applySettlementAction">申请结算</van-button>
-      </div>
-      <!-- 9订单待结算-已申请 -->
-      <div class="buttonPanel" v-else-if="info.status === 9 && settle.status === '0'">
-        <van-button class="button4" type="danger" @click="urgingSettlementAction" :icon="require('@/assets/icon/icon-bell-ring.png')">催 办</van-button>
-      </div>
-      <!-- 9订单待结算-已退回 -->
-      <div v-else-if="info.status === 9 && settle.status === '-1'">
-      </div>
-      <!-- 3订单待批复 5订单待签约 7订单待放款 13订单退审核 -->
-      <div class="buttonPanel" v-else>
-        <van-button class="button3" @click="goBackAction">返 回</van-button>
-      </div>
-    </div>
-    <!-- 其它
-    -->
-    <div v-else>
-      <div class="buttonPanel">
-        <van-button class="button3" @click="goBackAction">返 回</van-button>
-      </div>
-    </div>
-    <van-popup v-model="showGeneralPopup" position="bottom" class="popup-class">
-      <internal-list @select="getHandlerIdAction"></internal-list>
-    </van-popup>
   </div>
 </template>
 <script>
 import { getLoanOrderInfo, postLoanCommit, getCommissionByProduct, postLoanReApproval, cancelPublicOrder, getLoanUrge, getLoanExpenditure } from '@/apis/api.js'
-import InternalList from './InternalList'
 import OrderStep from '@/components/order/OrderStep'
 import OrderLoanBlock from '@/components/order/OrderLoanBlock'
-import CommissionBlock from '@/components/order/CommissionBlock'
-import CommissionBlock2 from '@/components/order/CommissionBlock2'
-import CommissionDetail from '@/components/order/CommissionDetail'
-import CommissionDetailBack from '@/components/order/CommissionDetailBack'
 import ScreenInfoPreview from '@/components/order/ScreenInfoPreview'
-import IdentityBlock from '@/components/order/IdentityBlock'
 
 export default {
   components: {
-    InternalList, OrderStep, OrderLoanBlock, CommissionBlock, CommissionBlock2, CommissionDetail, CommissionDetailBack, ScreenInfoPreview, IdentityBlock
+    OrderStep, OrderLoanBlock, ScreenInfoPreview
   },
   data () {
     return {
@@ -220,23 +79,13 @@ export default {
       audit: {},
       screenInfo: {},
       showImages: [],
-      showGeneralPopup: false,
       hasChangeProduct: false,
       handler_id: '',
       settle: {
         status: ''
       },
       identityList: [],
-      curIdentity: -1,
-      isManager: false
-    }
-  },
-  computed: {
-    isSetProduct () {
-      return this.product.product_name
-    },
-    childOrderShowStatus () {
-      return (this.info.status === 1 || this.info.status === 2 || this.info.status === 3 || this.info.status === 4 || this.info.status === 5 || this.info.status === 6) && this.grade === 2
+      curIdentity: -1
     }
   },
   created () {
@@ -244,13 +93,11 @@ export default {
   },
   methods: {
     init () {
-      this.order_id = this.$route.query.order_id
-      this.isManager = this.$route.query.isManager === '1'
-      this.grade = Number(this.$store.getters.userInfo.grade)
-
       this.identityList = this.analyseIdentity()
       this.curIdentity = this.identityList[0].value
 
+      this.grade = Number(this.$store.getters.userInfo.grade)
+      this.order_id = this.$route.query.order_id
       this.getInfo()
       // 测试
       if (process.env.NODE_ENV !== 'production') {
@@ -369,8 +216,7 @@ export default {
           }
           this.info = {
             ...res.data,
-            expire_time: h + ':' + mm,
-            overtime: date3 < 0
+            expire_time: h + ':' + mm
           }
           this.sortIdentity()
           this.product = res.data.product
@@ -405,18 +251,11 @@ export default {
     },
     screenAction () {
       this.$router.push({
-        path: '/systemscreen2',
+        path: '/myloanssystemscreen',
         query: {
-          order_id: this.info.order_id,
-          isManager: this.isManager ? '1' : '0'
+          order_id: this.info.order_id
         }
       })
-    },
-    addChildOrderAction () {
-      console.log('添加子订单')
-    },
-    assignControl () {
-      this.showGeneralPopup = true
     },
     cancelOrderActin () {
       this.dConfirm('取消订单，订单将回到订单库，由高级会员抢单，确认取消吗？').then(res => {
@@ -488,10 +327,6 @@ export default {
       this.hasChangeProduct = true
       this.product = item
       this.getCommissionByProduct()
-    },
-    getHandlerIdAction (item) {
-      this.handler_id = item.puid
-      this.showGeneralPopup = false
     },
     // 申请结算
     applySettlementAction () {
@@ -613,9 +448,6 @@ export default {
   background #F2F3F5
   overflow auto
 
-  .popup-class
-    height 100%
-
   .buttonPanel
     display flex
     justify-content space-around
@@ -662,9 +494,6 @@ export default {
 
         img
           width 15px
-
-      .right2
-        color rgba(0, 0, 0, .85)
 
     .content
       padding .8rem

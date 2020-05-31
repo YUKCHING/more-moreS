@@ -3,7 +3,6 @@
     <div class="loansBlock">
       <div class="loansTitle">
         <span>{{product.product_name || '-'}}</span>
-        <div class="button" @click="selectProductAction" v-if="!isSetProduct && isManager">选择产品</div>
       </div>
       <div class="loansInfo">
         <div class="item">
@@ -34,24 +33,6 @@
       </div>
       <div class="car-panel">
         <p class="p1">{{vehicleInfo.model || '-'}}</p>
-        <!-- <div class="base-info">
-          <div class="card">{{vehicleInfo.city || '-'}}</div>
-          <div class="line"></div>
-          <div class="card">{{vehicleInfo.licensingDate || '-'}}</div>
-          <div class="line"></div>
-          <div class="card">{{vehicleInfo.mileage ? (vehicleInfo.mileage + '万公里') : '-'}}</div>
-          <div class="line"></div>
-          <div class="card">{{vehicleInfo.standard || '-'}}</div>
-        </div>
-        <div class="base-info" style="margin-bottom: 22px;">
-          <div class="card">所在城市</div>
-          <div class="line"></div>
-          <div class="card">上牌日期</div>
-          <div class="line"></div>
-          <div class="card">行程里数</div>
-          <div class="line"></div>
-          <div class="card">排放标准</div>
-        </div> -->
         <div class="div-info">
           <span>所在城市</span>
           <span>{{vehicleInfo.city || '-'}}</span>
@@ -111,9 +92,8 @@
         备注：
       </div>
     </div>
-    <div class="buttonPanel" v-if="!isSetProduct && isManager">
-      <van-button class="button1" @click="noticeModifyAction">通知客人修改</van-button>
-      <van-button class="button2" type="danger" :disabled="!product.product_name" @click="submitAction">确定OK</van-button>
+    <div class="buttonPanel">
+      <van-button class="button1" @click="backAction">返回</van-button>
     </div>
     <van-image-preview v-model="showPreview" :images="showImages" :startPosition="previewIndex" @change="onChange">
       <template v-slot:index>第{{ previewIndex + 1 }}页</template>
@@ -124,7 +104,7 @@
   </div>
 </template>
 <script>
-import { getLoanOrderInfo, postLoanPassScreen, noticeModifyScreen } from '@/apis/api.js'
+import { getLoanOrderInfo, postLoanPassScreen } from '@/apis/api.js'
 import LoansList from '@/view/loans/LoansList'
 export default {
   components: {
@@ -146,12 +126,10 @@ export default {
       showImages: [],
       previewIndex: 0,
       showProductPopup: false,
-      isSetProduct: false,
-      isManager: false
+      isSetProduct: false
     }
   },
   created () {
-    this.isManager = this.$route.query.isManager === '1'
     this.getInfo()
   },
   destroyed () {
@@ -220,15 +198,8 @@ export default {
       this.product.id = item.id
       this.product.product_name = item.product_name
     },
-    noticeModifyAction () {
-      let req = {
-        screen_id: this.screenInfo.screen_id
-      }
-      noticeModifyScreen(req).then(res => {
-        if (res.code === 0) {
-          this.tSuccess('通知成功')
-        }
-      })
+    backAction () {
+      this.$router.go(-1)
     }
   }
 }

@@ -24,7 +24,7 @@
 </template>
 <script>
 import { getLoanOrderRecord, getLoanOrderInfo } from '@/apis/api.js'
-import OrderStep2 from './component/OrderStep2'
+import OrderStep2 from '@/components/order/OrderStep2'
 export default {
   components: {
     OrderStep2

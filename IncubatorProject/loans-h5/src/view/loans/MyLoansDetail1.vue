@@ -25,16 +25,12 @@
           <p class="value">{{info.mobile || '-'}}</p>
         </div>
         <van-button class="button" type="danger" @click="recordDetailAction">交易记录详情</van-button>
-        <order-loan-block></order-loan-block>
+        <order-loan-block :hiddenButton="true"></order-loan-block>
       </div>
     </div>
     <div class="panel">
       <div class="title">
         <span>系统初筛</span>
-        <div class="right" @click="screenAction" v-if="isManager">
-          进入系统初筛
-          <img src="@/assets/icon/icon-arrow-right2.png">
-        </div>
       </div>
       <div class="content">
         <div class="certificates">
@@ -68,8 +64,7 @@ export default {
     return {
       info: {},
       otherCost: '',
-      order_id: '',
-      isManager: false
+      order_id: ''
     }
   },
   created () {
@@ -77,7 +72,6 @@ export default {
   },
   methods: {
     init () {
-      this.isManager = this.$route.query.isManager === '1'
       this.order_id = this.$route.query.order_id
       this.getInfo()
     },
@@ -111,15 +105,6 @@ export default {
         path: '/recordprocess',
         query: {
           order_id: this.info.order_id
-        }
-      })
-    },
-    screenAction () {
-      this.$router.push({
-        path: '/systemscreen',
-        query: {
-          isInit: '1',
-          order_id: this.$route.query.order_id
         }
       })
     }

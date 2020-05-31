@@ -125,3 +125,9 @@ export function getLoanExpenditure (data) {
   let url = '/loan/expenditure'
   return sendGetRequest(url, data)
 }
+
+// 获取我的订单
+export function getMyOrdersList (data) {
+  let url = '/loan/my-orders'
+  return sendGetRequest(url, data)
+}

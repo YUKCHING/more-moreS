@@ -4,13 +4,14 @@
       v-for="(item, index) in listData"
       :key="index"
       :info="item"
+      :hiddenMask="true"
       @select="selectCard"
     ></business-card>
   </div>
 </template>
 <script>
 import BusinessCard from '@/components/card/BusinessCard'
-import { getLoanOrderList } from '@/apis/api.js'
+import { getMyOrdersList } from '@/apis/api.js'
 export default {
   components: {
     BusinessCard
@@ -26,10 +27,12 @@ export default {
   methods: {
     getList () {
       let req = {
-        status: ''
+        status: '',
+        page_index: 1,
+        page_size: 500
       }
       this.listData = []
-      getLoanOrderList(req).then(res => {
+      getMyOrdersList(req).then(res => {
         if (res.code === 0) {
           if (res.data.list.length > 0) {
             this.listData = res.data.list.map(ele => {
@@ -40,7 +43,8 @@ export default {
               let mm = date3 % 60// 计算相差小时后余下的分钟
               return {
                 ...ele,
-                expire_time: h + '小时' + mm + '分'
+                expire_time: h + '小时' + mm + '分',
+                overtime: date3 < 0
               }
             })
           }
@@ -48,6 +52,21 @@ export default {
       })
     },
     selectCard (item) {
+      if (item.status === 0) {
+        this.$router.push({
+          path: '/myloansdetail1',
+          query: {
+            order_id: item.order_id
+          }
+        })
+      } else {
+        this.$router.push({
+          path: '/myloansdetail2',
+          query: {
+            order_id: item.order_id
+          }
+        })
+      }
     }
   }
 }

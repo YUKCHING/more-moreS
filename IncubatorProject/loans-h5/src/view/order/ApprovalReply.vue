@@ -77,7 +77,7 @@
   </div>
 </template>
 <script>
-import OrderStep from './component/OrderStep'
+import OrderStep from '@/components/order/OrderStep'
 import { postLoanApproval } from '@/apis/api.js'
 export default {
   components: {

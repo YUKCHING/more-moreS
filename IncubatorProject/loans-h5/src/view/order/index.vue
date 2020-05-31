@@ -48,18 +48,21 @@ export default {
       this.getList()
     },
     selectOrder (item) {
+      let isManager = item.manager_id === this.$store.getters.userInfo.id ? '1' : '0'
       if (item.status === 0) {
         this.$router.push({
           path: '/orderinit',
           query: {
-            order_id: item.order_id
+            order_id: item.order_id,
+            isManager: isManager
           }
         })
       } else {
         this.$router.push({
           path: '/ordersubmit',
           query: {
-            order_id: item.order_id
+            order_id: item.order_id,
+            isManager: isManager
           }
         })
       }
