@@ -14,7 +14,7 @@
     </div>
     <div class="item">
       <span class="label">申请额度</span>
-      <span class="value">{{info.amount}}万元</span>
+      <span class="value">{{info.amount}}</span>
     </div>
     <div class="item">
       <span class="label">联系方式</span>

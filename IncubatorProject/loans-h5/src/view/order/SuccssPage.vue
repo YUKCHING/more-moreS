@@ -34,6 +34,10 @@ export default {
       }).then(() => {
         this.$router.push({
           path: '/index'
+        }).then(() => {
+          this.$router.push({
+            path: '/myloans'
+          })
         })
       })
     }

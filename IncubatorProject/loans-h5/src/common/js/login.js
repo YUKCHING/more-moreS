@@ -1,7 +1,7 @@
 import store from '@/store'
 import { toast, tLoading, tClear } from '@/common/js/Toast.js'
 import { judgeWeixinBrowser, getWeixinCodeUrlToIndex } from '@/common/js/common.js'
-import { getOpenidByCode, getTokenByOpenId, getUserInfo } from '@/apis/api.js'
+import { getOpenidByCode, getTokenByOpenId, getUserInfo, getControlConfig } from '@/apis/api.js'
 
 export default async function initLoginCheckInfo (route) {
   let query = route.query
@@ -87,7 +87,22 @@ export default async function initLoginCheckInfo (route) {
         userInfo: JSON.stringify(memberInfo)
       })
     }
+
+    let config = await getControlConfig({})
+    let isShowBackButton = false
+    if (config.code === 0) {
+      if (config.data.functions.length > 0) {
+        let item = config.data.functions.find(ele => ele.code === 'back_home')
+        if (item) {
+          isShowBackButton = item.is_show === 1
+        }
+      }
+    }
+
     tClear()
-    return memberInfo
+    return {
+      ...memberInfo,
+      showBack: isShowBackButton
+    }
   }
 }

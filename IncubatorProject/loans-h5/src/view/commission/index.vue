@@ -43,6 +43,7 @@
     <div v-else style="height: calc(100% - 43px)">
       <default-data></default-data>
     </div>
+    <back-home />
   </div>
 </template>
 <script>
@@ -53,9 +54,10 @@ import CommissionCard4 from './component/CommissionCard4'
 import initLoginCheckInfo from '@/common/js/login.js'
 import { deleteCommission, getCommissionList } from '@/apis/api'
 import DefaultData from '@/components/DefaultData'
+import BackHome from '@/components/BackHome'
 export default {
   components: {
-    CommissionCard, CommissionCard2, CommissionCard3, CommissionCard4, DefaultData
+    CommissionCard, CommissionCard2, CommissionCard3, CommissionCard4, DefaultData, BackHome
   },
   computed: {
     isProduction () {
@@ -89,12 +91,17 @@ export default {
             let shareLink = 'http://api.tainuocar.com/home/' + this.$route.name + '?invite=' + this.$store.getters.userInfo['invite_code']
             this.initWxShare(window.shareUrl, title, des, shareLink)
             window.isReady = true
+            this.$store.dispatch('setIsFirstVisit', {
+              isFirstVisit: info.showBack
+            })
+
             this.initSetting()
           })
         } else {
         // 分享设置
           let shareLink = 'http://api.tainuocar.com/home/' + this.$route.name + '?invite=' + this.$store.getters.userInfo['invite_code']
           this.initWxShare(window.shareUrl, title, des, shareLink)
+
           this.initSetting()
         }
       } else {

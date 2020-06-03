@@ -1,99 +1,92 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>CSS3弹簧特效</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>弹动效果 touch.js</title>
     <style>
-        * {
+        *{
             margin: 0;
-            padding: 0
+            padding: 0;
         }
-        html,body{
+        html, body{
+            width: 100%;
+        }
+        .app {
             width: 100%;
             height: 100%;
-            display: flex;
         }
-        body{
-            perspective: 800px;
+        /* 列表的父盒子，限制宽高 */
+        /* 注意设置overflow: hidden;样式后，超出这个盒子的ul将不会显示 */
+        .draw {
+            width: 100%;
+            height: 100%;
+            border: 2px solid #ccc;
+            overflow: hidden;
+            position: fixed;
+           /*  top: 50%;
+            transform: translateY(-50%); */
         }
-
-        .wrap{
-            width: 400px;
-            height: 400px;
-            margin: auto;
-            transform: rotateX(60deg);
-            position: relative;
-            transform-style: preserve-3d;
+        /* li 设置了浮动， 所以 ul 要清除浮动 */
+        ul {
+            zoom: 1;
+            padding: 0 10%;
         }
-        .wrap div{
-            position: absolute;
-            border: 15px solid #ccd7d9;
-            border-color: #ccd7d9 #d2dbde #d7e0e2 #d2dbde;
-            border-radius: 50%;
-            box-shadow: 0 1px 0 #fff, 0 10px 0 #abbdc1 inset, 0 10px 0 #abbdc1;
-            transform: translateZ(-50px);
+        ul::after {
+            content: "";
+            display:block;
+            visibility: hidden;
+            height: 0;
+            clear: both;
         }
-        .wrap div:nth-child(1){
-            left: calc( 400px/2 - 340px/2 - 15px );
-            top: calc( 400px/2 - 340px/2  - 15px );
-            width: 340px;
-            height: 340px;
-
-            animation: play1 2s 2400ms ease-in-out infinite alternate;
-        }
-        .wrap div:nth-child(2){
-            left: calc( 400px/2 - 280px/2 - 15px );
-            top: calc( 400px/2 - 280px/2  - 15px );
-            width: 280px;
-            height: 280px;
-            animation: play1 2s 2000ms ease-in-out infinite alternate;
-        }
-        .wrap div:nth-child(3){
-            left: calc( 400px/2 - 220px/2 - 15px );
-            top: calc( 400px/2 - 220px/2  - 15px );
-            width: 220px;
-            height: 220px;
-            animation: play1 2s 1600ms ease-in-out infinite alternate;
-        }
-        .wrap div:nth-child(4){
-            left: calc( 400px/2 - 160px/2 - 15px );
-            top: calc( 400px/2 - 160px/2  - 15px );
-            width: 160px;
-            height: 160px;
-            animation: play1 2s 1200ms ease-in-out infinite alternate;
-        }
-        .wrap div:nth-child(5){
-            left: calc( 400px/2 - 100px/2 - 15px );
-            top: calc( 400px/2 - 100px/2  - 15px );
-            width: 100px;
-            height: 100px;
-            animation: play1 2s 800ms ease-in-out infinite alternate;
-        }
-        .wrap div:nth-child(6){
-            left: calc( 400px/2 - 40px/2 - 15px );
-            top: calc( 400px/2 - 40px/2  - 15px );
-            width: 40px;
-            height: 40px;
-            animation: play1 2s 400ms ease-in-out infinite alternate;
-        }
-        @keyframes play1 {
-            from{
-                transform: translateZ(-50px);
-            }
-            to{
-                transform: translateZ(100px);
-            }
+        li {
+            list-style: none;
+            float: left;
+            width:100px;
+            height:100px;
+            line-height:100px;
+            text-align: center;
         }
     </style>
 </head>
 <body>
-    <div class="wrap">
-        <div></div>
-        <div></div>
-        <div></div>
-        <div></div>
-        <div></div>
-        <div></div>
+    <div class="app">
+        <div class="draw" id="draw">
+            <ul>
+                <li style="background:orange"></li>
+                <li style="background:cyan"></li>
+                <li style="background:orange"></li>
+                <li style="background:olivedrab"></li>
+                <li style="background:purple"></li>
+                <li style="background:cornflowerblue"></li>
+            </ul>
+        </div>
     </div>
+    <script>
+        var startY = 0;
+        const maxMove = 500;
+        var draw = document.getElementById('draw');
+        var ul = draw.children[0];
+        draw.addEventListener('touchstart', function(event) {
+            console.log('%ctouchstart // clientY: '+event.changedTouches[0].clientY,"color:green");
+            startY = event.changedTouches[0].clientY;
+        });
+        draw.addEventListener('touchmove', function(event) {
+            console.log('touchmove // clientY: '+event.changedTouches[0].clientY);
+            const y = event.changedTouches[0].clientY - startY <= maxMove ? event.changedTouches[0].clientY - startY : maxMove;
+            // 为了清除卡顿问题，需要清除过渡效果
+            ul.style.transition = "none";
+            // 阻尼系数0.3
+            ul.style.transform = 'translateY('+0.3*y+'px)';
+        });
+        draw.addEventListener('touchend', function(event) {
+            console.log('%ctouchend // clientY: '+event.changedTouches[0].clientY,"color:orange");
+            const y = event.changedTouches[0].clientY - startY;
+            // 添加过渡效果
+            ul.style.transition = 'transform .6s';
+            ul.style.transform = 'translateY('+0+'px)';
+        });
+    </script>
 </body>
 </html>

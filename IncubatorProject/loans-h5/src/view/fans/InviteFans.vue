@@ -67,6 +67,7 @@
     <van-image-preview v-model="showPreview" :images="[shareUrl]" @close="closePreviewAction">
     </van-image-preview>
     <qr-overlay></qr-overlay>
+    <back-home />
   </div>
 </template>
 <script>
@@ -76,9 +77,10 @@ import jrQrcode from 'jr-qrcode'
 import html2canvas from 'html2canvas'
 import initLoginCheckInfo from '@/common/js/login.js'
 import QrOverlay from '@/components/QrOverlay'
+import BackHome from '@/components/BackHome'
 export default {
   components: {
-    QrOverlay
+    QrOverlay, BackHome
   },
   data () {
     return {
@@ -101,26 +103,35 @@ export default {
   },
   methods: {
     init () {
-      let title = '泰诺汽车平台-邀请粉丝'
-      let des = '超10款车贷产品，总有一款适合您！做车贷，找泰诺。'
-      if (!window.isReady) {
-        initLoginCheckInfo(this.$route).then(info => {
-          if (info && info.code === -1000104) {
-            this.bus.$emit('showQrOverlay')
-            return
-          }
-          // 分享设置
+      if (process.env.NODE_ENV === 'production') {
+        let title = '泰诺汽车平台-邀请粉丝'
+        let des = '超10款车贷产品，总有一款适合您！做车贷，找泰诺。'
+        if (!window.isReady) {
+          initLoginCheckInfo(this.$route).then(info => {
+            if (info && info.code === -1000104) {
+              this.bus.$emit('showQrOverlay')
+              return
+            }
+            // 分享设置
+            let shareLink = 'http://api.tainuocar.com/home/' + this.$route.name + '?invite=' + this.$store.getters.userInfo['invite_code']
+            this.initWxShare(window.shareUrl, title, des, shareLink)
+            window.isReady = true
+            this.$store.dispatch('setIsFirstVisit', {
+              isFirstVisit: info.showBack
+            })
+
+            this.getCode()
+          })
+        } else {
+        // 分享设置
           let shareLink = 'http://api.tainuocar.com/home/' + this.$route.name + '?invite=' + this.$store.getters.userInfo['invite_code']
           this.initWxShare(window.shareUrl, title, des, shareLink)
-          window.isReady = true
-        })
-      } else {
-        // 分享设置
-        let shareLink = 'http://api.tainuocar.com/home/' + this.$route.name + '?invite=' + this.$store.getters.userInfo['invite_code']
-        this.initWxShare(window.shareUrl, title, des, shareLink)
-      }
 
-      this.getCode()
+          this.getCode()
+        }
+      } else {
+        this.getCode()
+      }
     },
     shareAction () {
 

@@ -81,13 +81,18 @@
         </div>
       </div>
     </div>
+    <back-home />
   </div>
 </template>
 <script>
 import $ from 'jquery'
 import { postLoanApply, sendVerifyCode } from '@/apis/api.js'
 import initLoginCheckInfo from '@/common/js/login.js'
+import BackHome from '@/components/BackHome'
 export default {
+  comments: {
+    BackHome
+  },
   computed: {
     isProduction () {
       return process.env.NODE_ENV === 'production'
@@ -102,17 +107,6 @@ export default {
         {title: '深圳', phone: '13713697967', num: 17.6},
         {title: '深圳', phone: '13713697967', num: 76.6},
         {title: '深圳', phone: '13713697967', num: 7.6},
-        {title: '深圳', phone: '13713697967', num: 7.6},
-        {title: '深圳', phone: '13713697967', num: 7.6},
-        {title: '深圳', phone: '13713697967', num: 7.6},
-        {title: '深圳', phone: '13713697967', num: 17.6},
-        {title: '深圳', phone: '13713697967', num: 76.6},
-        {title: '深圳', phone: '13713697967', num: 7.6},
-        {title: '深圳', phone: '13713697967', num: 7.6},
-        {title: '深圳', phone: '13713697967', num: 7.6},
-        {title: '深圳', phone: '13713697967', num: 7.6},
-        {title: '深圳', phone: '13713697967', num: 17.6},
-        {title: '深圳', phone: '13713697967', num: 76.6},
         {title: '深圳', phone: '13713697967', num: 7.6},
         {title: '深圳', phone: '13713697967', num: 7.6}
       ],
@@ -155,17 +149,28 @@ export default {
             let shareLink = 'http://api.tainuocar.com/home/' + this.$route.name + '?invite=' + this.$store.getters.userInfo['invite_code']
             this.initWxShare(window.shareUrl, title, des, shareLink)
             window.isReady = true
+            this.$store.dispatch('setIsFirstVisit', {
+              isFirstVisit: info.showBack
+            })
+
+            let screenWidth = window.screen.availWidth
+            let sHeight = (screenWidth * 156.0) / 375.0
+            this.swipeHeight = sHeight + 'px'
           })
         } else {
         // 分享设置
           let shareLink = 'http://api.tainuocar.com/home/' + this.$route.name + '?invite=' + this.$store.getters.userInfo['invite_code']
           this.initWxShare(window.shareUrl, title, des, shareLink)
-        }
-      }
 
-      let screenWidth = window.screen.availWidth
-      let sHeight = (screenWidth * 156.0) / 375.0
-      this.swipeHeight = sHeight + 'px'
+          let screenWidth = window.screen.availWidth
+          let sHeight = (screenWidth * 156.0) / 375.0
+          this.swipeHeight = sHeight + 'px'
+        }
+      } else {
+        let screenWidth = window.screen.availWidth
+        let sHeight = (screenWidth * 156.0) / 375.0
+        this.swipeHeight = sHeight + 'px'
+      }
     },
     scrollAction () {
       clearInterval(this.scrollTimer)
@@ -206,7 +211,7 @@ export default {
       let req = {
         username: this.username,
         mobile: this.mobile,
-        amount: this.amount,
+        amount: Number(this.amount) * 10000,
         invite_code: this.$store.getters.webInviteCode,
         verify_code: this.verify_code
       }

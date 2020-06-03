@@ -27,7 +27,8 @@ const user = {
     violationInfo: getStorageByKey(violationInfoKey),
     webInviteCode: getStorageByKey(webInviteCodeKey),
     nowTab: '',
-    carSearchInfo: getStorageByKey(carSearchInfoKey)
+    carSearchInfo: getStorageByKey(carSearchInfoKey),
+    isFirstVisit: false
   },
 
   mutations: {
@@ -66,6 +67,9 @@ const user = {
     },
     SET_CARSEARCHINFO (state, carSearchInfo) {
       state.carSearchInfo = getStorageByKey(carSearchInfoKey)
+    },
+    SET_ISFIRSTVISIT (state, isFirstVisit) {
+      state.isFirstVisit = isFirstVisit
     }
   },
   actions: {
@@ -115,6 +119,9 @@ const user = {
     setCarSearchInfo ({ commit }, { carSearchInfo }) {
       setStorageByKey(carSearchInfoKey, carSearchInfo)
       commit('SET_CARSEARCHINFO')
+    },
+    setIsFirstVisit ({ commit }, { isFirstVisit }) {
+      commit('SET_ISFIRSTVISIT', isFirstVisit)
     }
   }
 }

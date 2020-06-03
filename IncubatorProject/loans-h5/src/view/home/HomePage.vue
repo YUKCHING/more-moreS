@@ -114,7 +114,9 @@ export default {
           path: '/invitefans'
         })
       } else if (item.code === 'break_rule') {
-        this.showViolation()
+        this.$router.push({
+          path: '/violation'
+        })
       } else if (item.code === 'common_tools') {
         this.$emit('showTool')
       } else if (item.code === 'rapid_valuation') {
@@ -132,11 +134,6 @@ export default {
           this.toast('尽情期待')
         }
       }
-    },
-    showViolation () {
-      this.$router.push({
-        path: '/violation'
-      })
     },
     loanAction () {
       this.$router.push('/loanslist')

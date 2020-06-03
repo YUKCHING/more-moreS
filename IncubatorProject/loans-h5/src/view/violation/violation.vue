@@ -75,16 +75,18 @@
       />
     </van-popup>
     <qr-overlay></qr-overlay>
+    <back-home />
   </div>
 </template>
 <script>
-import { uploadDriverLicense } from '@/apis/api'
+import { uploadDriverLicense, getVinHistory } from '@/apis/api'
 import initLoginCheckInfo from '@/common/js/login.js'
 // import imgProcessor from '@/common/js/ImageProcessor.js'
 import QrOverlay from '@/components/QrOverlay'
+import BackHome from '@/components/BackHome'
 export default {
   components: {
-    QrOverlay
+    QrOverlay, BackHome
   },
   data () {
     return {
@@ -95,7 +97,8 @@ export default {
       ocr_id: '',
       need_push: '1',
       columns: ['粤', '京', '沪', '津', '渝', '鲁', '冀', '晋', '蒙', '辽', '吉', '黑', '苏', '浙', '皖', '闽', '赣', '豫', '湘', '鄂', '桂', '琼', '川', '贵', '云', '藏', '陕', '甘', '青', '宁', '新', '港', '澳', '台'],
-      showPicker: false
+      showPicker: false,
+      history: []
     }
   },
   beforeCreate () {
@@ -106,25 +109,41 @@ export default {
   },
   methods: {
     init () {
-      let title = '泰诺汽车平台-违章查询'
-      let des = '一键识别，有违章，早知道，免费查询，官方同步。'
-      if (!window.isReady) {
-        initLoginCheckInfo(this.$route).then(info => {
-          if (info && info.code === -1000104) {
-            this.bus.$emit('showQrOverlay')
-            return
-          }
-          // 分享设置
+      if (process.env.NODE_ENV === 'production') {
+        let title = '泰诺汽车平台-违章查询'
+        let des = '一键识别，有违章，早知道，免费查询，官方同步。'
+
+        if (!window.isReady) {
+          initLoginCheckInfo(this.$route).then(info => {
+            if (info && info.code === -1000104) {
+              this.bus.$emit('showQrOverlay')
+              return
+            }
+            // 分享设置
+            let shareLink = 'http://api.tainuocar.com/home/' + this.$route.name + '?invite=' + this.$store.getters.userInfo['invite_code']
+            this.initWxShare(window.shareUrl, title, des, shareLink)
+            window.isReady = true
+            this.$store.dispatch('setIsFirstVisit', {
+              isFirstVisit: info.showBack
+            })
+
+            this.getStoreInfo()
+            this.getHistory()
+          })
+        } else {
+        // 分享设置
           let shareLink = 'http://api.tainuocar.com/home/' + this.$route.name + '?invite=' + this.$store.getters.userInfo['invite_code']
           this.initWxShare(window.shareUrl, title, des, shareLink)
-          window.isReady = true
-        })
-      } else {
-        // 分享设置
-        let shareLink = 'http://api.tainuocar.com/home/' + this.$route.name + '?invite=' + this.$store.getters.userInfo['invite_code']
-        this.initWxShare(window.shareUrl, title, des, shareLink)
-      }
 
+          this.getStoreInfo()
+          this.getHistory()
+        }
+      } else {
+        this.getStoreInfo()
+        this.getHistory()
+      }
+    },
+    getStoreInfo () {
       if (this.$store.getters.violationInfo) {
         let item = this.$store.getters.violationInfo
         this.vin = item.vin
@@ -134,6 +153,11 @@ export default {
         this.ocr_id = item.ocr_id
         this.need_push = item.need_push || '1'
       }
+    },
+    getHistory () {
+      getVinHistory({}).then(res => {
+        console.log(res)
+      })
     },
     onSubmit (values) {
       this.createAction()

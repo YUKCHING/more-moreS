@@ -18,7 +18,8 @@ const store = new Vuex.Store({
     violationInfo: state => JSON.parse(state.user.violationInfo), // 违章查询历史信息
     webInviteCode: state => state.user.webInviteCode, // 从web获取他人的邀请码
     nowTab: state => Number(state.user.nowTab), // 当前tab值
-    carSearchInfo: state => JSON.parse(state.user.carSearchInfo)
+    carSearchInfo: state => JSON.parse(state.user.carSearchInfo),
+    isFirstVisit: state => Number(state.user.isFirstVisit) // 是否从分享链接访问
   },
   mutitons: {},
   modules: {

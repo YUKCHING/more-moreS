@@ -67,6 +67,7 @@
       <city-popup @select="selectCityItem"></city-popup>
     </van-popup>
     <qr-overlay></qr-overlay>
+    <back-home />
   </div>
 </template>
 <script>
@@ -75,9 +76,10 @@ import CarPopup from './components/CarPopup'
 import CityPopup from './components/CityPopup'
 import initLoginCheckInfo from '@/common/js/login.js'
 import QrOverlay from '@/components/QrOverlay'
+import BackHome from '@/components/BackHome'
 export default {
   components: {
-    CarPopup, CityPopup, QrOverlay
+    CarPopup, CityPopup, QrOverlay, BackHome
   },
   data () {
     return {
@@ -108,25 +110,37 @@ export default {
   },
   methods: {
     init () {
-      let title = '泰诺汽车平台-快速估值'
-      let des = '基于海量真实成交记录，采用人工智能和大数据，保证估值的真实可靠性。'
-      if (!window.isReady) {
-        initLoginCheckInfo(this.$route).then(info => {
-          if (info && info.code === -1000104) {
-            console.log('emit showQrOverlay')
-            this.bus.$emit('showQrOverlay')
-            return
-          }
-          // 分享设置
+      if (process.env.NODE_ENV === 'production') {
+        let title = '泰诺汽车平台-快速估值'
+        let des = '基于海量真实成交记录，采用人工智能和大数据，保证估值的真实可靠性。'
+        if (!window.isReady) {
+          initLoginCheckInfo(this.$route).then(info => {
+            if (info && info.code === -1000104) {
+              this.bus.$emit('showQrOverlay')
+              return
+            }
+            // 分享设置
+            let shareLink = 'http://api.tainuocar.com/home/' + this.$route.name + '?invite=' + this.$store.getters.userInfo['invite_code']
+            this.initWxShare(window.shareUrl, title, des, shareLink)
+            window.isReady = true
+            this.$store.dispatch('setIsFirstVisit', {
+              isFirstVisit: info.showBack
+            })
+
+            this.getStoreInfo()
+          })
+        } else {
+        // 分享设置
           let shareLink = 'http://api.tainuocar.com/home/' + this.$route.name + '?invite=' + this.$store.getters.userInfo['invite_code']
           this.initWxShare(window.shareUrl, title, des, shareLink)
-          window.isReady = true
-        })
+
+          this.getStoreInfo()
+        }
       } else {
-        // 分享设置
-        let shareLink = 'http://api.tainuocar.com/home/' + this.$route.name + '?invite=' + this.$store.getters.userInfo['invite_code']
-        this.initWxShare(window.shareUrl, title, des, shareLink)
+        this.getStoreInfo()
       }
+    },
+    getStoreInfo () {
       let valinfo = this.$store.getters.valinfo
       if (valinfo) {
         this.selectCarInfo = valinfo.selectCarInfo

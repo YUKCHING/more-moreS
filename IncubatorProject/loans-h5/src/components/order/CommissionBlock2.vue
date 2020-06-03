@@ -73,27 +73,27 @@ export default {
             let general = commissions.find(ele => ele.grade === 4)
             if (general) {
               this.ac_general_agent = Number(general.rate).toFixed(1)
-              this.money_general_agent = Number(general.commission).toFixed(1)
+              this.money_general_agent = Number(general.commission)
             }
             let first = commissions.find(ele => ele.grade === 3)
             if (first) {
               this.ac_first_agent = Number(first.rate).toFixed(1)
-              this.money_first_agent = Number(first.commission).toFixed(1)
+              this.money_first_agent = Number(first.commission)
             }
             let senior = commissions.find(ele => ele.grade === 2)
             if (senior) {
               this.ac_senior_member = Number(senior.rate).toFixed(1)
-              this.money_senior_member = Number(senior.commission).toFixed(1)
+              this.money_senior_member = Number(senior.commission)
             }
             let member = commissions.find(ele => ele.grade === 1)
             if (member) {
               this.ac_member = Number(member.rate).toFixed(1)
-              this.money_member = Number(member.commission).toFixed(1)
+              this.money_member = Number(member.commission)
             }
             let fans = commissions.find(ele => ele.grade === 0)
             if (fans) {
               this.ac_fans = Number(fans.rate).toFixed(1)
-              this.money_fans = Number(fans.commission).toFixed(1)
+              this.money_fans = Number(fans.commission)
             }
           }
         }

@@ -5,7 +5,7 @@ import { getWxShare } from '@/apis/api.js'
 Vue.prototype.initWxShare = initWxShare
 Vue.prototype.wechatShareReady = wechatShareReady
 
-function initWxShare (iniUrl, title, des, link) {
+export function initWxShare (iniUrl, title, des, link) {
   return new Promise((resolve, reject) => {
     let req = {
       apis: [
