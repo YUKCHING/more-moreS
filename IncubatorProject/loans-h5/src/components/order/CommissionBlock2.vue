@@ -70,30 +70,40 @@ export default {
         if (res.code === 0) {
           if (res.data.commissions.length > 0) {
             let commissions = res.data.commissions
-            let general = commissions.find(ele => ele.grade === 4)
-            if (general) {
+            let general = commissions.filter(ele => ele.grade === 4)
+            if (general.length > 0) {
               this.ac_general_agent = Number(general.rate).toFixed(1)
-              this.money_general_agent = Number(general.commission)
+              this.money_general_agent = general.length > 1 ? general.reduce((a, b) => {
+                return Number(a.commission) + Number(b.commission)
+              }) : Number(general[0].commission)
             }
-            let first = commissions.find(ele => ele.grade === 3)
-            if (first) {
+            let first = commissions.filter(ele => ele.grade === 3)
+            if (first.length > 0) {
               this.ac_first_agent = Number(first.rate).toFixed(1)
-              this.money_first_agent = Number(first.commission)
+              this.money_first_agent = first.length > 1 ? first.reduce((a, b) => {
+                return Number(a.commission) + Number(b.commission)
+              }) : Number(first[0].commission)
             }
-            let senior = commissions.find(ele => ele.grade === 2)
-            if (senior) {
-              this.ac_senior_member = Number(senior.rate).toFixed(1)
-              this.money_senior_member = Number(senior.commission)
+            let senior = commissions.filter(ele => ele.grade === 2)
+            if (senior.length > 0) {
+              this.ac_senior_member = Number(senior[0].rate).toFixed(1)
+              this.money_senior_member = senior.length > 1 ? senior.reduce((a, b) => {
+                return Number(a.commission) + Number(b.commission)
+              }) : Number(senior[0].commission)
             }
-            let member = commissions.find(ele => ele.grade === 1)
-            if (member) {
-              this.ac_member = Number(member.rate).toFixed(1)
-              this.money_member = Number(member.commission)
+            let member = commissions.filter(ele => ele.grade === 1)
+            if (member.length > 0) {
+              this.ac_member = Number(member[0].rate).toFixed(1)
+              this.money_member = member.length > 1 ? member.reduce((a, b) => {
+                return Number(a.commission) + Number(b.commission)
+              }) : Number(member[0].commission)
             }
-            let fans = commissions.find(ele => ele.grade === 0)
-            if (fans) {
-              this.ac_fans = Number(fans.rate).toFixed(1)
-              this.money_fans = Number(fans.commission)
+            let fans = commissions.filter(ele => ele.grade === 0)
+            if (fans.length > 0) {
+              this.ac_fans = Number(fans[0].rate).toFixed(1)
+              this.money_fans = fans.length > 1 ? fans.reduce((a, b) => {
+                return Number(a.commission) + Number(b.commission)
+              }) : Number(fans[0].commission)
             }
           }
         }

@@ -7,24 +7,64 @@
       :hiddenMask="true"
       @select="selectCard"
     ></business-card>
+    <qr-overlay></qr-overlay>
+    <back-home />
   </div>
 </template>
 <script>
 import BusinessCard from '@/components/card/BusinessCard'
 import { getMyOrdersList } from '@/apis/api.js'
+import initLoginCheckInfo from '@/common/js/login.js'
+import QrOverlay from '@/components/QrOverlay'
+import BackHome from '@/components/BackHome'
 export default {
   components: {
-    BusinessCard
+    BusinessCard, QrOverlay, BackHome
   },
   data () {
     return {
       listData: []
     }
   },
+  beforeCreate () {
+    window.shareUrl = location.href.split('#')[0]
+  },
   created () {
-    this.getList()
+    this.init()
   },
   methods: {
+    init () {
+      if (process.env.NODE_ENV === 'production') {
+        let title = '泰诺汽车平台-我的贷款'
+        let des = '一站式汽车金融服务\r\n做车贷，找泰诺！'
+
+        if (!window.isReady) {
+          initLoginCheckInfo(this.$route).then(info => {
+            if (info && info.code === -1000104) {
+              this.bus.$emit('showQrOverlay')
+              return
+            }
+            // 分享设置
+            let shareLink = 'http://api.tainuocar.com/home/' + this.$route.name + '?invite=' + this.$store.getters.userInfo['invite_code']
+            this.initWxShare(window.shareUrl, title, des, shareLink)
+            window.isReady = true
+            this.$store.dispatch('setIsFirstVisit', {
+              isFirstVisit: info.showBack
+            })
+
+            this.getList()
+          })
+        } else {
+        // 分享设置
+          let shareLink = 'http://api.tainuocar.com/home/' + this.$route.name + '?invite=' + this.$store.getters.userInfo['invite_code']
+          this.initWxShare(window.shareUrl, title, des, shareLink)
+
+          this.getList()
+        }
+      } else {
+        this.getList()
+      }
+    },
     getList () {
       let req = {
         status: '',

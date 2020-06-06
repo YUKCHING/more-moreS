@@ -11,7 +11,7 @@
       </div>
       <div class="right">
         <p>订单{{item.state}}</p>
-        <p>操作人：{{item.handler}}</p>
+        <p>操作人：{{String(item.operator) === '0' ? '-' : item.operator}}</p>
         <p>审核意见：{{item.opinion}}</p>
         <p>审核结论：{{item.conclusion}}</p>
       </div>
