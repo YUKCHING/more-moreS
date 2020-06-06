@@ -29,16 +29,8 @@ export default {
   },
   methods: {
     clickAction (tab) {
-      this.$store.dispatch('setNowTab', {
-        nowTab: tab
-      }).then(() => {
-        this.$router.push({
-          path: '/index'
-        }).then(() => {
-          this.$router.push({
-            path: '/myloans'
-          })
-        })
+      this.$router.push({
+        path: '/myloans'
       })
     }
   }
