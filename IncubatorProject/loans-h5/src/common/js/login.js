@@ -6,7 +6,6 @@ import { getOpenidByCode, getTokenByOpenId, getUserInfo, getControlConfig } from
 export default async function initLoginCheckInfo (route) {
   let query = route.query
   console.log(query)
-  // const { isReady } = query
 
   if (window.isReady) {
     let res = await getUserInfo({

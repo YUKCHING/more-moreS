@@ -53,7 +53,7 @@ export default {
             let grade = this.$store.getters.userInfo.grade
 
             let baseData = res.data.functions.filter(ele => {
-              return ele.visible_grade.indexOf(String(grade)) !== -1
+              return ele.visible_grade.indexOf(String(grade)) !== -1 && ele.is_show === 1
             })
 
             baseData.forEach(ele => {

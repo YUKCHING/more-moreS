@@ -1,5 +1,8 @@
 <template>
   <div class='index'>
+    <div class="unhandled" ref="unhandled" v-show="unhandledTotal > 0">
+      {{unhandledTotal}}
+    </div>
     <van-tabs
       v-model="active"
       :swipe-threshold="6"
@@ -7,6 +10,7 @@
       :swipeable="true"
       @change="clickTabsAction">
       <van-tab title="全部" style="width: 100%; box-sizing: border-box">
+        <template #nav-left> <van-icon name="more-o" /></template>
         <order-list :list="listData" class="pane" @select="selectOrder"></order-list>
       </van-tab>
       <van-tab title="待提交">
@@ -37,7 +41,14 @@ export default {
   data () {
     return {
       active: 0,
-      listData: []
+      listData: [],
+      unhandledTotal: 0,
+      unhandledList: ['16%', '32%', '47%', '63%', '79%', '95%']
+    }
+  },
+  watch: {
+    'active' () {
+      this.$refs['unhandled'].style.left = this.unhandledList[this.active]
     }
   },
   created () {
@@ -45,6 +56,7 @@ export default {
   },
   methods: {
     clickTabsAction () {
+      this.unhandledTotal = 0
       this.getList()
     },
     selectOrder (item) {
@@ -81,7 +93,9 @@ export default {
         status = 11
       }
       let req = {
-        status: status
+        status: status,
+        page: 1,
+        limit: 200
       }
       this.listData = []
       getLoanOrderList(req).then(res => {
@@ -99,6 +113,7 @@ export default {
                 overtime: date3 < 0
               }
             })
+            this.unhandledTotal = res.data.un_handled_total
           }
         }
       })
@@ -109,6 +124,21 @@ export default {
 <style lang='stylus' rel='stylesheet/stylus' scoped>
 .index /deep/
   height 100%
+  position relative
+
+  .unhandled
+    position absolute
+    width 19px
+    height 19px
+    background url("~@/assets/icon/icon-unhandled-big.png") no-repeat
+    background-size 100% 100%
+    text-align center
+    font-size 10px
+    color #ffffff
+    line-height 19px
+    z-index 100
+    top 4px
+    left 16%
 
   .van-tab--active
     background #EE5150

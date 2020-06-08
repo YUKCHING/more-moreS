@@ -87,7 +87,7 @@
         </div>
       </div>
       <!-- 2 高级会员——业务 -->
-      <div v-else-if="curIdentity === 2">
+      <div v-else-if="curIdentity === 2 && isManager">
         <!-- 1订单待提交 3订单待批复 13订单退审核 14订单已被拒绝 -->
         <div v-if="info.status === 1 || info.status === 3 || info.status === 13 || info.status === 14">
           <commission-block :productId="String(product.id)"></commission-block>
@@ -99,6 +99,17 @@
         <!-- 9订单待结算-退回 -->
         <div v-else-if="info.status === 9 && settle.status === '-1'">
           <commission-detail-back :orderId="String(order_id)" :settle="settle"></commission-detail-back>
+        </div>
+      </div>
+      <!-- 粉丝 或 会员 -->
+      <div v-else-if="curIdentity === 1 || curIdentity === 0 || !isManager">
+        <!-- 1订单待提交 3订单待批复 13订单退审核 14订单已被拒绝 -->
+        <div v-if="info.status === 1 || info.status === 3 || info.status === 13 || info.status === 14">
+          <commission-block :productId="String(product.id)"></commission-block>
+        </div>
+        <!-- 5订单待签约 7订单待放款 9订单待结算-未申请/申请中 11待支持 12已支出 -->
+        <div v-else-if="info.status === 5 || info.status === 7 || (info.status === 9 && settle.status !== '-1') || info.status === 11 || info.status === 12">
+          <commission-block2 :orderId="String(order_id)"></commission-block2>
         </div>
       </div>
     </div>

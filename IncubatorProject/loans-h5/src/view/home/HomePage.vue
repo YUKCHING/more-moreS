@@ -54,7 +54,7 @@ export default {
             var breakruleBadgeNum = this.$store.getters.userInfo.breakrule_badge_num
 
             let baseData = res.data.functions.filter(ele => {
-              return ele.visible_grade.indexOf(String(grade)) !== -1
+              return ele.visible_grade.indexOf(String(grade)) !== -1 && ele.is_show === 1
             })
 
             // 读缓存的配置

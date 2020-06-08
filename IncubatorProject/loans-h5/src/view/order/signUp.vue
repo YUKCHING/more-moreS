@@ -54,18 +54,18 @@
         </div>
         <div class="emipt"></div>
         <div class="info">
-          <p>10秒在线</p>
-          <p>快速申请</p>
+          <p>专属客服</p>
+          <p>电话联系</p>
         </div>
         <div class="emipt"></div>
         <div class="info">
-          <p>10秒在线</p>
-          <p>快速申请</p>
+          <p>现场验车</p>
+          <p>风控审核</p>
         </div>
         <div class="emipt"></div>
         <div class="info">
-          <p>10秒在线</p>
-          <p>快速申请</p>
+          <p>审核通过</p>
+          <p>放款成功</p>
         </div>
       </div>
     </div>
@@ -219,13 +219,16 @@ export default {
         console.log(res)
         if (res.code === 0) {
           this.tSuccess('预约成功')
-          this.$store.dispatch('setNowTab', {
-            nowTab: 3
-          }).then(() => {
-            this.$router.push({
-              path: '/index'
-            })
+          this.$router.push({
+            path: '/myloans'
           })
+          // this.$store.dispatch('setNowTab', {
+          //   nowTab: 3
+          // }).then(() => {
+          //   this.$router.push({
+          //     path: '/index'
+          //   })
+          // })
         }
       })
     }

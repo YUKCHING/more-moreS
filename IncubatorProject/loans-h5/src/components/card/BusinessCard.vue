@@ -1,5 +1,6 @@
 <template>
   <div class='BusinessCard' @click="selectAction">
+    <img class="redIcon" v-show="info.is_handled === 0" src="@/assets/icon/icon-unhandled.png" >
     <div class="item">
       <span class="label">产品</span>
       <span class="value">{{info.product_name || '-'}}</span>
@@ -82,6 +83,13 @@ export default {
   margin-top 1rem
   position relative
   overflow hidden
+
+  .redIcon
+    position absolute
+    right 18px
+    top 16px
+    width 8px
+    height 8px
 
   .mask
     position absolute
