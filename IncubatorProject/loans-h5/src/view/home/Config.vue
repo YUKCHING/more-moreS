@@ -77,6 +77,7 @@ export default {
       })
     },
     editAction () {
+      window.loadHomeConfig = false
       this.isEdit = !this.isEdit
     },
     itemEditAction (isAdd, item, index) {

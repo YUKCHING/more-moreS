@@ -56,7 +56,7 @@ export default {
   },
   methods: {
     init () {
-      if (process.env.NODE_ENV === 'production') {
+      if (process.env.NODE_ENV === 'production' && !process.env.ISAPPLET) {
         let title = '泰诺汽车平台-泰诺产品'
         let des = '超10款车贷产品\r\n总有一款适合您!'
         if (!window.isReady) {

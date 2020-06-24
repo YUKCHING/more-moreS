@@ -110,7 +110,7 @@ export default {
   },
   methods: {
     init () {
-      if (process.env.NODE_ENV === 'production') {
+      if (process.env.NODE_ENV === 'production' && !process.env.ISAPPLET) {
         let title = '泰诺汽车平台-快速估值'
         let des = '基于海量真实成交记录，采用人工智能和大数据，保证估值的真实可靠性。'
         if (!window.isReady) {

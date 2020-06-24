@@ -109,7 +109,7 @@ export default {
   },
   methods: {
     init () {
-      if (process.env.NODE_ENV === 'production') {
+      if (process.env.NODE_ENV === 'production' && !process.env.ISAPPLET) {
         let title = '泰诺汽车平台-违章查询'
         let des = '一键识别，有违章，早知道，免费查询，官方同步。'
 

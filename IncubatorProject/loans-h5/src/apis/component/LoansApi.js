@@ -39,3 +39,15 @@ export function getEmployeesByDept (data) {
   let url = '/address-book/employee/get-employees-by-dept'
   return sendGetRequest(url, data)
 }
+
+// 成交订单列表
+export function getDealLoanList (data) {
+  let url = '/loan/deal-loan-list'
+  return sendGetRequest(url, data)
+}
+
+// 未处理订单数
+export function getUnhandleCount (data) {
+  let url = '/loan/un-handle-count'
+  return sendGetRequest(url, data)
+}

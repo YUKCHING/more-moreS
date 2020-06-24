@@ -103,7 +103,7 @@ export default {
   },
   methods: {
     init () {
-      if (process.env.NODE_ENV === 'production') {
+      if (process.env.NODE_ENV === 'production' && !process.env.ISAPPLET) {
         let title = '泰诺汽车平台-邀请粉丝'
         let des = '超10款车贷产品，总有一款适合您！做车贷，找泰诺。'
         if (!window.isReady) {

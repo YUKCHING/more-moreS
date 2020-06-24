@@ -62,22 +62,6 @@
            @click="btnActionSubmit">申请贷款
 
       </div>
-      <!-- <button class="bar-btn"
-              @click="btnActionHome">
-        <img src="@/assets/imgs/home.png"
-             alt="home"
-             style="width: 21px; height: 21px;">
-        <span>首页</span>
-      </button>
-      <button class="bar-btn"
-              @click="btnActionPhone">
-        <img src="@/assets/imgs/phone.png"
-             alt="home"
-             style="width: 21px; height: 21px;">
-        <span>电话咨询</span>
-      </button>
-      <button class="bar-btn bar-submit"
-              @click="btnActionSubmit">申请贷款</button> -->
     </div>
   </div>
 </template>
@@ -298,6 +282,13 @@ export default {
       window.location.href = `tel://${13760430001}`
     },
     btnActionSubmit () {
+      let tag = true
+      if (tag) {
+        this.$router.push({
+          path: '/ordersignup'
+        })
+        return
+      }
       MessageBox.confirm('您确定要提交申请贷款吗?', '温馨提示').then(action => {
         if (action === 'confirm') {
           this.getApplyloans()

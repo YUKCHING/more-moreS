@@ -27,7 +27,7 @@
               <img :src="props.active ? tabIcon3.active : tabIcon3.inactive"/>
             </template>
         </van-tabbar-item>
-        <van-tabbar-item :name="3">
+        <van-tabbar-item :name="3" :badge="orderBadge">
           <span>订单</span>
             <template #icon="props">
               <img :src="props.active ? tabIcon4.active : tabIcon4.inactive"/>
@@ -63,7 +63,7 @@
   </div>
 </template>
 <script>
-import { getOpenidByCode, getTokenByOpenId, getUserInfo } from '@/apis/api.js'
+import { getOpenidByCode, getTokenByOpenId, getUserInfo, getUnhandleCount } from '@/apis/api.js'
 import HomePage from './HomePage'
 import Member from './Member'
 import My from './My'
@@ -136,7 +136,8 @@ export default {
       memberInfo: {
         grade: 0
       },
-      showToolPicker: false
+      showToolPicker: false,
+      orderBadge: ''
     }
   },
   created () {
@@ -144,6 +145,9 @@ export default {
   },
   beforeCreate () {
     window.shareUrl = location.href.split('#')[0]
+  },
+  destroyed () {
+    this.bus.$off()
   },
   methods: {
     init () {
@@ -164,11 +168,19 @@ export default {
           let shareLink = 'http://api.tainuocar.com/home/index?invite=' + info['invite_code']
           this.initWxShare(window.shareUrl, '泰诺汽车平台', '一站式汽车金融服务\r\n做车贷，找泰诺！', shareLink)
           window.isReady = true
+
+          this.getOrderUnhandle()
         })
       } else {
-        // this.getOpenId('071DApZa0OnXhB1v4QXa0RDsZa0DApZx') // 调试 直接获取openId
+        // this.getOpenId('071VXB161YvGHQ1GriZ519al161VXB1q') // 调试 直接获取openId
         this.getInfo()
       }
+
+      this.bus.$on('orderUnhandleCount', (res) => {
+        if (res.hasOwnProperty('total')) {
+          this.orderBadge = res.total > 0 ? res.total : ''
+        }
+      })
     },
     showViolation () {
       this.$router.push({
@@ -208,6 +220,8 @@ export default {
       })
     },
     getInfo () {
+      this.getOrderUnhandle()
+
       let req = {
         openid: this.$store.getters.openid,
         token: this.$store.getters.token
@@ -220,6 +234,13 @@ export default {
           this.$store.dispatch('setUserInfo', {
             userInfo: JSON.stringify(this.memberInfo)
           })
+        }
+      })
+    },
+    getOrderUnhandle () {
+      getUnhandleCount({}).then(res => {
+        if (res.code === 0) {
+          this.bus.$emit('orderUnhandleCount', res.data)
         }
       })
     },

@@ -34,7 +34,7 @@ request.interceptors.request.use(config => {
 request.interceptors.response.use(res => {
   const data = res.data
   if (data.code !== 0) {
-    if (data.msg !== '违章查询报告失败' || data.msg !== '用户未关注公众号') {
+    if (data.msg !== '违章查询报告失败' && data.msg !== '用户未关注公众号') {
       toast(data.msg)
     }
 

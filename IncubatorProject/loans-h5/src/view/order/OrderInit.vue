@@ -55,11 +55,14 @@
         </div>
       </div>
     </div>
+    <div class="buttonPanel" v-if="grade === 4 || grade === 3">
+      <van-button class="button4" type="danger" @click="cancelOrderActin">取消订单</van-button>
+    </div>
   </div>
 </template>
 <script>
 import OrderLoanBlock from '@/components/order/OrderLoanBlock'
-import { getLoanOrderInfo } from '@/apis/api.js'
+import { getLoanOrderInfo, cancelPublicOrder } from '@/apis/api.js'
 export default {
   components: {
     OrderLoanBlock
@@ -69,7 +72,8 @@ export default {
       info: {},
       otherCost: '',
       order_id: '',
-      isManager: false
+      isManager: false,
+      grade: ''
     }
   },
   created () {
@@ -79,6 +83,7 @@ export default {
     init () {
       this.isManager = this.$route.query.isManager === '1'
       this.order_id = this.$route.query.order_id
+      this.grade = this.$store.getters.userInfo.grade
       this.getInfo()
     },
     getInfo () {
@@ -122,6 +127,28 @@ export default {
           order_id: this.$route.query.order_id
         }
       })
+    },
+    cancelOrderActin () {
+      this.dConfirm('取消订单，订单将回到订单库，由高级会员抢单，确认取消吗？').then(res => {
+        if (res) {
+          let req = {
+            order_id: this.order_id
+          }
+          cancelPublicOrder(req).then(res => {
+            if (res.code === 0) {
+              this.tSuccess('取消成功').then(() => {
+                this.$store.dispatch('setNowTab', {
+                  nowTab: 3
+                }).then(() => {
+                  this.$router.push({
+                    path: '/index'
+                  })
+                })
+              })
+            }
+          })
+        }
+      })
     }
   }
 }
@@ -130,6 +157,19 @@ export default {
 .OrderDetail
   height 100%
   background #F2F3F5
+
+  .buttonPanel
+    display flex
+    justify-content space-around
+    align-items center
+    padding 40px 0
+
+    .van-button
+      width 40%
+
+    .button4
+      background #EE5150
+      width 70%
 
   .panel
     border-top 10px solid #F2F3F5

@@ -1,6 +1,6 @@
 <template>
   <div class='signUp'>
-    <van-swipe :style="{ height: swipeHeight }" :autoplay="5000" indicator-color="white">
+    <van-swipe :style="{ height: swipeHeight }" :autoplay="8000" indicator-color="white">
       <van-swipe-item>
         <div class="bannar">
           <img class="bg" src="@/assets/order/img-signup-bg.png" alt="">
@@ -74,7 +74,7 @@
       <div class="scroll-block" ref="scollBlock" id="scollBlock">
         <div class="item" v-for="(item, index) in record" :key="index">
           <p>{{item.title}}</p>
-          <p>{{packagePhoneNumber(item.phone)}}</p>
+          <p>{{item.phone}}</p>
           <p>
             成功贷款<span style="color: #FC9D75">{{item.num}}</span>万
           </p>
@@ -86,30 +86,17 @@
 </template>
 <script>
 import $ from 'jquery'
-import { postLoanApply, sendVerifyCode } from '@/apis/api.js'
+import { postLoanApply, sendVerifyCode, getDealLoanList } from '@/apis/api.js'
 import initLoginCheckInfo from '@/common/js/login.js'
 import BackHome from '@/components/BackHome'
 export default {
-  comments: {
+  components: {
     BackHome
-  },
-  computed: {
-    isProduction () {
-      return process.env.NODE_ENV === 'production'
-    }
   },
   data () {
     return {
       total: 300000000,
-      record: [
-        {title: '深圳', phone: '13713697967', num: 7.6},
-        {title: '深圳', phone: '13713697967', num: 7.6},
-        {title: '深圳', phone: '13713697967', num: 17.6},
-        {title: '深圳', phone: '13713697967', num: 76.6},
-        {title: '深圳', phone: '13713697967', num: 7.6},
-        {title: '深圳', phone: '13713697967', num: 7.6},
-        {title: '深圳', phone: '13713697967', num: 7.6}
-      ],
+      record: [],
       scrollTimer: '',
       codeTimer: '',
       codeTime: 0,
@@ -136,9 +123,9 @@ export default {
   },
   methods: {
     init () {
-      if (this.isProduction) {
+      if (process.env.NODE_ENV === 'production' && !process.env.ISAPPLET) {
         let title = '泰诺汽车平台-预约贷款'
-        let des = '一站式汽车金融服务\r\n做车贷，找泰诺！。'
+        let des = '一站式汽车金融服务\r\n做车贷，找泰诺！'
         if (!window.isReady) {
           initLoginCheckInfo(this.$route).then(info => {
             if (info && info.code === -1000104) {
@@ -153,24 +140,24 @@ export default {
               isFirstVisit: info.showBack
             })
 
-            let screenWidth = window.screen.availWidth
-            let sHeight = (screenWidth * 156.0) / 375.0
-            this.swipeHeight = sHeight + 'px'
+            this.initDeal()
           })
         } else {
         // 分享设置
           let shareLink = 'http://api.tainuocar.com/home/' + this.$route.name + '?invite=' + this.$store.getters.userInfo['invite_code']
           this.initWxShare(window.shareUrl, title, des, shareLink)
 
-          let screenWidth = window.screen.availWidth
-          let sHeight = (screenWidth * 156.0) / 375.0
-          this.swipeHeight = sHeight + 'px'
+          this.initDeal()
         }
       } else {
-        let screenWidth = window.screen.availWidth
-        let sHeight = (screenWidth * 156.0) / 375.0
-        this.swipeHeight = sHeight + 'px'
+        this.initDeal()
       }
+    },
+    initDeal () {
+      let screenWidth = window.screen.availWidth
+      let sHeight = (screenWidth * 156.0) / 375.0
+      this.swipeHeight = sHeight + 'px'
+      this.getDealList()
     },
     scrollAction () {
       clearInterval(this.scrollTimer)
@@ -183,8 +170,22 @@ export default {
         $('#scollBlock').animate({scrollTop: srollTop + 'px'}, 500)
       }, 1500)
     },
+    animationTotal (target) {
+      let timePool = 2000
+      let timeStep = 100
+      let count = Math.ceil(timePool / timeStep)
+      let distance = (target / count).toFixed(0)
+      let timer = setInterval(() => {
+        if (timePool <= 0) {
+          clearInterval(timer)
+          timer = null
+          return
+        }
+        this.total = this.total + Number(distance)
+        timePool = timePool - 100
+      }, timeStep)
+    },
     getCodeAction () {
-      console.log(this.mobile)
       if (this.codeTime > 0) {
         return
       }
@@ -204,6 +205,23 @@ export default {
               clearInterval(this.codeTimer)
             }
           }, 1000)
+        }
+      })
+    },
+    getDealList () {
+      getDealLoanList({}).then(res => {
+        if (res.code === 0) {
+          if (res.data.list.length > 0) {
+            this.record = res.data.list.map(ele => {
+              return {
+                title: ele.city,
+                phone: ele.hidden_tel,
+                num: ele.deal_amount
+              }
+            })
+          }
+          let sumDealMoney = res.data.sum_deal_amount
+          this.animationTotal(sumDealMoney)
         }
       })
     },

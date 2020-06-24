@@ -25,6 +25,9 @@ Vue.config.productionTip = false
 Vue.prototype._ = _
 Vue.prototype.moment = moment
 
+// vue原型链挂载总线
+Vue.prototype.bus = new Vue()
+
 /* eslint-disable no-new */
 new Vue({
   el: '#app',

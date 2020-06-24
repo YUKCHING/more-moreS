@@ -29,9 +29,19 @@ export default {
   },
   methods: {
     clickAction (tab) {
-      this.$router.push({
-        path: '/myloans'
-      })
+      if (tab === 3) {
+        this.$store.dispatch('setNowTab', {
+          nowTab: tab
+        }).then(() => {
+          this.$router.push({
+            path: '/index'
+          })
+        })
+      } else {
+        this.$router.push({
+          path: '/myloans'
+        })
+      }
     }
   }
 }

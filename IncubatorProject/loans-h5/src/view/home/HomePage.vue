@@ -38,7 +38,17 @@ export default {
     }
   },
   mounted () {
-    this.getConfig()
+    if (!window.loadHomeConfig) {
+      this.getConfig()
+    } else {
+      this.configs = this.$store.getters.configInfo.concat([])
+      this.configs.push({
+        name: '更多功能',
+        url: '',
+        is_show: 1,
+        icon: require('@/assets/icon/icon-config-more.png')
+      })
+    }
   },
   data () {
     return {
@@ -102,6 +112,7 @@ export default {
               is_show: 1,
               icon: require('@/assets/icon/icon-config-more.png')
             })
+            window.loadHomeConfig = true
           }
         }
       })

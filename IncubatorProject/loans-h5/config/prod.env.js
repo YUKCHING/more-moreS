@@ -4,6 +4,7 @@ if (process.argv.length > 2) {
   params = process.argv[2].slice(10)
 }
 let Redirect = ''
+let IsApplet = false
 switch (params) {
   case 'valuation': 
     Redirect = '"/valuation"'
@@ -11,6 +12,7 @@ switch (params) {
 
   case 'loansh5': 
     Redirect = '"/loansh5"'
+    IsApplet = true
     break;
 
   case 'home': 
@@ -23,5 +25,6 @@ switch (params) {
 
 module.exports = {
   NODE_ENV: '"production"',
-  REDIRECT: Redirect
+  REDIRECT: Redirect,
+  ISAPPLET: IsApplet
 }

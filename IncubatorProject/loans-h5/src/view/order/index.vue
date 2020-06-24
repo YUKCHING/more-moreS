@@ -1,8 +1,6 @@
 <template>
   <div class='index'>
-    <div class="unhandled" ref="unhandled" v-show="unhandledTotal > 0">
-      {{unhandledTotal}}
-    </div>
+    <unhandle-bar ref="unhandleBar" :list="unhandleList" :active="active" @select="selectTabsAction"></unhandle-bar>
     <van-tabs
       v-model="active"
       :swipe-threshold="6"
@@ -33,30 +31,43 @@
 </template>
 <script>
 import OrderList from './OrderList'
-import { getLoanOrderList } from '@/apis/api.js'
+import UnhandleBar from '@/components/order/UnhandleBar'
+import { getLoanOrderList, getUnhandleCount } from '@/apis/api.js'
 export default {
   components: {
-    OrderList
+    OrderList, UnhandleBar
   },
   data () {
     return {
       active: 0,
       listData: [],
-      unhandledTotal: 0,
-      unhandledList: ['16%', '32%', '47%', '63%', '79%', '95%']
-    }
-  },
-  watch: {
-    'active' () {
-      this.$refs['unhandled'].style.left = this.unhandledList[this.active]
+      unhandleList: []
     }
   },
   created () {
-    this.getList()
+    this.init()
+  },
+  destroyed () {
+    this.bus.$off()
   },
   methods: {
+    init () {
+      this.bus.$on('orderUnhandleCount', (res) => {
+        this.unhandleList = []
+        Object.keys(res).map((key, index) => {
+          if (index <= 5) {
+            this.unhandleList.push(res[key])
+          }
+        })
+        this.$refs['unhandleBar'].dealItemPosition()
+      })
+      this.getList()
+    },
     clickTabsAction () {
-      this.unhandledTotal = 0
+      this.getList()
+    },
+    selectTabsAction (val) {
+      this.active = val
       this.getList()
     },
     selectOrder (item) {
@@ -80,6 +91,8 @@ export default {
       }
     },
     getList () {
+      this.getOrderUnhandle()
+
       let status = ''
       if (this.active === 1) {
         status = 1
@@ -113,8 +126,14 @@ export default {
                 overtime: date3 < 0
               }
             })
-            this.unhandledTotal = res.data.un_handled_total
           }
+        }
+      })
+    },
+    getOrderUnhandle () {
+      getUnhandleCount({}).then(res => {
+        if (res.code === 0) {
+          this.bus.$emit('orderUnhandleCount', res.data)
         }
       })
     }
@@ -125,20 +144,6 @@ export default {
 .index /deep/
   height 100%
   position relative
-
-  .unhandled
-    position absolute
-    width 19px
-    height 19px
-    background url("~@/assets/icon/icon-unhandled-big.png") no-repeat
-    background-size 100% 100%
-    text-align center
-    font-size 10px
-    color #ffffff
-    line-height 19px
-    z-index 100
-    top 4px
-    left 16%
 
   .van-tab--active
     background #EE5150

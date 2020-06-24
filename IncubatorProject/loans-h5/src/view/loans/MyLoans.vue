@@ -34,7 +34,7 @@ export default {
   },
   methods: {
     init () {
-      if (process.env.NODE_ENV === 'production') {
+      if (process.env.NODE_ENV === 'production' && !process.env.ISAPPLET) {
         let title = '泰诺汽车平台-我的贷款'
         let des = '一站式汽车金融服务\r\n做车贷，找泰诺！'
 

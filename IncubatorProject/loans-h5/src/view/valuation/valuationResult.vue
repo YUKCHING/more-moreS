@@ -224,7 +224,7 @@ export default {
           let midRed = (Number(this.sliderInfo['2'].minRed) + Number(this.sliderInfo['2'].maxRed)) / 2.0
           this.sliderRed = Number(midRed.toFixed(2))
           let midBlue = (Number(this.sliderInfo['2'].minBlue) + Number(this.sliderInfo['2'].maxBlue)) / 2.0
-          this.sliderBlue = Number(midBlue.toFixed(2))
+          this.sliderBlue = Number(midBlue.toFixed(1)) + 0.05
         }
       })
     },

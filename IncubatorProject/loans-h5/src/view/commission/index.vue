@@ -118,9 +118,8 @@ export default {
     },
     getList () {
       getCommissionList({}).then(res => {
-        console.log(res)
         if (res.code === 0) {
-          if (res.data) {
+          if (JSON.stringify(res.data) !== '[]') {
             this.listData = res.data.list
           }
         }

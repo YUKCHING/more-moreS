@@ -91,31 +91,43 @@ export default {
     submitAction () {
       let member = this.commissions.find(ele => ele.grade === 1)
       let fans = this.commissions.filter(ele => ele.grade === 0)
-      if (member.mode === 0) {
+      console.log(this.commissions)
+      console.log(member)
+      console.log(fans)
+      if (member && member.mode === 0) {
         this.toast('请选择会员提现模式')
         return
       }
-      var fansChoice = true
-      fans.forEach(ele => {
-        if (ele.mode === 0) {
-          fansChoice = false
+
+      if (fans.length > 0) {
+        var fansChoice = true
+        fans.forEach(ele => {
+          if (ele.mode === 0) {
+            fansChoice = false
+          }
+        })
+        if (!fansChoice) {
+          this.toast('请选择粉丝提现模式')
+          return
         }
-      })
-      if (!fansChoice) {
-        this.toast('请选择粉丝提现模式')
-        return
       }
+
       let req = {
         order_id: this.orderId,
-        member_mode: member.grade,
-        fans: fans.map(ele => {
+        approval_id: this.settle.approver_id
+      }
+      if (member) {
+        req['member_mode'] = member.grade
+      }
+      if (fans.length > 0) {
+        req['fans'] = fans.map(ele => {
           return {
             fan_id: ele.user_id,
             fans_mode: ele.mode
           }
-        }),
-        approval_id: this.settle.approver_id
+        })
       }
+
       postApplySettle(req).then(res => {
         if (res.code === 0) {
           this.tSuccess('提交成功').then(() => {

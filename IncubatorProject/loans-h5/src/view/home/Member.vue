@@ -25,19 +25,19 @@
       </p>
       <div class="content">
         <div class="item">
-          <span>{{info.my_property.today || 0}}</span>
+          <span>{{Number(info.my_property.today).toFixed(2) || 0}}</span>
           <span>今日(元)</span>
         </div>
         <div class="item">
-          <span>{{info.my_property.month || 0}}</span>
+          <span>{{Number(info.my_property.month).toFixed(2) || 0}}</span>
           <span>本月(元)</span>
         </div>
         <div class="item">
-          <span>{{info.my_property.total || 0}}</span>
+          <span>{{Number(info.my_property.total).toFixed(2) || 0}}</span>
           <span>累计(元)</span>
         </div>
         <div class="item">
-          <span style="color: #FFA109;">{{info.my_property.withdraw_available || 0}}</span>
+          <span style="color: #FFA109;">{{Number(info.my_property.withdraw_available).toFixed(2) || 0}}</span>
           <span>可提现(元)</span>
         </div>
       </div>
@@ -85,6 +85,7 @@ export default {
   },
   computed: {
     gradeName () {
+      console.log(this.info)
       return this.getGradeStatusName(this.info.grade)
     }
   },
