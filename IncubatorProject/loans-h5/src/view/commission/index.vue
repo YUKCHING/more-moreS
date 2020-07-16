@@ -113,7 +113,7 @@ export default {
       this.grade = Number(this.$store.getters.userInfo.grade)
       this.getList()
       if (process.env.NODE_ENV !== 'production') {
-        // this.grade = 3
+        // this.grade = 4
       }
     },
     getList () {

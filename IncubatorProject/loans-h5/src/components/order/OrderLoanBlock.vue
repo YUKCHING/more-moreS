@@ -58,6 +58,10 @@ export default {
     hiddenButton: {
       type: Boolean,
       default: false
+    },
+    isOpen: {
+      type: Boolean,
+      default: false
     }
   },
   computed: {
@@ -84,6 +88,10 @@ export default {
         } else {
           isBan = true
         }
+      }
+
+      if (this.isOpen) {
+        isBan = false
       }
 
       return isBan

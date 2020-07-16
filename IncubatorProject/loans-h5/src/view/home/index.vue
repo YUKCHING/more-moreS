@@ -172,7 +172,7 @@ export default {
           this.getOrderUnhandle()
         })
       } else {
-        // this.getOpenId('071VXB161YvGHQ1GriZ519al161VXB1q') // 调试 直接获取openId
+        // this.getOpenId('061CMpyv0CR4bg161cwv0tVpyv0CMpyT') // 调试 直接获取openId
         this.getInfo()
       }
 

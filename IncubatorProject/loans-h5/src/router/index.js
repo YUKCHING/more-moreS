@@ -374,6 +374,14 @@ const router = new Router({
       }
     },
     {
+      path: '/childorder',
+      name: 'childorder',
+      component: resolve => require(['@/view/order/OrderChildSubmit'], resolve),
+      meta: {
+        title: '子订单'
+      }
+    },
+    {
       path: '/commission',
       name: 'commission',
       component: resolve => require(['@/view/commission/index'], resolve),
@@ -403,6 +411,11 @@ const router = new Router({
 router.beforeEach((to, from, next) => {
   if (to.meta.title) {
     document.title = to.meta.title
+  }
+  if (to.query.tab) {
+    store.dispatch('setNowTab', {
+      nowTab: Number(to.query.tab)
+    })
   }
   if (to.query.token) {
     store.dispatch('setToken', {

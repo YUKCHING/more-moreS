@@ -216,6 +216,7 @@ import CommissionDetail from '@/components/order/CommissionDetail'
 import CommissionDetailBack from '@/components/order/CommissionDetailBack'
 import ScreenInfoPreview from '@/components/order/ScreenInfoPreview'
 import IdentityBlock from '@/components/order/IdentityBlock'
+import initLoginCheckInfo from '@/common/js/login.js'
 
 export default {
   components: {
@@ -247,7 +248,8 @@ export default {
       return this.product.product_name
     },
     childOrderShowStatus () {
-      return (this.info.status === 1 || this.info.status === 2 || this.info.status === 3 || this.info.status === 4 || this.info.status === 5 || this.info.status === 6) && this.grade === 2
+      // return (this.info.status === 1 || this.info.status === 2 || this.info.status === 3 || this.info.status === 4 || this.info.status === 5 || this.info.status === 6) && (this.curIdentity === 2 || this.curIdentity === 8) && this.isManager
+      return (this.info.status === 1 || this.info.status === 2 || this.info.status === 3 || this.info.status === 4 || this.info.status === 5 || this.info.status === 6)
     }
   },
   created () {
@@ -255,17 +257,33 @@ export default {
   },
   methods: {
     init () {
+      if (process.env.NODE_ENV === 'production') {
+        if (!window.isReady) {
+          initLoginCheckInfo(this.$route).then(info => {
+            window.isReady = true
+            this.$store.dispatch('setIsFirstVisit', {
+              isFirstVisit: info.showBack
+            })
+
+            this.baseDeal()
+          })
+        } else {
+          this.baseDeal()
+        }
+      } else {
+        this.baseDeal()
+      }
+    },
+    baseDeal () {
       this.order_id = this.$route.query.order_id
       this.isManager = this.$route.query.isManager === '1'
       this.grade = Number(this.$store.getters.userInfo.grade)
+      console.log('======================', this.grade)
 
       this.identityList = this.analyseIdentity()
       this.curIdentity = this.identityList[0].value
 
       this.getInfo()
-      // 测试
-      if (process.env.NODE_ENV !== 'production') {
-      }
     },
     analyseIdentity () {
       /**
@@ -424,7 +442,13 @@ export default {
       })
     },
     addChildOrderAction () {
-      console.log('添加子订单')
+      this.$router.push({
+        path: '/childorder',
+        query: {
+          order_id: this.order_id,
+          isManager: 1
+        }
+      })
     },
     assignControl () {
       this.showGeneralPopup = true

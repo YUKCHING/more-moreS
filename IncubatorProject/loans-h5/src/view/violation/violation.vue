@@ -14,14 +14,17 @@
           class="border-bottom"
           clearable
         >
-          <van-uploader
-            slot="right-icon"
-            class="uploader"
-            :after-read="afterRead"
-            :preview-image="false"
-          >
-            <img src="@/assets/icon/icon-camera.png" style="width: 1.5rem;">
-          </van-uploader>
+          <div slot="right-icon" class="button-panel">
+            <img class="arrow-button" src="@/assets/icon/icon-arrow-down.png" @click="showHistoryPicker = true">
+            <van-uploader
+              class="uploader"
+              :after-read="afterRead"
+              :preview-image="false"
+            >
+              <img src="@/assets/icon/icon-camera.png" style="width: 1.5rem;">
+            </van-uploader>
+          </div>
+
         </van-field>
         <p class="label">发动机号</p>
         <van-field
@@ -31,14 +34,14 @@
           class="border-bottom"
           clearable
         >
-          <van-uploader
+          <!-- <van-uploader
             slot="right-icon"
             class="uploader"
             :after-read="afterRead"
             :preview-image="false"
           >
             <img src="@/assets/icon/icon-camera.png" style="width: 1.5rem;">
-          </van-uploader>
+          </van-uploader> -->
         </van-field>
         <p class="label">车牌号码</p>
         <div class="plate-block border-bottom">
@@ -74,6 +77,9 @@
         @confirm="onPickerConfirm"
       />
     </van-popup>
+    <van-popup v-model="showHistoryPicker" position="bottom" style="background: rgba(0, 0, 0, 0); overflow: visible;">
+      <history-picker @select="historyPickerSelect" @close="showHistoryPicker = false"/>
+    </van-popup>
     <qr-overlay></qr-overlay>
     <back-home />
   </div>
@@ -84,9 +90,10 @@ import initLoginCheckInfo from '@/common/js/login.js'
 // import imgProcessor from '@/common/js/ImageProcessor.js'
 import QrOverlay from '@/components/QrOverlay'
 import BackHome from '@/components/BackHome'
+import HistoryPicker from './component/HistoryPicker'
 export default {
   components: {
-    QrOverlay, BackHome
+    QrOverlay, BackHome, HistoryPicker
   },
   data () {
     return {
@@ -98,6 +105,7 @@ export default {
       need_push: '1',
       columns: ['粤', '京', '沪', '津', '渝', '鲁', '冀', '晋', '蒙', '辽', '吉', '黑', '苏', '浙', '皖', '闽', '赣', '豫', '湘', '鄂', '桂', '琼', '川', '贵', '云', '藏', '陕', '甘', '青', '宁', '新', '港', '澳', '台'],
       showPicker: false,
+      showHistoryPicker: false,
       history: []
     }
   },
@@ -207,6 +215,15 @@ export default {
           need_push: this.need_push
         }
       })
+    },
+    historyPickerSelect (item) {
+      console.log(item)
+      this.showHistoryPicker = false
+      this.vin = item.vin
+      this.engine_no = item.engine_no
+      this.ocr_id = item.id
+      this.plate_first = item.plate_no.slice(0, 1)
+      this.plate_show = item.plate_no.slice(1)
     }
   }
 }
@@ -227,6 +244,15 @@ export default {
 
   .content-block
     margin-top 4rem
+
+    .button-panel
+      display flex
+      justify-content center
+      align-items center
+
+      .arrow-button
+        height 20px
+        margin-right 5px
 
     .label
       font-size 1.17rem

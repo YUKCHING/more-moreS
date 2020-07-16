@@ -34,7 +34,7 @@ export default async function initLoginCheckInfo (route) {
   if (!code) { // 没有code 判断浏览器
     if (judgeWeixinBrowser()) {
       console.log('是微信浏览器')
-      let indexUrl = getWeixinCodeUrlToIndex(route.name, invite)
+      let indexUrl = getWeixinCodeUrlToIndex(route.name, invite, query)
       window.location.href = indexUrl
     } else {
       console.log('不是微信浏览器')

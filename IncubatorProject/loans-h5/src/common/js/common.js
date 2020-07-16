@@ -13,9 +13,18 @@ Vue.prototype.getOrderStatusName = getOrderStatusName
 Vue.prototype.getGradeStatusName = getGradeStatusName
 
 // 微信获取code链接跳转到Index
-export function getWeixinCodeUrlToIndex (link, code) {
+export function getWeixinCodeUrlToIndex (link, code, query) {
+  let queryStr = 'invite=' + code
+  if (Object.keys(query).length > 0) {
+    Object.keys(query).forEach(key => {
+      if (key !== 'invite') {
+        queryStr = queryStr + '&' + key + '=' + query[key]
+      }
+    })
+  }
+
   let appid = 'wxa90d81193e301d26'
-  let redirectUri = encodeURIComponent('https://api.tainuocar.com/home/' + link + '?invite=' + code)
+  let redirectUri = encodeURIComponent('https://api.tainuocar.com/home/' + link + '?' + queryStr)
   let resType = 'snsapi_userinfo' // snsapi_userinfo   snsapi_base
   return 'https://open.weixin.qq.com/connect/oauth2/authorize?appid=' + appid + '&redirect_uri=' + redirectUri + '&response_type=code&scope=' + resType + '&state=&connect_redirect=1#wechat_redirect'
 }
