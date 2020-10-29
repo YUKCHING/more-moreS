@@ -55,7 +55,16 @@ module.exports = {
       },
       {
         test: /\.js$/,
-        loader: 'babel-loader',
+        // loader: 'babel-loader',
+        use: [
+          {
+            loader: 'thread-loader',
+            options: {
+              workers: 2
+            }
+          },
+          'babel-loader'
+        ],
         include: [resolve('src'), resolve('test'), resolve('node_modules/webpack-dev-server/client')]
       },
       {

@@ -111,7 +111,7 @@ export default {
   methods: {
     init () {
       if (process.env.NODE_ENV === 'production' && !process.env.ISAPPLET) {
-        let title = '泰诺汽车平台-快速估值'
+        let title = '汽车平台-快速估值'
         let des = '基于海量真实成交记录，采用人工智能和大数据，保证估值的真实可靠性。'
         if (!window.isReady) {
           initLoginCheckInfo(this.$route).then(info => {
@@ -120,7 +120,7 @@ export default {
               return
             }
             // 分享设置
-            let shareLink = 'http://api.tainuocar.com/home/' + this.$route.name + '?invite=' + this.$store.getters.userInfo['invite_code']
+            let shareLink = 'http://77car-api.shanshuijv.com/home/' + this.$route.name + '?invite=' + this.$store.getters.userInfo['invite_code']
             this.initWxShare(window.shareUrl, title, des, shareLink)
             window.isReady = true
             this.$store.dispatch('setIsFirstVisit', {
@@ -131,7 +131,7 @@ export default {
           })
         } else {
         // 分享设置
-          let shareLink = 'http://api.tainuocar.com/home/' + this.$route.name + '?invite=' + this.$store.getters.userInfo['invite_code']
+          let shareLink = 'http://77car-api.shanshuijv.com/home/' + this.$route.name + '?invite=' + this.$store.getters.userInfo['invite_code']
           this.initWxShare(window.shareUrl, title, des, shareLink)
 
           this.getStoreInfo()

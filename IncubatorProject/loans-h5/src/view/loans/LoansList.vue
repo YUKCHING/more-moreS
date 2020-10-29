@@ -57,7 +57,7 @@ export default {
   methods: {
     init () {
       if (process.env.NODE_ENV === 'production' && !process.env.ISAPPLET) {
-        let title = '泰诺汽车平台-泰诺产品'
+        let title = '汽车平台-77汽车产品'
         let des = '超10款车贷产品\r\n总有一款适合您!'
         if (!window.isReady) {
           initLoginCheckInfo(this.$route).then(info => {
@@ -66,7 +66,7 @@ export default {
               return
             }
             // 分享设置
-            let shareLink = 'http://api.tainuocar.com/home/' + this.$route.name + '?invite=' + this.$store.getters.userInfo['invite_code']
+            let shareLink = 'http://77car-api.shanshuijv.com/home/' + this.$route.name + '?invite=' + this.$store.getters.userInfo['invite_code']
             this.initWxShare(window.shareUrl, title, des, shareLink)
             window.isReady = true
             this.$store.dispatch('setIsFirstVisit', {
@@ -77,7 +77,7 @@ export default {
           })
         } else {
         // 分享设置
-          let shareLink = 'http://api.tainuocar.com/home/' + this.$route.name + '?invite=' + this.$store.getters.userInfo['invite_code']
+          let shareLink = 'http://77car-api.shanshuijv.com/home/' + this.$route.name + '?invite=' + this.$store.getters.userInfo['invite_code']
           this.initWxShare(window.shareUrl, title, des, shareLink)
 
           this.getProductList()

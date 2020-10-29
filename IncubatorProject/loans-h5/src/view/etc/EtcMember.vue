@@ -76,7 +76,7 @@
       <p id="p1">高速公路通行95折</p>
     </div>
     <div class="block11">
-      <p>泰诺金融ETC十大特权秒杀传统ETC</p>
+      <p>77汽车金融ETC十大特权秒杀传统ETC</p>
       <img src="@/assets/etc/img_form.png" alt="form">
     </div>
     <div class="block12">
@@ -109,14 +109,14 @@
         <img src="@/assets/etc/icon_question.png" alt="question">
         其他问题？
       </p>
-      <p class="answer">可微信搜索【泰诺汽车金融】咨询客服。</p>
+      <p class="answer">可微信搜索【77汽车汽车金融】咨询客服。</p>
     </div>
     <div class="bottom-button" @click="applyAction">立即开通</div>
     <van-dialog
       v-model="show"
       title="温馨提示"
     >
-      <img style="width: 200px; height: 200px;" src="@/assets/etc/img_qrcode.png">
+      <!-- <img style="width: 200px; height: 200px;" src="@/assets/etc/img_qrcode.png"> -->
       <p>长按图片保存,添加客服微信</p>
       <p>为您开通ETC。</p>
     </van-dialog>

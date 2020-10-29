@@ -5,7 +5,7 @@
       <div class="bg-panel">
         <img class="code" :src="codeUrl" v-if="isHaveCode">
         <img class="code" src="@/assets/imgs/img-qrcode.png" v-else>
-        <p>关注我，成为泰诺用户！</p>
+        <p>关注我，成为77汽车用户！</p>
       </div>
     </div>
   </van-overlay>

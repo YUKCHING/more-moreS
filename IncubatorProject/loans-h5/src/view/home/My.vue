@@ -70,7 +70,7 @@ export default {
         {name: '我的订单', icon: require('@/assets/icon/icon-server-wddd.png'), active: 1},
         // {name: '我的消息', icon: require('@/assets/icon/icon-server-wdxx.png'), active: 2},
         {name: '意见反馈', icon: require('@/assets/icon/icon-server-yjfk.png'), active: 3},
-        {name: '关于泰诺', icon: require('@/assets/icon/icon-server-gytn.png'), active: 4},
+        {name: '关于77汽车', icon: require('@/assets/icon/icon-server-gytn.png'), active: 4},
         {name: '收货地址', icon: require('@/assets/icon/icon-server-shdz.png'), active: 5},
         {name: '我的优惠券', icon: require('@/assets/icon/icon-server-wdyhq.png'), active: 6},
         {name: '推广码', icon: require('@/assets/icon/icon-server-tgm.png'), active: 7}
@@ -85,9 +85,9 @@ export default {
       if (item.active === 0) {
 
       } else if (item.active === 4) {
-        this.$router.push({
-          path: '/abouttainuo'
-        })
+        // this.$router.push({
+        //   path: '/abouttainuo'
+        // })
       } else if (item.active === 7) {
         this.$router.push({
           path: '/invitefans'

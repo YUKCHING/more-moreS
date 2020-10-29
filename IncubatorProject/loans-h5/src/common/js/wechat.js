@@ -44,7 +44,7 @@ function wechatShareReady (title, des, link) {
     link: link, // 分享链接
     // link: location.href.split('#')[0],
     // link: window.shareUrl,
-    imgUrl: 'http://tainuocar.oss-cn-zhangjiakou.aliyuncs.com/my-share/image/125G7TLSc9dyq0961Mp.png' // 分享图标
+    imgUrl: 'http://tainuocar.oss-cn-zhangjiakou.aliyuncs.com/my-share/image/125wiXpjf7tgcixRv2z.png' // 分享图标
   }
   return new Promise((resolve, reject) => {
     let wxConfig = store.getters.wxConfig

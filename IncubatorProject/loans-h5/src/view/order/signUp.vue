@@ -10,11 +10,6 @@
           </div>
         </div>
       </van-swipe-item>
-      <van-swipe-item>
-        <div class="bannar">
-          <img class="bg" src="@/assets/order/img-signup-bg2.png" alt="">
-        </div>
-      </van-swipe-item>
     </van-swipe>
     <div class="middle">
       <van-field v-model="username" clearable placeholder="您的姓名"/>
@@ -81,6 +76,7 @@
         </div>
       </div>
     </div>
+    <qr-overlay />
     <back-home />
   </div>
 </template>
@@ -88,10 +84,11 @@
 import $ from 'jquery'
 import { postLoanApply, sendVerifyCode, getDealLoanList } from '@/apis/api.js'
 import initLoginCheckInfo from '@/common/js/login.js'
+import QrOverlay from '@/components/QrOverlay'
 import BackHome from '@/components/BackHome'
 export default {
   components: {
-    BackHome
+    BackHome, QrOverlay
   },
   data () {
     return {
@@ -124,8 +121,8 @@ export default {
   methods: {
     init () {
       if (process.env.NODE_ENV === 'production' && !process.env.ISAPPLET) {
-        let title = '泰诺汽车平台-预约贷款'
-        let des = '一站式汽车金融服务\r\n做车贷，找泰诺！'
+        let title = '汽车平台-预约贷款'
+        let des = '一站式汽车金融服务\r\n做车贷，找77汽车！'
         if (!window.isReady) {
           initLoginCheckInfo(this.$route).then(info => {
             if (info && info.code === -1000104) {
@@ -133,7 +130,7 @@ export default {
               return
             }
             // 分享设置
-            let shareLink = 'http://api.tainuocar.com/home/' + this.$route.name + '?invite=' + this.$store.getters.userInfo['invite_code']
+            let shareLink = 'http://77car-api.shanshuijv.com/home/' + this.$route.name + '?invite=' + this.$store.getters.userInfo['invite_code']
             this.initWxShare(window.shareUrl, title, des, shareLink)
             window.isReady = true
             this.$store.dispatch('setIsFirstVisit', {
@@ -144,7 +141,7 @@ export default {
           })
         } else {
         // 分享设置
-          let shareLink = 'http://api.tainuocar.com/home/' + this.$route.name + '?invite=' + this.$store.getters.userInfo['invite_code']
+          let shareLink = 'http://77car-api.shanshuijv.com/home/' + this.$route.name + '?invite=' + this.$store.getters.userInfo['invite_code']
           this.initWxShare(window.shareUrl, title, des, shareLink)
 
           this.initDeal()

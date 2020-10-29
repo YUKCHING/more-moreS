@@ -141,6 +141,11 @@ export default {
     }
   },
   created () {
+    // console.log(this.yuk.deal.packagePhoneNumber('13713697967'))
+
+    // let str = '😊'
+    // console.log(String.fromCodePoint(0x1F60A))
+    // console.log(str.charCodeAt(0))
     this.init()
   },
   beforeCreate () {
@@ -165,14 +170,14 @@ export default {
           }
           this.memberInfo = info
           // 分享设置
-          let shareLink = 'http://api.tainuocar.com/home/index?invite=' + info['invite_code']
-          this.initWxShare(window.shareUrl, '泰诺汽车平台', '一站式汽车金融服务\r\n做车贷，找泰诺！', shareLink)
+          let shareLink = 'http://77car-api.shanshuijv.com/home/index?invite=' + info['invite_code']
+          this.initWxShare(window.shareUrl, '77汽车平台', '一站式汽车金融服务\r\n做车贷，找77汽车！', shareLink)
           window.isReady = true
 
           this.getOrderUnhandle()
         })
       } else {
-        // this.getOpenId('061CMpyv0CR4bg161cwv0tVpyv0CMpyT') // 调试 直接获取openId
+        // this.getOpenId('061cXkFa1kMBPz04DOGa1bpF5o3cXkFS') // 调试 直接获取openId
         this.getInfo()
       }
 

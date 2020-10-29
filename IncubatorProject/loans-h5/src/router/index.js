@@ -18,7 +18,7 @@ const router = new Router({
       name: 'index',
       component: resolve => require(['@/view/home/index'], resolve),
       meta: {
-        title: '泰诺汽车平台'
+        title: '77汽车平台'
       }
     },
     {
@@ -82,7 +82,7 @@ const router = new Router({
       name: 'abouttainuo',
       component: resolve => require(['@/view/home/component/AboutTainuo'], resolve),
       meta: {
-        title: '关于泰诺'
+        title: '关于77汽车'
       }
     },
     {
@@ -122,7 +122,7 @@ const router = new Router({
       name: 'loanslist',
       component: resolve => require(['@/view/loans/LoansList'], resolve),
       meta: {
-        title: '泰诺产品'
+        title: '77汽车产品'
       }
     },
     {
@@ -250,7 +250,7 @@ const router = new Router({
       name: 'ordersignup',
       component: resolve => require(['@/view/order/signUp'], resolve),
       meta: {
-        title: '泰诺金融'
+        title: '车辆金融'
       }
     },
     {

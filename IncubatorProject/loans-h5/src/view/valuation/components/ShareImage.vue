@@ -49,7 +49,7 @@
         </div>
       </div>
       <div class="block5">
-        <img ref="img2" src="@/assets/valuation/share-bottom.png" alt="">
+        <!-- <img ref="img2" src="@/assets/valuation/share-bottom.png" alt=""> -->
         <p class="exp">长按可保存图片</p>
         <img class="qrcode-img" :src="qrcode">
       </div>

@@ -4,7 +4,7 @@
       <img src="https://tainuocar.oss-cn-zhangjiakou.aliyuncs.com/b63bd85c14b67b82469e013136c8b384.gif" alt="">
     </div>
     <div class="panel">
-      <p class="title">泰诺汽车平台</p>
+      <p class="title">汽车平台</p>
       <p class="des">超10款车贷产品，总有一款适合您！</p>
       <div class="config-block">
         <div

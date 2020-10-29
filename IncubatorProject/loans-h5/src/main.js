@@ -18,6 +18,10 @@ import QrOverlay from '@/components/QrOverlay'
 // let vConsole = new VConsole()
 import moment from 'moment'
 import 'moment/locale/zh-cn'
+import Yuk from 'yukching/index.js'
+
+Vue.prototype.yuk = new Yuk()
+
 moment.locale('zh-cn')
 
 Vue.use(QrOverlay)

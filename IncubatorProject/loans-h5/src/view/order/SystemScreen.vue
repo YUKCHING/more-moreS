@@ -92,7 +92,7 @@
           </div>
         </div>
         <div class="qrcode-block">
-          <img src="@/assets/order/share-bottom.png">
+          <!-- <img src="@/assets/order/share-bottom.png"> -->
           <p class="exp">- 长按可保存图片 -</p>
           <img class="qrcode-img" :src="qrcode">
         </div>

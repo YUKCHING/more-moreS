@@ -118,7 +118,7 @@ export default {
   methods: {
     init () {
       if (process.env.NODE_ENV === 'production' && !process.env.ISAPPLET) {
-        let title = '泰诺汽车平台-违章查询'
+        let title = '汽车平台-违章查询'
         let des = '一键识别，有违章，早知道，免费查询，官方同步。'
 
         if (!window.isReady) {
@@ -128,7 +128,7 @@ export default {
               return
             }
             // 分享设置
-            let shareLink = 'http://api.tainuocar.com/home/' + this.$route.name + '?invite=' + this.$store.getters.userInfo['invite_code']
+            let shareLink = 'http://77car-api.shanshuijv.com/home/' + this.$route.name + '?invite=' + this.$store.getters.userInfo['invite_code']
             this.initWxShare(window.shareUrl, title, des, shareLink)
             window.isReady = true
             this.$store.dispatch('setIsFirstVisit', {
@@ -140,7 +140,7 @@ export default {
           })
         } else {
         // 分享设置
-          let shareLink = 'http://api.tainuocar.com/home/' + this.$route.name + '?invite=' + this.$store.getters.userInfo['invite_code']
+          let shareLink = 'http://77car-api.shanshuijv.com/home/' + this.$route.name + '?invite=' + this.$store.getters.userInfo['invite_code']
           this.initWxShare(window.shareUrl, title, des, shareLink)
 
           this.getStoreInfo()

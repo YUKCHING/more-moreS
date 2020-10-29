@@ -15,8 +15,8 @@ module.exports = {
     assetsPublicPath: '/',
     proxyTable: {
       '/api': {
-        target: 'http://api.tainuocar.com',
-        // target: 'http://test-api.tainuocar.com',
+        target: 'http://77car-api.shanshuijv.com',
+        // target: 'http://test-77car-api.shanshuijv.com',
         changeOrigin: true,
         pathRewrite: {
           '^/api': ''
@@ -46,6 +46,7 @@ module.exports = {
 
     // https://webpack.js.org/configuration/devtool/#development
     devtool: 'cheap-module-eval-source-map',
+    // devtool: 'nosources-source-map',
 
     // If you have problems debugging vue-files in devtools,
     // set this to false - it *may* help

@@ -2,16 +2,16 @@
   <div class='InviteFans'>
     <div class="panel" id="share-block">
       <div class="top">
-        <img src="@/assets/imgs/img-tainuo-logo.png">
-        <div class="line"></div>
+        <!-- <img src="@/assets/imgs/img-tainuo-logo.png">
+        <div class="line"></div> -->
         <span class="banner">
-          做车贷  找泰诺
+          做车贷  找77汽车
         </span>
       </div>
       <div class="content">
         <p class="p1">分享海报</p>
         <p class="p2">超10款车贷产品，总有一款适合您！</p>
-        <p class="p2">咱们做车贷找泰诺！</p>
+        <p class="p2">咱们做车贷找77汽车！</p>
         <div class="img-block">
           <img :src="imgUrl" ref="imgUrlBlock">
           <van-uploader
@@ -104,8 +104,8 @@ export default {
   methods: {
     init () {
       if (process.env.NODE_ENV === 'production' && !process.env.ISAPPLET) {
-        let title = '泰诺汽车平台-邀请粉丝'
-        let des = '超10款车贷产品，总有一款适合您！做车贷，找泰诺。'
+        let title = '汽车平台-邀请粉丝'
+        let des = '超10款车贷产品，总有一款适合您！做车贷，找77汽车。'
         if (!window.isReady) {
           initLoginCheckInfo(this.$route).then(info => {
             if (info && info.code === -1000104) {
@@ -113,7 +113,7 @@ export default {
               return
             }
             // 分享设置
-            let shareLink = 'http://api.tainuocar.com/home/' + this.$route.name + '?invite=' + this.$store.getters.userInfo['invite_code']
+            let shareLink = 'http://77car-api.shanshuijv.com/home/' + this.$route.name + '?invite=' + this.$store.getters.userInfo['invite_code']
             this.initWxShare(window.shareUrl, title, des, shareLink)
             window.isReady = true
             this.$store.dispatch('setIsFirstVisit', {
@@ -124,7 +124,7 @@ export default {
           })
         } else {
         // 分享设置
-          let shareLink = 'http://api.tainuocar.com/home/' + this.$route.name + '?invite=' + this.$store.getters.userInfo['invite_code']
+          let shareLink = 'http://77car-api.shanshuijv.com/home/' + this.$route.name + '?invite=' + this.$store.getters.userInfo['invite_code']
           this.initWxShare(window.shareUrl, title, des, shareLink)
 
           this.getCode()
