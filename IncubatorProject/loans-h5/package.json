@@ -14,7 +14,7 @@
     "build:home": "node build/build.js --PROJECT=home"
   },
   "dependencies": {
-    "axios": "^0.18.0",
+    "axios": "^0.21.1",
     "echarts": "^4.6.0",
     "html2canvas": "1.0.0-alpha.12",
     "jquery": "^3.5.0",
